@@ -108,14 +108,21 @@ def answer(question: str, decompose: bool = False) -> dict:
         set_output(root, result["answer"], **{"rag.n_sources": len(result["sources"]),
                                               "rag.n_sub_questions": len(result["sub_questions"]),
                                               "rag.unverified_numbers": len(result["unverified_numbers"])})
+        ctx = root.get_span_context()
+        result["trace_id"] = format(ctx.trace_id, "032x") if ctx.is_valid else None  # Phoenix trace lookup
         return result
 
 
 def _answer(question: str, decompose: bool) -> dict:
     from src.observability.tracing import set_output, span
+    engine, bundle = get_query_engine(decompose), QueryBundle(question)
+    # retrieve() + synthesize() is exactly what CitationQueryEngine.query() does; split to time each.
     t0 = time.perf_counter()
-    response = get_query_engine(decompose).query(question)
-    total_ms = (time.perf_counter() - t0) * 1000
+    nodes = engine.retrieve(bundle)
+    t1 = time.perf_counter()
+    response = engine.synthesize(bundle, nodes)
+    t2 = time.perf_counter()
+    total_ms = (t2 - t0) * 1000
     sources_text = "\n".join(n.node.get_content(metadata_mode=MetadataMode.NONE) for n in response.source_nodes)
     with span("answer.calc_and_verify", "TOOL", input_value=str(response)) as s:
         text, calcs = apply_calcs(str(response))
@@ -136,7 +143,8 @@ def _answer(question: str, decompose: bool) -> dict:
     contexts = [s.node.get_content(metadata_mode=MetadataMode.NONE) for s in response.source_nodes]
     return {"question": question, "sub_questions": sub_questions, "contexts": contexts,
             "answer": text.strip(), "sources": sources, "calculations": calcs,
-            "unverified_numbers": unverified, "latency_ms": round(total_ms)}
+            "unverified_numbers": unverified, "latency_ms": round(total_ms),
+            "latency_breakdown_ms": {"retrieval": round((t1 - t0) * 1000), "generation": round((t2 - t1) * 1000)}}
 
 
 def main() -> None:

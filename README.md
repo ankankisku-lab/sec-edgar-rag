@@ -304,6 +304,27 @@ Latency breakdown read back from Phoenix (warm pipeline, V5 + Qwen3-4B):
 
 Generation is ~95% of end-to-end latency; retrieval + reranking is under a second.
 
+## FastAPI service (Phase 20)
+
+```powershell
+docker compose up -d
+.venv\Scripts\python -m uvicorn src.api.main:app --host 127.0.0.1 --port 8000   # single worker: one GPU
+curl -X POST http://127.0.0.1:8000/query -H "Content-Type: application/json" -d "{\"question\": \"...\"}"
+```
+
+- `POST /query` -> answer, sub-questions, cited sources (filing, period, section, SEC URL), `<calc>`
+  calculations, unverified numbers, latency `{total, retrieval, generation}`, request id and the
+  Phoenix `trace_id`. `GET /health` (503 until Qdrant, Ollama and the models are ready), `GET /metrics`
+  (requests, errors, busy rejections, in-flight/queued, p50/p95, refusal and unverified-number rates).
+- One GPU: pipeline runs are serialised by an asyncio lock in a worker thread, at most 4 requests may
+  queue (then 503). Startup warms BM25 + reranker + embedder before Ollama loads the LLM (~67 s).
+- Live check: `/health` answered in 73 ms and `/metrics` in 5 ms while a query was generating; two
+  concurrent queries were queued and both completed; every response's trace id is in Phoenix.
+- Known limitation seen live: period resolution. "Most recent annual report" and a bare "fiscal 2026"
+  retrieved a 10-Q / older 10-K (one refusal, one year-to-date figure instead of the annual one). Needs
+  a query-understanding step that maps a fiscal year without a quarter to the 10-K and "latest" to each
+  company's newest filing via metadata filters.
+
 ## Local LLM feasibility (4 GB VRAM)
 
 ```powershell

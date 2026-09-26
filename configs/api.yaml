@@ -1,0 +1,10 @@
+server:
+  host: 127.0.0.1
+  port: 8000
+pipeline:
+  decompose_default: true      # V5 retrieval (router skips the LLM call for single-fact questions)
+  max_queue: 4                 # requests allowed to wait for the GPU; beyond this -> 503 busy
+  request_timeout_s: 300
+  question_max_chars: 1000
+metrics:
+  window: 200                  # recent requests kept for latency percentiles
