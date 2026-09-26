@@ -1,15 +1,23 @@
 ragas:
-  # Judge = FREE tier only (user requirement). Groq's free plan has no billing attached, so the
-  # key cannot be charged; the guards below also keep every run bounded and resumable.
-  judge:
-    provider: groq
-    model: openai/gpt-oss-120b             # strongest free Groq model here; not Qwen, so no self-grading
-    reasoning_effort: low                  # reasoning model: keep hidden reasoning tokens (free TPD) small
-    base_url: https://api.groq.com/openai/v1   # OpenAI-compatible endpoint
-    api_key_env: GROQ_API_KEY
-  requests_per_minute: 20         # pacing; per-minute token limits are handled by waiting
-  max_calls_per_run: 600          # hard cap per invocation (full G5+G6 run ~490 calls); stops cleanly when reached
+  # Judges: FREE only (user requirement). Each judge has its own cache and result files, so
+  # verdicts from different judges can never mix. Pick one with --judge.
+  default_judge: groq-gpt-oss-120b
+  judges:
+    groq-gpt-oss-120b:                     # hosted, Groq free plan (no billing): ~200K tokens/day
+      model: openai/gpt-oss-120b           # strongest free Groq model; not Qwen, so no self-grading
+      reasoning_effort: low                # keep hidden reasoning tokens (free quota) small
+      base_url: https://api.groq.com/openai/v1
+      api_key_env: GROQ_API_KEY
+      requests_per_minute: 20              # per-minute token limits are handled by waiting
+      max_calls_per_run: 600
+    local-llama3.1-8b:                     # local via Ollama: no quota, no network
+      model: llama3.1:8b-instruct-q4_K_M   # not Qwen (the generator), so no self-grading
+      base_url: http://127.0.0.1:11434/v1  # Ollama's OpenAI-compatible endpoint
+      local_ollama: true                   # start the portable Ollama server for the run
+      instructor_mode: JSON_SCHEMA         # constrained decoding: free JSON mode made the 8B echo the schema
+      requests_per_minute: 6000            # no pacing needed
+      max_calls_per_run: 5000
   rate_limit_max_waits: 12        # consecutive per-minute 429 waits before giving up on a call
   answer_relevancy_strictness: 1  # generated questions per answer (ragas default 3 = 3x the calls)
   embeddings_model: BAAI/bge-small-en-v1.5   # local, free (answer relevancy similarity)
-  cache_dir: data/eval/cache/ragas            # every judge call cached: re-runs and resumes are free
+  cache_dir: data/eval/cache/ragas            # + /<judge name>: every call cached, runs resumable

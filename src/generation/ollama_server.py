@@ -30,7 +30,10 @@ def start(kv_cache_type: str = "q8_0") -> subprocess.Popen:
                OLLAMA_FLASH_ATTENTION="1" if cfg["flash_attention"] else "0",
                OLLAMA_KV_CACHE_TYPE=kv_cache_type,
                OLLAMA_NUM_PARALLEL="1",        # parallel slots multiply KV-cache memory
-               OLLAMA_MAX_LOADED_MODELS="1")
+               OLLAMA_MAX_LOADED_MODELS="1",
+               # Default context for requests that don't set num_ctx (the OpenAI-compatible
+               # endpoint can't): too small a default silently truncates long prompts.
+               OLLAMA_CONTEXT_LENGTH=str(cfg.get("default_context_length", 8192)))
     LOG_DIR.mkdir(exist_ok=True)
     log = open(LOG_DIR / f"ollama_{kv_cache_type}.log", "a", encoding="utf-8")
     proc = subprocess.Popen([str(PROJECT_ROOT / cfg["exe"]), "serve"], env=env, stdout=log, stderr=log,

@@ -1,0 +1,6 @@
+qid,type,faithfulness,answer_relevancy,judge_calls,seconds,refused
+q0115,numeric,1.0,0.5196150962162701,3,14.2,False
+q0119,numeric,0.0,0.8089335603592663,4,44.0,False
+q0130,numeric,1.0,0.6045147974486442,4,39.7,False
+q0048,numeric,1.0,0.6652182569131075,4,35.7,False
+q0047,numeric,1.0,0.5024189828358328,4,41.8,False

@@ -222,6 +222,21 @@ vs 4-5 for LlamaIndex's SubQuestionQueryEngine, and the model sees both facts to
   1 period ambiguity ("fiscal 2025" answered from a 10-Q), 1 self-rounded % instead of `<calc>`,
   1 wrong value.
 
+## Ragas (Phase 13): in progress, paused
+
+Free judges only. `python -m src.evaluation.ragas_eval` scores faithfulness and answer relevancy
+(ragas 0.4 collections) on the saved answers + exact contexts of G5 (no decomposition) and G6
+(decomposition); refusals are not judged (no claims to verify). Judges live in
+`configs/evaluation.yaml`, each with its own cache and result files:
+
+- `groq-gpt-oss-120b` (Groq free plan): 27 G5 answers judged -- faithfulness 0.890, relevancy 0.722 --
+  before the free ~200K tokens/day limit; the guard stopped cleanly and the run resumes from cache.
+- `local-llama3.1-8b` (Ollama, schema-constrained decoding): validated on the same 27 answers.
+  Relevancy agrees with the 120B judge (Pearson 0.98, 100% same side of 0.5); faithfulness does not
+  (Pearson 0.44 -- it failed 3 answers the deterministic answer key shows are correct), so it is
+  used for relevancy only. Remaining: relevancy on all 128 locally; 120B faithfulness mainly on the
+  narrative answers (typed answers already have answer-key and number-verification checks).
+
 ## HyDE (Phase 15): evaluated, not adopted
 
 `src/query/hyde.py`: LlamaIndex `HyDEQueryTransform` with the local Qwen writes a <=80-word
