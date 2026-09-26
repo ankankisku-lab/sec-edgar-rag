@@ -27,3 +27,5 @@ __pycache__/
 .cache/
 models/
 tools/
+# Ragas judge-response cache (binary sqlite, changes every run)
+data/eval/cache/ragas/
