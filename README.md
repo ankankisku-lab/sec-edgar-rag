@@ -169,7 +169,8 @@ v0 results are kept for history; v1 results live in `data/eval/results/retrieval
 | V1 | Dense | 0.071 | 0.104 | 0.132 | 0.233 | 0.225 | 28 ms |
 | V2 | BM25 | 0.223 | 0.466 | 0.428 | 0.661 | 0.661 | 14 ms |
 | V3 | Hybrid (relative, a=0.3) | 0.218 | 0.457 | 0.427 | 0.653 | 0.653 | 34 ms |
-| **V4** | BM25 top-60 -> BGE rerank (linearized) | **0.321** | **0.611** | **0.614** | **0.805** | **0.792** | 483 ms |
+| V4 | BM25 top-60 -> BGE rerank (linearized) | 0.321 | 0.611 | 0.614 | 0.805 | 0.792 | 483 ms |
+| **V5** | V4 + sub-question decomposition (router + Qwen JSON) | **0.422** | **0.711** | **0.725** | **0.941** | **0.932** | 507 ms |
 
 All-hit@10 by question type (every required fact retrieved):
 
@@ -179,6 +180,7 @@ All-hit@10 by question type (every required fact retrieved):
 | V2 | 0.786 | 0.542 | 0.867 | 0.000 | 0.000 | 0.833 |
 | V3 | 0.764 | 0.500 | 0.867 | 0.000 | 0.000 | 0.917 |
 | V4 | 0.907 | 0.958 | 0.933 | 0.000 | 0.000 | 0.958 |
+| **V5** | **0.907** | **1.000** | **1.000** | **0.917** | **1.000** | **0.958** |
 
 Single-query retrieval cannot serve multi-fact questions: cross-quarter/cross-company all-hit@10
 is 0.000 for every retriever. The gold labels are right -- asked alone, "What was Apple's net
@@ -191,12 +193,34 @@ Generation on a stratified 40-question sample (`python -m src.evaluation.generat
 |---|---|---|---|---|---|---|---|---|---|---|
 | G2 | 40.0% | 56.5% | 91.7% | 12.5% | 50.0% | 0.0% | 16.7% | 3 | 0% | 10.8 s |
 | G3 | 52.5% | 78.3% | 91.7% | 62.5% | 66.7% | 0.0% | 16.7% | 0 | 0% | 12.4 s |
+| **G4** (decomposition) | **87.5%** | 86.8% | 91.7% | 75.0% | 83.3% | 100.0% | 83.3% | 0 | 0% | 15.7 s |
 
 G2 -> G3 is a prompt change only (same questions): every change/percentage must be a `<calc>`
 (no self-rounding), comparisons must state the difference, and the refusal sentence may not be
 appended to an answer. 5 answers fixed, 0 broken. Remaining misses are retrieval (multi-fact
 questions never get both facts into context) and period ambiguity ("fiscal 2025" answered from
 the Q3 10-Q's nine-month column instead of the 10-K).
+
+## Sub-question decomposition (Phase 14)
+
+`src/query/decomposition.py`: one Qwen3-4B call (Ollama JSON mode) splits a question into the
+minimal list of self-contained lookups (one company, one metric, one explicit period each).
+Few-shot examples use companies/metrics that are *not* in the eval set (Costco, Intel/AMD,
+Tesla). A single returned sub-question falls back to the original wording (the LLM once turned
+"What drove X's growth?" into "What was X?"). A regex router sends only questions with a
+comparison / multi-period cue to the LLM -- on eval v1 it agreed with the LLM's own split
+decisions on all 235 questions -- which brings median retrieval latency from 2.3 s back to 0.5 s.
+`src/retrieval/decomposed.py` runs V4 per sub-question and interleaves the ranked lists
+round-robin; the LLM then answers the *original* question from the merged context (2 LLM calls,
+vs 4-5 for LlamaIndex's SubQuestionQueryEngine, and the model sees both facts together for
+`<calc>`). Decompositions are cached so retrieval and generation runs use identical sub-questions.
+
+- Retrieval V4 -> V5: all-hit@10 0.792 -> 0.932 (+0.140, 95% CI [+0.10, +0.19]); cross-company
+  0.000 -> 1.000, cross-quarter 0.000 -> 0.917; numeric and narrative exactly unchanged.
+- Generation G3 -> G4 (same 40 questions): 52.5% -> 87.5% correct; 15 fixed, 1 broken
+  (McNemar p ~ 0.0005). The 5 remaining misses all had the facts in context: 2 wrong-row reads,
+  1 period ambiguity ("fiscal 2025" answered from a 10-Q), 1 self-rounded % instead of `<calc>`,
+  1 wrong value.
 
 ## Local LLM feasibility (4 GB VRAM)
 

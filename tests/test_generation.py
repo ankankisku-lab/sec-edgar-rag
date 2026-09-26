@@ -50,3 +50,26 @@ def test_score_answer_by_type():
     cc = {"type": "cross_company", "answer_values": ["416,161", "$331,839"]}
     assert score_answer(cc, "Apple $416,161 million [1] vs Microsoft $331,839 million [2].")["correct"]
     assert not score_answer(cc, "Apple $416,161 million [1].")["correct"]
+
+
+def test_decomposition_parse_and_interleave():
+    from llama_index.core.schema import NodeWithScore, TextNode
+    from src.query.decomposition import parse
+    from src.retrieval.decomposed import interleave
+    q = "Compare A and B."
+    assert parse('{"sub_questions": ["What was A?", "What was B?"]}', q) == ["What was A?", "What was B?"]
+    assert parse('{"sub_questions": ["What was X revenue?"]}', "What drove X growth?") == ["What drove X growth?"]
+    assert parse("not json", q) == [q]
+    n = lambda i: NodeWithScore(node=TextNode(id_=i, text=i), score=1.0)
+    merged = interleave([[n("a1"), n("a2"), n("s")], [n("b1"), n("s"), n("b2")]], top_k=5)
+    assert [m.node.node_id for m in merged] == ["a1", "b1", "a2", "s", "b2"]
+
+
+def test_router_only_sends_multi_fact_questions_to_the_llm():
+    from src.query.decomposition import needs_decomposition
+    assert needs_decomposition("Compare Apple's net income in fiscal 2025 Q1 with fiscal 2025 Q3.")
+    assert needs_decomposition("By what percentage did Apple's revenue change from 2024 to 2025?")
+    assert needs_decomposition("How did X compare with the same period a year earlier?")
+    assert needs_decomposition("How has Nvidia's revenue trended over the last three quarters?")
+    assert not needs_decomposition("What was Apple's operating income in fiscal 2025 Q3?")
+    assert not needs_decomposition("What drove NVIDIA's Data Center revenue growth in fiscal 2027 Q2?")

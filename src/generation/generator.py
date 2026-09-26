@@ -71,12 +71,16 @@ def get_llm():
                   additional_kwargs={"seed": cfg["seed"], "num_predict": cfg["max_output_tokens"]})
 
 
-@lru_cache(maxsize=1)
-def get_query_engine() -> CitationQueryEngine:
+@lru_cache(maxsize=2)
+def get_query_engine(decompose: bool = False) -> CitationQueryEngine:
+    """decompose=True: multi-fact questions are split into sub-questions, each retrieved
+    separately and interleaved (V5); the LLM still answers the original question."""
     from llama_index.core import get_response_synthesizer
+    from src.retrieval.decomposed import DecomposedRetriever
     cfg = load_config("generation")
+    top_k = cfg["retrieval"]["top_k_children"]
     return CitationQueryEngine(
-        retriever=V4Retriever(cfg["retrieval"]["top_k_children"]),
+        retriever=DecomposedRetriever(top_k) if decompose else V4Retriever(top_k),
         llm=get_llm(),
         node_postprocessors=[ParentExpander.from_config()],
         citation_chunk_size=4096,           # never re-split our parents; the budget is enforced upstream
@@ -97,9 +101,9 @@ def ollama_running():
             ollama_server.stop(proc)
 
 
-def answer(question: str) -> dict:
+def answer(question: str, decompose: bool = False) -> dict:
     t0 = time.perf_counter()
-    response = get_query_engine().query(question)
+    response = get_query_engine(decompose).query(question)
     total_ms = (time.perf_counter() - t0) * 1000
     sources_text = "\n".join(n.node.get_content(metadata_mode=MetadataMode.NONE) for n in response.source_nodes)
     text, calcs = apply_calcs(str(response))
@@ -108,7 +112,13 @@ def answer(question: str) -> dict:
                 "period": s.node.metadata.get("period"), "section": s.node.metadata.get("heading_path"),
                 "url": s.node.metadata.get("source_url"), "score": round(float(s.score or 0), 3)}
                for i, s in enumerate(response.source_nodes, 1)]
-    return {"question": question, "answer": text.strip(), "sources": sources, "calculations": calcs,
+    if decompose:
+        from src.retrieval.decomposed import LAST_SUB_QUESTIONS
+        sub_questions = list(LAST_SUB_QUESTIONS)
+    else:
+        sub_questions = [question]
+    return {"question": question, "sub_questions": sub_questions,
+            "answer": text.strip(), "sources": sources, "calculations": calcs,
             "unverified_numbers": verify_numbers(text, sources_text, question, calcs),
             "latency_ms": round(total_ms)}
 

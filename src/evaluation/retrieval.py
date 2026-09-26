@@ -21,6 +21,7 @@ import argparse
 import hashlib
 import json
 import math
+import sys
 import time
 from datetime import datetime
 
@@ -68,6 +69,9 @@ def get_retriever(name: str, **options):
     if name == "bm25":
         from src.retrieval.hybrid import retrieve_bm25
         return retrieve_bm25
+    if name == "decomposed":
+        from src.retrieval.decomposed import retrieve_decomposed
+        return lambda q, top_k=K: retrieve_decomposed(q, top_k=top_k)
     if name == "rerank":
         from src.retrieval.reranker import retrieve_reranked
         return lambda q, top_k=K: retrieve_reranked(q, top_k=top_k, **options)
@@ -85,7 +89,18 @@ def split_of(qid: str) -> str:
 def evaluate(retriever_name: str, dataset: str, **options) -> tuple[pd.DataFrame, list[dict]]:
     questions = [json.loads(line) for line in open(EVAL_DIR / dataset, encoding="utf-8")]
     retrieve = get_retriever(retriever_name, **options)
+    if retriever_name == "decomposed":
+        from src.retrieval.reranker import retrieve_reranked
+        from src.generation.generator import ollama_running
+        retrieve_reranked("warm-up query")  # reranker on the GPU before the LLM loads
+        with ollama_running():
+            retrieve("warm-up query")
+            return _run(questions, retrieve)
     retrieve("warm-up query")  # load models / open connections outside the timed loop
+    return _run(questions, retrieve)
+
+
+def _run(questions: list[dict], retrieve) -> tuple[pd.DataFrame, list[dict]]:
     rows, traces = [], []
     for q in questions:
         t0 = time.perf_counter()
@@ -95,8 +110,11 @@ def evaluate(retriever_name: str, dataset: str, **options) -> tuple[pd.DataFrame
         rows.append({"qid": q["qid"], "type": q["type"], "split": split_of(q["qid"]),
                      "ticker": q["ticker"], "latency_ms": ms,
                      **score(ranked, q.get("gold_groups") or [q["gold_ids"]])})
-        traces.append({"qid": q["qid"], "question": q["question"], "ranked": ranked,
-                       "scores": [round(float(h.score), 4) for h in hits], "n_gold": len(q["gold_ids"])})
+        trace = {"qid": q["qid"], "question": q["question"], "ranked": ranked,
+                 "scores": [round(float(h.score), 4) for h in hits], "n_gold": len(q["gold_ids"])}
+        if "src.retrieval.decomposed" in sys.modules:
+            trace["sub_questions"] = list(sys.modules["src.retrieval.decomposed"].LAST_SUB_QUESTIONS)
+        traces.append(trace)
     return pd.DataFrame(rows), traces
 
 

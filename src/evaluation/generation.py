@@ -76,6 +76,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--version", default="G2")
     parser.add_argument("--dataset", default="retrieval_v1.jsonl")
+    parser.add_argument("--decompose", action="store_true", help="sub-question decomposition (V5 retrieval)")
     args = parser.parse_args()
 
     questions = [json.loads(line) for line in open(EVAL_DIR / args.dataset, encoding="utf-8")]
@@ -90,9 +91,9 @@ def main() -> None:
     retrieve_reranked("warm-up: what was Apple's net income?")
     rows = []
     with ollama_running():
-        answer("warm-up: what was Apple's net income?")
+        answer("warm-up: what was Apple's net income?", decompose=args.decompose)
         for i, q in enumerate(sample, 1):
-            r = answer(q["question"])
+            r = answer(q["question"], decompose=args.decompose)
             in_ctx = {s["node_id"] for s in r["sources"]}
             facts_in_ctx = [bool(in_ctx & (set(g) | {child_parent[c] for c in g if c in child_parent}))
                             for g in q["gold_groups"]]
@@ -102,7 +103,8 @@ def main() -> None:
                    "n_calcs": len(r["calculations"]), "cited": bool(re.search(r"\[\d+\]", r["answer"])),
                    "latency_ms": r["latency_ms"], "question": q["question"],
                    "expected": " | ".join(q["answer_values"]), "answer": r["answer"],
-                   "unverified_numbers": " ".join(r["unverified_numbers"])}
+                   "unverified_numbers": " ".join(r["unverified_numbers"]),
+                   "sub_questions": " || ".join(r["sub_questions"])}
             rows.append(row)
             print(f"{i:3}/{len(sample)} {'OK ' if row['correct'] else 'ERR'} {q['type']:13} ctx={int(row['all_facts_in_context'])} "
                   f"{r['latency_ms']:6d}ms | {q['question'][:60]} -> {r['answer'][:90]!r}", flush=True)
