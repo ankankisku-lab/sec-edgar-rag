@@ -97,12 +97,12 @@ docker compose up -d                      # Qdrant v1.19.1, dashboard: http://12
 
 | Version | Retrieval | Reranker | P@3 | R@5 | MRR@10 | Hit@10 | numeric P@3 | narrative P@3 | p50 latency |
 |---|---|---|---|---|---|---|---|---|---|
-| V1 | Dense (bge-small) | - | 0.089 | 0.108 | 0.153 | 0.244 | 0.024 | 0.472 | 31 ms |
-| V2 | BM25 (Qdrant sparse) | - | 0.285 | 0.526 | 0.528 | 0.774 | 0.264 | 0.403 | 14 ms |
-| V3 | Hybrid dense30 + BM25-30, relative fusion a=0.3 | - | 0.270 | 0.496 | 0.502 | 0.780 | 0.243 | 0.431 | 31 ms |
-| V4-md | BM25 top-60 | bge-reranker-base, markdown tables | 0.238 | - | 0.444 | - | 0.190 | 0.514 | ~480 ms |
-| **V4** | **BM25 top-60** | **bge-reranker-base, linearized tables** | **0.441** | **0.797** | **0.767** | **0.970** | **0.429** | 0.514 | 529 ms |
-| V4h | BM25-45 + dense-15 | same as V4 | 0.441 | - | 0.764 | - | 0.426 | 0.528 | ~490 ms |
+| V1 | Dense (bge-small) | - | 0.089 | 0.106 | 0.153 | 0.244 | 0.024 | 0.472 | 30 ms |
+| V2 | BM25 (Qdrant sparse) | - | 0.285 | 0.512 | 0.528 | 0.817 | 0.264 | 0.403 | 13 ms |
+| V3 | Hybrid dense30 + BM25-30, relative fusion a=0.3 | - | 0.270 | 0.493 | 0.502 | 0.811 | 0.243 | 0.431 | 34 ms |
+| V4-md | BM25 top-60 | bge-reranker-base, markdown tables | 0.238 | 0.485 | 0.444 | 0.805 | 0.190 | 0.514 | 479 ms |
+| **V4** | BM25 top-60 | bge-reranker-base, linearized tables | **0.441** | **0.797** | **0.767** | **0.970** | **0.429** | **0.514** | 529 ms |
+| V4h | BM25-45 + dense-15 | same as V4 | 0.441 | 0.786 | 0.764 | 0.957 | 0.426 | 0.528 | 490 ms |
 
 P@3 ceiling on this set is 0.632 (most questions have 1-2 relevant chunks), so V4 reaches 70%
 of the achievable maximum. Significance: paired bootstrap over questions
