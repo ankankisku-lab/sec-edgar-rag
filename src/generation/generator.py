@@ -117,7 +117,9 @@ def answer(question: str, decompose: bool = False) -> dict:
         sub_questions = list(LAST_SUB_QUESTIONS)
     else:
         sub_questions = [question]
-    return {"question": question, "sub_questions": sub_questions,
+    # Exactly the source texts the LLM saw ("Source N:" + metadata header + content), for Ragas.
+    contexts = [s.node.get_content(metadata_mode=MetadataMode.NONE) for s in response.source_nodes]
+    return {"question": question, "sub_questions": sub_questions, "contexts": contexts,
             "answer": text.strip(), "sources": sources, "calculations": calcs,
             "unverified_numbers": verify_numbers(text, sources_text, question, calcs),
             "latency_ms": round(total_ms)}

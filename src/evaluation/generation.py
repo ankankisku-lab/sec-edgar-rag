@@ -77,10 +77,13 @@ def main() -> None:
     parser.add_argument("--version", default="G2")
     parser.add_argument("--dataset", default="retrieval_v1.jsonl")
     parser.add_argument("--decompose", action="store_true", help="sub-question decomposition (V5 retrieval)")
+    parser.add_argument("--include-narrative", action="store_true",
+                        help="also answer the narrative questions (no exact answer key; for Ragas)")
     args = parser.parse_args()
 
     questions = [json.loads(line) for line in open(EVAL_DIR / args.dataset, encoding="utf-8")]
-    sample = sample_questions(questions, SAMPLE)
+    plan = {**SAMPLE, "narrative": 24} if args.include_narrative else SAMPLE
+    sample = sample_questions(questions, plan)
     tickers = {t for q in sample for t in q["ticker"].split(",")}
     child_parent = {n.node_id: n.metadata["parent_id"] for f in CHUNKS_DIR.glob("*/*.jsonl") if f.parent.name in tickers
                     for n in load_nodes(f) if n.metadata["node_type"] == "child"}
@@ -90,28 +93,45 @@ def main() -> None:
     from src.retrieval.reranker import retrieve_reranked
     retrieve_reranked("warm-up: what was Apple's net income?")
     rows = []
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    csv_path = RESULTS_DIR / f"{args.version}_generation.csv"
+    ragas_path = RESULTS_DIR / f"{args.version}_ragas_input.jsonl"
+    ragas_path.write_text("", encoding="utf-8")
     with ollama_running():
         answer("warm-up: what was Apple's net income?", decompose=args.decompose)
         for i, q in enumerate(sample, 1):
-            r = answer(q["question"], decompose=args.decompose)
+            try:
+                r = answer(q["question"], decompose=args.decompose)
+            except Exception as e:  # one failing question must not lose the whole run
+                print(f"{i:3}/{len(sample)} FAILED {q['qid']}: {type(e).__name__}: {e}", flush=True)
+                continue
             in_ctx = {s["node_id"] for s in r["sources"]}
             facts_in_ctx = [bool(in_ctx & (set(g) | {child_parent[c] for c in g if c in child_parent}))
                             for g in q["gold_groups"]]
+            has_key = q["type"] != "narrative"
+            scored = score_answer(q, r["answer"]) if has_key else {"values_ok": None, "calc_ok": None, "correct": None}
             row = {"qid": q["qid"], "type": q["type"], "ticker": q["ticker"],
-                   "all_facts_in_context": all(facts_in_ctx), **score_answer(q, r["answer"]),
+                   "all_facts_in_context": all(facts_in_ctx), **scored,
                    "refused": REFUSAL in r["answer"].lower(), "unverified": len(r["unverified_numbers"]),
                    "n_calcs": len(r["calculations"]), "cited": bool(re.search(r"\[\d+\]", r["answer"])),
                    "latency_ms": r["latency_ms"], "question": q["question"],
-                   "expected": " | ".join(q["answer_values"]), "answer": r["answer"],
+                   "expected": " | ".join(q.get("answer_values", [])), "answer": r["answer"],
                    "unverified_numbers": " ".join(r["unverified_numbers"]),
                    "sub_questions": " || ".join(r["sub_questions"])}
             rows.append(row)
-            print(f"{i:3}/{len(sample)} {'OK ' if row['correct'] else 'ERR'} {q['type']:13} ctx={int(row['all_facts_in_context'])} "
+            # Written after every question, so a crash never discards finished work.
+            pd.DataFrame(rows).to_csv(csv_path, index=False)
+            with open(ragas_path, "a", encoding="utf-8") as fh:
+                fh.write(json.dumps({"qid": q["qid"], "type": q["type"], "user_input": q["question"],
+                                     "response": r["answer"], "retrieved_contexts": r["contexts"],
+                                     "reference": " | ".join(q.get("answer_values", [])) or None},
+                                    ensure_ascii=False) + "\n")
+            status = ("OK " if row["correct"] else "ERR") if has_key else "-- "
+            print(f"{i:3}/{len(sample)} {status} {q['type']:13} ctx={int(row['all_facts_in_context'])} "
                   f"{r['latency_ms']:6d}ms | {q['question'][:60]} -> {r['answer'][:90]!r}", flush=True)
 
     df = pd.DataFrame(rows)
-    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    df.to_csv(RESULTS_DIR / f"{args.version}_generation.csv", index=False)
+    df = df[df.type != "narrative"]  # the accuracy summary below needs an answer key
     by_type = df.groupby("type").agg(n=("qid", "size"), correct=("correct", "mean"),
                                      facts_in_ctx=("all_facts_in_context", "mean"), values_ok=("values_ok", "mean"),
                                      calc_ok=("calc_ok", lambda s: s.dropna().astype(float).mean() if s.notna().any() else float("nan")),
