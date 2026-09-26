@@ -26,3 +26,4 @@ rerank:
     bm25_60: {bm25: 60}
     union_30_30: {bm25: 30, dense: 30}
     union_45_15: {bm25: 45, dense: 15}
+    union_45_hyde15: {bm25: 45, hyde_dense: 15}   # Phase 15: HyDE dense candidates

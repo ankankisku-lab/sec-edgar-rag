@@ -28,10 +28,11 @@ def interleave(lists: list[list[NodeWithScore]], top_k: int) -> list[NodeWithSco
     return out
 
 
-def retrieve_decomposed(query: str, top_k: int = 10, per_sub_k: int | None = None) -> list[NodeWithScore]:
+def retrieve_decomposed(query: str, top_k: int = 10, per_sub_k: int | None = None,
+                        pool: str | None = None) -> list[NodeWithScore]:
     subs = decompose(query)
     LAST_SUB_QUESTIONS[:] = subs
-    lists = [retrieve_reranked(s, top_k=per_sub_k or top_k) for s in subs]
+    lists = [retrieve_reranked(s, top_k=per_sub_k or top_k, pool=pool) for s in subs]
     return interleave(lists, top_k)
 
 

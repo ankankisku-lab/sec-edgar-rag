@@ -17,3 +17,11 @@ def get_index() -> VectorStoreIndex:
 
 def retrieve(query: str, top_k: int = 10, filters=None) -> list[NodeWithScore]:
     return get_index().as_retriever(similarity_top_k=top_k, filters=filters).retrieve(query)
+
+
+def retrieve_hyde(query: str, top_k: int = 10, filters=None) -> list[NodeWithScore]:
+    """Dense search with the HyDE embedding (hypothetical passage + question)."""
+    from llama_index.core.schema import QueryBundle
+    from src.query.hyde import hyde_embedding
+    bundle = QueryBundle(query_str=query, embedding=hyde_embedding(query))
+    return get_index().as_retriever(similarity_top_k=top_k, filters=filters).retrieve(bundle)

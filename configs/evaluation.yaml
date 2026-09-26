@@ -8,7 +8,7 @@ ragas:
     base_url: https://api.groq.com/openai/v1   # OpenAI-compatible endpoint
     api_key_env: GROQ_API_KEY
   requests_per_minute: 20         # pacing; per-minute token limits are handled by waiting
-  max_calls_per_run: 300          # hard cap per invocation; the run stops cleanly when reached
+  max_calls_per_run: 600          # hard cap per invocation (full G5+G6 run ~490 calls); stops cleanly when reached
   rate_limit_max_waits: 12        # consecutive per-minute 429 waits before giving up on a call
   answer_relevancy_strictness: 1  # generated questions per answer (ragas default 3 = 3x the calls)
   embeddings_model: BAAI/bge-small-en-v1.5   # local, free (answer relevancy similarity)

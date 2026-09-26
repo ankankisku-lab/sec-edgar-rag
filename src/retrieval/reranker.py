@@ -65,6 +65,9 @@ def candidate_pool(query: str, pool: str) -> list[NodeWithScore]:
         lists.append(retrieve_bm25(query, top_k=sizes["bm25"]))
     if sizes.get("dense"):
         lists.append(dense_retrieve(query, top_k=sizes["dense"]))
+    if sizes.get("hyde_dense"):
+        from src.retrieval.dense import retrieve_hyde
+        lists.append(retrieve_hyde(query, top_k=sizes["hyde_dense"]))
     seen, out = set(), []
     for hits in lists:
         for h in hits:

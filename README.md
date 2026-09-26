@@ -222,6 +222,24 @@ vs 4-5 for LlamaIndex's SubQuestionQueryEngine, and the model sees both facts to
   1 period ambiguity ("fiscal 2025" answered from a 10-Q), 1 self-rounded % instead of `<calc>`,
   1 wrong value.
 
+## HyDE (Phase 15): evaluated, not adopted
+
+`src/query/hyde.py`: LlamaIndex `HyDEQueryTransform` with the local Qwen writes a <=80-word
+filing-style passage for the question (cached). The passage is embedded as a *passage* and averaged
+with the question's *query* embedding (BGE is asymmetric; LlamaIndex's default would embed the
+passage with the query instruction). It is used only for retrieval, never shown to the answering
+LLM. Controls isolate HyDE from simply adding dense candidates to the rerank pool:
+
+| Comparison (MRR@10, eval v1, 236 questions) | diff | 95% CI |
+|---|---|---|
+| V1 dense -> V1h HyDE-dense | +0.011 | [-0.011, +0.033] n.s. (narrative -0.026 n.s.) |
+| V5h (decomp + BM25-45 + dense-15) -> V6 (same pool, HyDE dense) | 0.000 | [-0.006, +0.004] n.s. |
+| V5 (best) -> V6 | -0.005 | [-0.017, +0.008] n.s. (numeric -0.009, significant) |
+
+HyDE adds ~3 s per query (one local LLM call) and no measurable gain: once the cross-encoder
+reranks a BM25 pool, dense candidates barely affect the final ranking (V4h, V5h and V6 all tie).
+It stays implemented behind the `union_45_hyde15` pool, off by default.
+
 ## Local LLM feasibility (4 GB VRAM)
 
 ```powershell

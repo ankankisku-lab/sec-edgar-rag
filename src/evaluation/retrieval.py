@@ -71,7 +71,10 @@ def get_retriever(name: str, **options):
         return retrieve_bm25
     if name == "decomposed":
         from src.retrieval.decomposed import retrieve_decomposed
-        return lambda q, top_k=K: retrieve_decomposed(q, top_k=top_k)
+        return lambda q, top_k=K: retrieve_decomposed(q, top_k=top_k, pool=options.get("pool"))
+    if name == "hyde_dense":
+        from src.retrieval.dense import retrieve_hyde
+        return retrieve_hyde
     if name == "rerank":
         from src.retrieval.reranker import retrieve_reranked
         return lambda q, top_k=K: retrieve_reranked(q, top_k=top_k, **options)
@@ -89,7 +92,7 @@ def split_of(qid: str) -> str:
 def evaluate(retriever_name: str, dataset: str, **options) -> tuple[pd.DataFrame, list[dict]]:
     questions = [json.loads(line) for line in open(EVAL_DIR / dataset, encoding="utf-8")]
     retrieve = get_retriever(retriever_name, **options)
-    if retriever_name == "decomposed":
+    if retriever_name in ("decomposed", "hyde_dense") or "hyde" in str(options.get("pool", "")):
         from src.retrieval.reranker import retrieve_reranked
         from src.generation.generator import ollama_running
         retrieve_reranked("warm-up query")  # reranker on the GPU before the LLM loads
@@ -148,6 +151,8 @@ def main() -> None:
                if v is not None}
     if args.retriever == "rerank":
         options["linearize"] = not args.no_linearize
+    if args.retriever == "decomposed" and args.pool:
+        options["pool"] = args.pool
     df, traces = evaluate(args.retriever, args.dataset, **options)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     run = f"{args.version}_{args.retriever}"
