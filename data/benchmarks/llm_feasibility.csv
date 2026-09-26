@@ -1,0 +1,41 @@
+model,context,kv_cache,vram_used_mib,vram_before_mib,model_total_mib,model_on_gpu_mib,fully_on_gpu,runner_ram_mib,load_s,prompt_tokens,prompt_tok_s,gen_tokens,gen_tok_s,wall_s,answer,has_2025_value,has_2024_value,computed_change_correctly,unsupported_numbers
+qwen3-4b,4096,f16,2335,0,3361,2236,False,1568,7.4,3306,1151,128,11.9,21.1,"Apple's operating income for the three months ended June 28, 2025, was $28,202 million.
+
+Compared to the same quarter a year earlier (three months ended June 29, 2024), which was $25,352 million, Apple's operating income increased by $2,850 million.
+
+This information is derived from SOURCE 1, specifically the ""Operating income"" row under the ""Three Months Ended"" column for June 28, 2025, and June 29, 2024.",True,True,True,
+qwen3-4b,8192,f16,2385,8,3939,2275,False,2109,7.5,6839,944,64,4.8,28.0,"Apple's operating income for the three months ended June 28, 2025, was $28,202 million.
+
+This compares with $25,352 million for the same quarter a year earlier (three months ended June 29, 2024).",True,True,False,
+qwen3-4b,16384,f16,2273,9,5154,2156,False,2876,10.7,13547,687,64,1.9,63.5,"Apple's operating income for the three months ended June 28, 2025, was $28,202 million.
+
+This compares with $25,352 million for the same quarter a year earlier (three months ended June 29, 2024).",True,True,False,
+llama3.2-3b,4096,f16,2327,0,2775,2226,False,995,9.0,2847,1981,75,39.2,12.4,"According to SOURCE 1, Part I, Item 1. Financial Statements > CONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS (Unaudited), Apple's operating income for the three months ended June 28, 2025, was $28,202 million, and it compared with $25,352 million for the same quarter a year earlier.",True,True,False,
+llama3.2-3b,8192,f16,2285,0,3235,2190,False,1491,5.0,5714,1481,88,13.8,15.3,"According to SOURCE 1, Part I, Item 1. Financial Statements > CONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS (Unaudited), Apple's operating income for the three months ended June 28, 2025, was $28,202 million.
+
+This represents an increase of $856 million, or 3%, compared to the same quarter a year earlier, which was $27,346 million.",True,False,False,"27,346 856"
+llama3.2-3b,16384,f16,2253,0,4188,2156,False,2478,6.0,11453,1046,80,4.1,36.5,"According to SOURCE 16, Part I, Item 1. Financial Statements > CONDENSED CONSOLIDATED STATEMENTS OF COMPREHENSIVE INCOME (Unaudited), Apple's operating income for the three months ended June 28, 2025, was $28,202 million, and it compared with $25,352 million for the same quarter a year earlier.",True,True,False,
+phi4-mini,4096,f16,2303,8,3475,2215,False,1709,7.9,2811,1279,50,18.3,12.9,"Apple's operating income for the three months ended June 28, 2025, was $28,202. Compared with the same quarter a year earlier (June 29, 2024), Apple's operating income was $25,352.",True,True,False,
+phi4-mini,8192,f16,2321,8,4011,2229,False,2231,6.6,5688,1047,66,8.2,20.2,"Apple's operating income for the three months ended June 28, 2025, was $28,202 million. Compared to the same quarter a year earlier (June 29, 2024), the operating income increased by $2,754 million (from $25,352 million to $28,202 million).",True,True,False,"2,754"
+phi4-mini,16384,f16,2303,9,5056,2206,False,3301,8.1,11427,796,64,3.2,42.4,"Apple's operating income for the three months ended June 28, 2025, was $28,202 million. Compared to the same quarter a year earlier (June 29, 2024), the operating income increased by $3,850 million ($28,202 million - $24,352 million).",True,False,False,"24,352 3,850"
+qwen3-4b,4096,q8_0,2353,0,3099,2252,False,1301,6.4,3306,1231,128,17.0,16.7,"Apple's operating income for the three months ended June 28, 2025, was $28,202 million.
+
+Compared to the same quarter a year earlier (three months ended June 29, 2024), which was $25,352 million, Apple's operating income increased by $2,850 million.
+
+This information is derived from SOURCE 1, specifically the ""Operating income"" row under the ""Three Months Ended"" column for June 28, 2025, and June 29, 2024.",True,True,True,
+qwen3-4b,8192,q8_0,2385,0,3412,2272,False,1595,5.3,6839,1056,64,7.3,20.5,"Apple's operating income for the three months ended June 28, 2025, was $28,202 million.
+
+This compares with $25,352 million for the same quarter a year earlier (three months ended June 29, 2024).",True,True,False,
+qwen3-4b,16384,q8_0,2319,8,4091,2207,False,2343,7.1,13547,793,64,2.9,46.6,"Apple's operating income for the three months ended June 28, 2025, was $28,202 million.
+
+This compares with $25,352 million for the same quarter a year earlier (three months ended June 29, 2024).",True,True,False,
+llama3.2-3b,4096,q8_0,2319,8,2226,2226,True,778,4.8,2847,2233,82,61.0,7.4,"According to SOURCE 1, Part I, Item 1. Financial Statements > CONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS (Unaudited), Apple's operating income for the three months ended June 28, 2025, was $28,202 million. 
+
+This is an increase from the same quarter a year earlier, when the operating income was $25,352 million.",True,True,False,
+llama3.2-3b,8192,q8_0,2369,0,2830,2274,False,1013,5.6,5714,1807,127,31.4,12.9,"According to SOURCE 1, Part I, Item 1. Financial Statements > CONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS (Unaudited), Apple's operating income for the three months ended June 28, 2025, was $28,202 million.
+
+Comparing this to the same quarter a year earlier (June 29, 2024), Apple's operating income for the three months ended June 29, 2024, was $25,352 million. Therefore, Apple's operating income increased by $850 million, or 3.4%, from the same quarter a year earlier.",True,True,False,3.4 850
+llama3.2-3b,16384,q8_0,2307,0,3364,2207,False,1615,5.8,11453,1253,80,8.6,24.4,"According to SOURCE 16, Part I, Item 1. Financial Statements > CONDENSED CONSOLIDATED STATEMENTS OF COMPREHENSIVE INCOME (Unaudited), Apple's operating income for the three months ended June 28, 2025, was $28,202 million, and it compared with $25,352 million for the same quarter a year earlier.",True,True,False,
+phi4-mini,4096,q8_0,2343,8,3229,2250,False,1442,7.6,2811,1454,50,25.7,11.6,"Apple's operating income for the three months ended June 28, 2025, was $28,202. Compared with the same quarter a year earlier (June 29, 2024), Apple's operating income was $25,352.",True,True,False,
+phi4-mini,8192,q8_0,2343,0,3516,2248,False,1732,6.3,5688,1216,66,13.1,16.1,"Apple's operating income for the three months ended June 28, 2025, was $28,202 million. Compared to the same quarter a year earlier (June 29, 2024), the operating income increased by $2,754 million (from $25,352 million to $28,202 million).",True,True,False,"2,754"
+phi4-mini,16384,q8_0,2315,8,4121,2219,False,2368,8.3,11427,941,64,5.0,33.3,"Apple's operating income for the three months ended June 28, 2025, was $28,202 million. Compared to the same quarter a year earlier (June 29, 2024), the operating income increased by $3,850 million ($28,202 million - $24,352 million).",True,False,False,"24,352 3,850"

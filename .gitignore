@@ -11,6 +11,9 @@ data/metadata/*
 !data/metadata/companies.csv
 !data/metadata/filings.csv
 !data/metadata/verification.csv
+# Evaluation sets and results are small and must be versioned to reproduce experiments.
+!data/eval/
+!data/benchmarks/
 logs/*
 !logs/.gitkeep
 

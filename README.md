@@ -80,6 +80,30 @@ docker compose up -d                      # Qdrant v1.19.1, dashboard: http://12
 - Use `127.0.0.1`, not `localhost`: on Windows `localhost` tries IPv6 first and each
   request stalls ~2 s (indexing 24 filings: 3m46s -> 21s).
 
+## Retrieval evaluation
+
+```powershell
+.venv\Scripts\python -m src.evaluation.dataset --tickers AAPL MSFT NVDA     # -> data/eval/retrieval_v0.jsonl
+.venv\Scripts\python -m src.evaluation.retrieval --retriever dense --version V1
+#    -> data/eval/results/experiments.csv (one row per experiment) + per-query CSV and traces
+```
+
+`retrieval_v0` (24 filings, 164 questions), ground truth is deterministic and auditable:
+- **140 numeric** questions generated from primary-statement rows (current-period column only;
+  the period text is validated against the filing's period end). Relevant = every child that
+  contains that row with that value, or a text chunk stating the value with the line item.
+- **24 narrative** questions from `configs/eval_narrative.yaml`, each with an explicit
+  relevance rule (filing scope, heading, required keywords); 2-28 relevant chunks each.
+
+| Version | Retrieval | Reranker | P@3 | R@5 | MRR@10 | Hit@10 | numeric P@3 | narrative P@3 | p50 latency |
+|---|---|---|---|---|---|---|---|---|---|
+| V1 | Dense (bge-small) | - | 0.091 | 0.109 | 0.159 | 0.250 | 0.026 | 0.472 | 23 ms |
+
+V1 finding: for numeric questions the top-3 is always the right company and 48% the right
+filing, but only 6% of those chunks contain the asked line item -- a table chunk's embedding
+is dominated by its headers and numbers, so one row label is diluted. Exact-term matching
+(BM25) and query-chunk cross-attention (reranker) target exactly this.
+
 ## Local LLM feasibility (4 GB VRAM)
 
 ```powershell

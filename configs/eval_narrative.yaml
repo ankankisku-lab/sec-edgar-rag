@@ -1,0 +1,66 @@
+# Hand-written narrative questions for the retrieval evaluation set.
+# A child chunk is relevant when it satisfies every rule given:
+#   tickers      company scope
+#   filing_ids   specific filing(s) -- the question names that period
+#   heading_any  heading path contains at least one of these (case-insensitive)
+#   text_all     chunk text contains all of these
+#   text_any     chunk text contains at least one of these
+# Most questions name a period and are scoped to that filing: risk-factor and MD&A
+# text repeats almost verbatim across a company's filings, and unscoped rules made
+# gold sets of 60-170 chunks, which would make Precision@k meaninglessly easy.
+questions:
+  # ------------------------------------------------------------------ Apple
+  - question: What drove the growth in Apple's Services net sales?
+    relevant: {tickers: [AAPL], text_all: [services net sales increased], text_any: [advertising, app store, cloud]}
+  - question: How were tariffs affecting Apple's business in the third quarter of fiscal 2025?
+    relevant: {filing_ids: [AAPL_10Q_2025-06-28], text_all: [tariff]}
+  - question: How much stock did Apple repurchase under its share repurchase program?
+    relevant: {tickers: [AAPL], heading_any: [share repurchase], text_all: [repurchased]}
+  - question: Why did Apple's Products gross margin percentage change?
+    relevant: {tickers: [AAPL], text_all: [products gross margin percentage], text_any: [increased, decreased]}
+  - question: How does seasonality affect Apple's net sales?
+    relevant: {tickers: [AAPL], text_all: [seasonal]}
+  - question: What risks does Apple face from relying on outsourcing partners located outside the U.S.?
+    relevant: {tickers: [AAPL], heading_any: [risk factors], text_all: [outsourcing partners], text_any: [asia, china]}
+  - question: What did Apple's fiscal 2025 annual report say about the European Commission State Aid decision?
+    relevant: {filing_ids: [AAPL_10K_2025-09-27], text_all: [state aid]}
+  - question: What did Apple's fiscal 2025 annual report disclose about the Digital Markets Act?
+    relevant: {filing_ids: [AAPL_10K_2025-09-27], text_any: [digital markets act, dma]}
+
+  # ------------------------------------------------------------------ Microsoft
+  - question: What drove Microsoft's Azure revenue growth in fiscal year 2026?
+    relevant: {filing_ids: [MSFT_10K_2026-06-30], text_all: [azure], text_any: [revenue increased, grew, growth]}
+  - question: What did Microsoft's fiscal 2026 annual report say about its relationship with OpenAI?
+    relevant: {filing_ids: [MSFT_10K_2026-06-30], text_all: [openai]}
+  - question: What AI-related risk factors did Microsoft describe in its fiscal 2026 annual report?
+    relevant: {filing_ids: [MSFT_10K_2026-06-30], heading_any: [risk factors], text_any: [" ai ", artificial intelligence]}
+  - question: Why did Microsoft's gross margin percentage change in the third quarter of fiscal 2026?
+    relevant: {filing_ids: [MSFT_10Q_2026-03-31], text_all: [gross margin percentage]}
+  - question: How much did Microsoft return to shareholders through dividends and share repurchases in fiscal 2026?
+    relevant: {filing_ids: [MSFT_10K_2026-06-30], text_all: [share repurchases], text_any: [dividend, returned]}
+  - question: What was Microsoft's effective tax rate in fiscal 2026 and why did it change?
+    relevant: {filing_ids: [MSFT_10K_2026-06-30], text_all: [effective tax rate]}
+  - question: How much revenue did Microsoft expect to recognize from remaining performance obligations as of June 30, 2026?
+    relevant: {filing_ids: [MSFT_10K_2026-06-30], text_all: [remaining performance obligation]}
+  - question: How did the Activision Blizzard acquisition affect Microsoft's fiscal 2025 results?
+    relevant: {filing_ids: [MSFT_10K_2025-06-30], text_all: [activision]}
+
+  # ------------------------------------------------------------------ NVIDIA
+  - question: What export control risks did NVIDIA describe in its fiscal 2026 annual report?
+    relevant: {filing_ids: [NVDA_10K_2026-01-25], heading_any: [risk factors], text_all: [export control]}
+  - question: What drove NVIDIA's Data Center revenue growth in the second quarter of fiscal 2027?
+    relevant: {filing_ids: [NVDA_10Q_2026-07-26], text_all: [data center], text_any: [grew, increased, " up "]}
+  - question: How concentrated was NVIDIA's revenue among its largest customers in fiscal 2026?
+    relevant: {filing_ids: [NVDA_10K_2026-01-25], text_all: [customer], text_any: [direct customer, indirect customer]}
+  - question: What happened with NVIDIA's H20 products and related charges in the second quarter of fiscal 2026?
+    relevant: {filing_ids: [NVDA_10Q_2025-07-27], text_all: [h20]}
+  - question: What purchase obligations and supply commitments did NVIDIA report in its fiscal 2026 annual report?
+    # The disclosure itself: $95.2B inventory purchase + supply/capacity commitments and
+    # $27B multi-year cloud service commitments (Note 12, also cited as a critical audit matter).
+    relevant: {filing_ids: [NVDA_10K_2026-01-25], text_any: [95.2 billion, cloud service agreement commitments]}
+  - question: How much did NVIDIA return to shareholders through share repurchases and dividends in fiscal 2026?
+    relevant: {filing_ids: [NVDA_10K_2026-01-25], text_all: [repurchase], text_any: [dividend, returned]}
+  - question: What factors affected NVIDIA's gross margin in the second quarter of fiscal 2027?
+    relevant: {filing_ids: [NVDA_10Q_2026-07-26], text_all: [gross margin], text_any: [decreased, increased, primarily due, driven]}
+  - question: What securities class action and other litigation did NVIDIA disclose in its fiscal 2026 annual report?
+    relevant: {filing_ids: [NVDA_10K_2026-01-25], text_any: [class action, securities litigation, derivative lawsuit, putative]}
