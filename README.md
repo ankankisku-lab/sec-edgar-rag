@@ -125,6 +125,35 @@ filing, but only 6% of those chunks contain the asked line item -- a table chunk
 is dominated by its headers and numbers, so one row label is diluted. Exact-term matching
 (BM25) and query-chunk cross-attention (reranker) target exactly this.
 
+## Generation
+
+```powershell
+.venv\Scripts\python -m src.generation.generator "What was Apple's operating income in the third quarter of fiscal 2025?"
+.venv\Scripts\python -m src.evaluation.generation --n 30        # end-to-end numeric accuracy
+```
+
+V4 retrieval -> parent expansion (5k-token budget; oversized tables fall back to the retrieved
+row group) -> LlamaIndex `CitationQueryEngine` with numbered sources and the LLM metadata header
+-> Qwen3-4B-Instruct-2507 (Ollama, q8_0 KV, 8k context) -> `<calc>` arithmetic evaluated in
+Python (AST evaluator, no `eval`) -> every number in the answer verified against the sources.
+
+G1 (30 numeric questions, stratified by company x statement):
+
+| correct value | gold in context | correct given context | unverified numbers | refused | cited | p50 / p95 |
+|---|---|---|---|---|---|---|
+| 80.0% | 96.7% | 82.8% | **0%** | 3.3% (only when retrieval missed) | 96.7% | 12.3 s / 26.6 s |
+
+Of the 6 misses, 3 are badly generated questions (cash-flow *change* rows phrased like
+balance-sheet levels, e.g. "accounts payable for the year" -> model answered the balance), 1 is a
+generator bug (group label carried past its "Total" row), 1 is ambiguous (current vs total
+deferred revenue), 1 is a genuine wrong-column read. Fixed in the eval-set phase before
+re-measuring.
+
+Runtime notes: warm up the embedder + reranker *before* the LLM loads so Ollama sizes its GPU
+layers around them; reranker batch 16 (60 pairs: 439 ms / 906 MiB vs 939 ms / 1218 MiB at 32);
+`ollama_server.stop()` also kills orphaned `llama-server.exe` runners, which otherwise keep VRAM
+and push the next run into shared-memory spill (prompt processing fell to ~70 tok/s).
+
 ## Local LLM feasibility (4 GB VRAM)
 
 ```powershell

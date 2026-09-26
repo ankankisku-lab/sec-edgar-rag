@@ -1,0 +1,14 @@
+llm:
+  model: qwen3:4b-instruct-2507-q4_K_M   # chosen in the 4 GB feasibility benchmark (0 wrong numbers)
+  context_window: 8192                   # with q8_0 KV cache; 16k slows Qwen to ~3 tok/s on this GPU
+  max_output_tokens: 512
+  temperature: 0.0
+  seed: 0
+  request_timeout_s: 300
+  keep_alive: 10m
+
+retrieval:
+  top_k_children: 8           # reranked children considered for context
+context:
+  budget_tokens: 5000         # sources in the prompt; leaves ~2.5k for instructions + answer
+  max_parent_tokens: 1500     # larger parents (big tables) fall back to the retrieved row group

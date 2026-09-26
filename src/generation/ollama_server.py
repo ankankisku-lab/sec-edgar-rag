@@ -49,5 +49,7 @@ def stop(proc: subprocess.Popen) -> None:
         proc.wait(timeout=15)
     except subprocess.TimeoutExpired:
         proc.kill()
-    # The server spawns runner processes; make sure none keep holding VRAM.
-    subprocess.run(["taskkill", "/F", "/IM", "ollama.exe", "/T"], capture_output=True)
+    # The server spawns model runners (llama-server.exe) that can outlive it and keep
+    # holding VRAM; an orphaned runner starves the next run into CPU spill.
+    for image in ("ollama.exe", "llama-server.exe"):
+        subprocess.run(["taskkill", "/F", "/IM", image, "/T"], capture_output=True)

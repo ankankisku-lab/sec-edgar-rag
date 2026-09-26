@@ -18,6 +18,7 @@ hybrid:
 rerank:
   model: BAAI/bge-reranker-base   # 278M params; fp16 on GPU ~0.55 GB
   fp16: true
+  batch_size: 16                 # 60 pairs: 439 ms / 906 MiB (batch 32: 939 ms / 1218 MiB)
   linearize_tables: true         # rows as sentences for the cross-encoder (see src/retrieval/linearize.py)
   top_n: 60                      # keep the full re-scored list; evaluation cuts to top 10
   default_pool: bm25_60          # chosen on dev (MRR); ties union_45_15 (paired bootstrap)

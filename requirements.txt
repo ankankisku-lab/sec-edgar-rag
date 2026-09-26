@@ -30,3 +30,6 @@ requests
 
 # Phase 8: BM25 sparse vectors (Qdrant/bm25 model cached in models/fastembed)
 fastembed==0.8.1
+
+# Phase 11: generation (local Qwen3-4B via the portable Ollama server)
+llama-index-llms-ollama==0.11.0
