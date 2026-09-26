@@ -54,13 +54,21 @@ def ensure_collection(recreate: bool = False) -> None:
     log.info("created collection %s", name)
 
 
-def get_vector_store():
+def get_vector_store(fusion_fn=None):
+    """LlamaIndex QdrantVectorStore with dense + BM25 sparse vectors.
+
+    `fusion_fn` overrides how hybrid queries merge the dense and sparse result
+    lists (LlamaIndex default: relative score fusion)."""
     from llama_index.vector_stores.qdrant import QdrantVectorStore
+    from src.retrieval.bm25 import sparse_doc_fn, sparse_query_fn
     cfg = load_config("qdrant")
+    kwargs = {"hybrid_fusion_fn": fusion_fn} if fusion_fn else {}
     return QdrantVectorStore(
         collection_name=cfg["collection"], client=get_client(),
         dense_vector_name=cfg["dense_vector_name"], sparse_vector_name=cfg["sparse_vector_name"],
         batch_size=cfg["upsert_batch_size"],
+        enable_hybrid=True, sparse_doc_fn=sparse_doc_fn, sparse_query_fn=sparse_query_fn,
+        **kwargs,
     )
 
 

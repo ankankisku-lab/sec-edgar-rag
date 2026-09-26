@@ -1,0 +1,16 @@
+bm25:
+  model: Qdrant/bm25
+  k: 1.2
+  b: 0.75
+  # Mean BM25 length (stemmed, stopwords removed) of child embedding texts, measured
+  # with `python -m src.retrieval.bm25 --avg-len` (24 filings: 113.5). fastembed's
+  # default of 256 would under-penalise long chunks. Re-measure after scaling up.
+  avg_len: 113.5
+
+hybrid:
+  dense_top_k: 30        # candidates from each side before fusion
+  sparse_top_k: 30
+  top_k: 10              # returned after fusion
+  fusion: relative       # relative (score-normalised, weighted by alpha) | rrf
+  alpha: 0.3             # weight of the dense side; selected on the dev split (fusion_sweep)
+  rrf_k: 60

@@ -25,3 +25,14 @@ def test_retrieval_metrics():
     assert miss["mrr@10"] == 0 and miss["ndcg@10"] == 0 and miss["first_rank"] is None
     many = score(["g1", "g2", "g3", "g4", "g5"], {f"g{i}" for i in range(1, 13)})
     assert many["recall@5"] == 1.0           # capped recall: 12 gold, all top-5 correct
+
+
+def test_rrf_fusion_rewards_agreement():
+    from llama_index.core.vector_stores.types import VectorStoreQueryResult
+    from src.retrieval.hybrid import rrf_fusion
+    nodes = {i: TextNode(id_=i, text=i) for i in "abcd"}
+    dense = VectorStoreQueryResult(nodes=[nodes["a"], nodes["b"], nodes["c"]], similarities=[0.9, 0.8, 0.7])
+    sparse = VectorStoreQueryResult(nodes=[nodes["c"], nodes["d"]], similarities=[12.0, 3.0])
+    fused = rrf_fusion(dense, sparse, top_k=3)
+    assert fused.ids[0] == "c"               # ranked by both lists
+    assert len(fused.ids) == 3 and set(fused.ids) <= set("abcd")

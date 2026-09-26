@@ -15,6 +15,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import time
@@ -45,16 +46,28 @@ def score(ranked: list[str], gold: set[str]) -> dict:
     }
 
 
-def get_retriever(name: str):
+def get_retriever(name: str, **options):
+    """dense | bm25 | hybrid (options: fusion=relative|rrf, alpha=float)."""
     if name == "dense":
         from src.retrieval.dense import retrieve
         return retrieve
+    if name == "bm25":
+        from src.retrieval.hybrid import retrieve_bm25
+        return retrieve_bm25
+    if name == "hybrid":
+        from src.retrieval.hybrid import retrieve_hybrid
+        return lambda q, top_k=K: retrieve_hybrid(q, top_k=top_k, **options)
     raise ValueError(f"unknown retriever {name!r}")
 
 
-def evaluate(retriever_name: str, dataset: str) -> tuple[pd.DataFrame, list[dict]]:
+def split_of(qid: str) -> str:
+    """Deterministic 50/50 dev/test split: tune settings on dev, report on test."""
+    return "dev" if int(hashlib.md5(qid.encode()).hexdigest(), 16) % 2 == 0 else "test"
+
+
+def evaluate(retriever_name: str, dataset: str, **options) -> tuple[pd.DataFrame, list[dict]]:
     questions = [json.loads(line) for line in open(EVAL_DIR / dataset, encoding="utf-8")]
-    retrieve = get_retriever(retriever_name)
+    retrieve = get_retriever(retriever_name, **options)
     retrieve("warm-up query")  # load models / open connections outside the timed loop
     rows, traces = [], []
     for q in questions:
@@ -62,7 +75,8 @@ def evaluate(retriever_name: str, dataset: str) -> tuple[pd.DataFrame, list[dict
         hits = retrieve(q["question"], top_k=K)
         ms = (time.perf_counter() - t0) * 1000
         ranked = [h.node.node_id for h in hits]
-        rows.append({"qid": q["qid"], "type": q["type"], "ticker": q["ticker"], "latency_ms": ms,
+        rows.append({"qid": q["qid"], "type": q["type"], "split": split_of(q["qid"]),
+                     "ticker": q["ticker"], "latency_ms": ms,
                      **score(ranked, set(q["gold_ids"]))})
         traces.append({"qid": q["qid"], "question": q["question"], "ranked": ranked,
                        "scores": [round(h.score, 4) for h in hits], "n_gold": len(q["gold_ids"])})
@@ -88,9 +102,12 @@ def main() -> None:
     parser.add_argument("--version", required=True, help="experiment label, e.g. V1")
     parser.add_argument("--dataset", default="retrieval_v0.jsonl")
     parser.add_argument("--notes", default="")
+    parser.add_argument("--fusion", choices=["relative", "rrf"])
+    parser.add_argument("--alpha", type=float)
     args = parser.parse_args()
 
-    df, traces = evaluate(args.retriever, args.dataset)
+    options = {k: v for k, v in (("fusion", args.fusion), ("alpha", args.alpha)) if v is not None}
+    df, traces = evaluate(args.retriever, args.dataset, **options)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     run = f"{args.version}_{args.retriever}"
     df.to_csv(RESULTS_DIR / f"{run}_per_query.csv", index=False)
@@ -98,7 +115,7 @@ def main() -> None:
         for t in traces:
             fh.write(json.dumps(t, ensure_ascii=False) + "\n")
 
-    summary = {"version": args.version, "retriever": args.retriever, "dataset": args.dataset,
+    summary = {"version": args.version, "retriever": args.retriever, "dataset": args.dataset, **options,
                "embedding": load_config("embedding")["model_name"], "n_questions": len(df),
                "timestamp": datetime.now().isoformat(timespec="seconds"), **summarize(df), "notes": args.notes}
     log = pd.read_csv(EXPERIMENTS_CSV) if EXPERIMENTS_CSV.exists() else pd.DataFrame()

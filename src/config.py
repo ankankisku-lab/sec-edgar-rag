@@ -27,6 +27,8 @@ MODELS_DIR = PROJECT_ROOT / "models"
 os.environ.setdefault("HF_HOME", str(MODELS_DIR / "huggingface"))
 # LlamaIndex's HuggingFaceEmbedding ignores HF_HOME and uses its own cache dir.
 os.environ.setdefault("LLAMA_INDEX_CACHE_DIR", str(MODELS_DIR / "llama_index"))
+# fastembed (BM25 sparse model) defaults to the system temp dir on C:.
+os.environ.setdefault("FASTEMBED_CACHE_PATH", str(MODELS_DIR / "fastembed"))
 
 
 def load_config(name: str = "ingestion") -> dict:

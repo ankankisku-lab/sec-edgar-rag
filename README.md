@@ -98,6 +98,15 @@ docker compose up -d                      # Qdrant v1.19.1, dashboard: http://12
 | Version | Retrieval | Reranker | P@3 | R@5 | MRR@10 | Hit@10 | numeric P@3 | narrative P@3 | p50 latency |
 |---|---|---|---|---|---|---|---|---|---|
 | V1 | Dense (bge-small) | - | 0.091 | 0.109 | 0.159 | 0.250 | 0.026 | 0.472 | 23 ms |
+| V2 | BM25 (Qdrant sparse) | - | **0.266** | **0.509** | **0.497** | 0.768 | **0.245** | 0.389 | 14 ms |
+| V3 | Hybrid: dense30 + BM25-30, relative fusion alpha=0.3 | - | 0.258 | 0.481 | 0.477 | **0.780** | 0.229 | 0.431 | 31 ms |
+
+Fusion was chosen on the dev half (`python -m src.evaluation.fusion_sweep`): relative score
+fusion with alpha 0.3 (dev MRR 0.508) beat alpha 0.5 (0.365), 0.7 (0.243) and RRF (0.292) --
+RRF gives dense's mostly-wrong numeric candidates an equal vote. For top-10 ranking, hybrid
+ties BM25 on this 85%-numeric set; its value is the reranker's candidate pool
+(`fusion_sweep --pools`): dense top-60 contains a relevant chunk for 57% of questions,
+BM25 top-60 for 97%, and only the dense+BM25 union reaches 100% on narrative questions.
 
 V1 finding: for numeric questions the top-3 is always the right company and 48% the right
 filing, but only 6% of those chunks contain the asked line item -- a table chunk's embedding
