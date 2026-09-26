@@ -79,13 +79,22 @@ def candidate_pool(query: str, pool: str) -> list[NodeWithScore]:
 
 def retrieve_reranked(query: str, top_k: int = 10, pool: str | None = None,
                       linearize: bool | None = None) -> list[NodeWithScore]:
+    from src.observability.tracing import set_output, span
     cfg = load_config("retrieval")["rerank"]
-    t0 = time.perf_counter()
-    candidates = candidate_pool(query, pool or cfg["default_pool"])
-    t1 = time.perf_counter()
-    reranker = get_reranker()
-    reranker.linearize = cfg["linearize_tables"] if linearize is None else linearize
-    reranked = reranker.postprocess_nodes(candidates, query_bundle=QueryBundle(query))
-    t2 = time.perf_counter()
+    pool = pool or cfg["default_pool"]
+    with span("retrieve.candidate_pool", "RETRIEVER", input_value=query, **{"retrieval.pool": pool}) as s:
+        t0 = time.perf_counter()
+        candidates = candidate_pool(query, pool)
+        t1 = time.perf_counter()
+        set_output(s, f"{len(candidates)} candidates", **{"retrieval.n_candidates": len(candidates)})
+    with span("rerank.cross_encoder", "RERANKER", input_value=query,
+              **{"reranker.model_name": cfg["model"], "reranker.top_k": top_k}) as s:
+        reranker = get_reranker()
+        reranker.linearize = cfg["linearize_tables"] if linearize is None else linearize
+        s.set_attribute("reranker.linearize_tables", reranker.linearize)
+        reranked = reranker.postprocess_nodes(candidates, query_bundle=QueryBundle(query))
+        t2 = time.perf_counter()
+        set_output(s, [n.node.metadata.get("heading_path", "")[-80:] for n in reranked[:3]],
+                   **{"reranker.top_score": float(reranked[0].score) if reranked else None})
     LAST_TIMINGS.update(pool_ms=(t1 - t0) * 1000, rerank_ms=(t2 - t1) * 1000, n_candidates=len(candidates))
     return reranked[:top_k]

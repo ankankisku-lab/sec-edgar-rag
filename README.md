@@ -277,6 +277,33 @@ pipeline holds. V4 without decomposition loses a little but significantly (MRR -
 sub-queries mostly avoid. Latency is flat (~0.5 s, dominated by reranking 60 candidates; BM25 search
 14 -> 18 ms at 41x the chunks). Dense (V1) was not re-measured at scale: it is not part of V4/V5.
 
+## Observability with Arize Phoenix (Phase 19)
+
+```powershell
+docker compose up -d                                   # qdrant + phoenix (UI: http://127.0.0.1:6006)
+.venv\Scripts\python -m src.observability.latency_report --last 5    # per-stage latency from Phoenix spans
+```
+
+`src/observability/tracing.py` sets up the OpenTelemetry SDK with an OTLP/HTTP exporter to Phoenix
+(project `sec-edgar-rag`) and OpenInference's LlamaIndex instrumentation, which traces the query
+engine, retrievers, reranker postprocessor, parent expansion, synthesizer and every Ollama call.
+Custom spans cover what LlamaIndex can't see: `query.decompose` (router decision, sub-questions,
+cache/LLM source), `retrieve.candidate_pool`, `rerank.cross_encoder` and `answer.calc_and_verify`
+(calculations, unverified numbers), with OpenInference span kinds. Without `setup_tracing()` the
+no-op tracer is used, so evaluations pay nothing. Notes: `phoenix.otel.register()` 0.17.1 fails with
+opentelemetry-exporter 1.45 (reads a removed private attribute), so the SDK is configured directly;
+OTel's default 128-attribute cap silently dropped the retrieved documents OpenInference records, so
+the span limit is 2048 with 4,000-character values; embedding vectors are hidden.
+
+Latency breakdown read back from Phoenix (warm pipeline, V5 + Qwen3-4B):
+
+| Question | total | decompose | BM25 pool | rerank | LLM | calc/verify | other |
+|---|---|---|---|---|---|---|---|
+| single fact (Apple operating income) | 18.7 s | 0 ms (router skip) | 51 ms | 489 ms | 17.7 s | 2 ms | 378 ms |
+| comparison, 2 sub-questions | 26.0 s | 3 ms (cached) | 105 ms | 843 ms | 25.0 s | 1 ms | 56 ms |
+
+Generation is ~95% of end-to-end latency; retrieval + reranking is under a second.
+
 ## Local LLM feasibility (4 GB VRAM)
 
 ```powershell

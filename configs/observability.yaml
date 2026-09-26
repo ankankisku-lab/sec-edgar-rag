@@ -1,0 +1,8 @@
+tracing:
+  enabled: true
+  # Phoenix (docker compose service `phoenix`, open source, local). OTLP/HTTP ingest endpoint.
+  endpoint: http://127.0.0.1:6006/v1/traces   # 127.0.0.1, not localhost (IPv6 stall on Windows)
+  project_name: sec-edgar-rag
+  batch: true                                 # export spans in the background
+  max_span_attributes: 2048                   # OTel default 128 dropped retrieved-document attributes
+  max_attribute_length: 4000                  # truncate long attribute values (chunk texts)

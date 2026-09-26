@@ -15,6 +15,21 @@ services:
       QDRANT__TELEMETRY_DISABLED: "true"
     mem_limit: 3g                      # keep headroom on a 16 GB laptop
 
+  phoenix:
+    image: arizephoenix/phoenix:version-20.16.0   # pinned; open-source, runs fully locally
+    container_name: sec-rag-phoenix
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6006:6006"          # UI + OTLP/HTTP trace ingest (/v1/traces)
+    volumes:
+      - phoenix_data:/mnt/data         # traces persist across restarts (SQLite in the volume)
+    environment:
+      PHOENIX_WORKING_DIR: /mnt/data
+      PHOENIX_TELEMETRY_ENABLED: "false"
+    mem_limit: 1g
+
 volumes:
   qdrant_storage:
     name: sec-rag-qdrant-storage
+  phoenix_data:
+    name: sec-rag-phoenix-data

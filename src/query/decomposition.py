@@ -110,16 +110,23 @@ def needs_decomposition(question: str) -> bool:
 
 
 def decompose(question: str) -> list[str]:
-    if not needs_decomposition(question):
-        return [question]
-    key = _key(question)
-    cache = _cache()
-    if key in cache:
-        return cache[key]
-    raw = get_json_llm().complete(PROMPT.format(question=question)).text
-    subs = parse(raw, question)
-    cache[key] = subs
-    CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(CACHE_PATH, "a", encoding="utf-8") as fh:
-        fh.write(json.dumps({"key": key, "question": question, "sub_questions": subs}, ensure_ascii=False) + "\n")
-    return subs
+    from src.observability.tracing import set_output, span
+    with span("query.decompose", "CHAIN", input_value=question) as s:
+        routed = needs_decomposition(question)
+        s.set_attribute("router.multi_fact_cue", routed)
+        if not routed:
+            set_output(s, [question], **{"decompose.source": "router_skip"})
+            return [question]
+        key = _key(question)
+        cache = _cache()
+        if key in cache:
+            set_output(s, cache[key], **{"decompose.source": "cache", "decompose.n_sub_questions": len(cache[key])})
+            return cache[key]
+        raw = get_json_llm().complete(PROMPT.format(question=question)).text
+        subs = parse(raw, question)
+        cache[key] = subs
+        CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with open(CACHE_PATH, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps({"key": key, "question": question, "sub_questions": subs}, ensure_ascii=False) + "\n")
+        set_output(s, subs, **{"decompose.source": "llm", "decompose.n_sub_questions": len(subs)})
+        return subs

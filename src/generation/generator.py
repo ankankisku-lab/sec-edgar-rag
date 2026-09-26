@@ -102,11 +102,26 @@ def ollama_running():
 
 
 def answer(question: str, decompose: bool = False) -> dict:
+    from src.observability.tracing import set_output, span
+    with span("rag.answer", "CHAIN", input_value=question, **{"rag.decompose": decompose}) as root:
+        result = _answer(question, decompose)
+        set_output(root, result["answer"], **{"rag.n_sources": len(result["sources"]),
+                                              "rag.n_sub_questions": len(result["sub_questions"]),
+                                              "rag.unverified_numbers": len(result["unverified_numbers"])})
+        return result
+
+
+def _answer(question: str, decompose: bool) -> dict:
+    from src.observability.tracing import set_output, span
     t0 = time.perf_counter()
     response = get_query_engine(decompose).query(question)
     total_ms = (time.perf_counter() - t0) * 1000
     sources_text = "\n".join(n.node.get_content(metadata_mode=MetadataMode.NONE) for n in response.source_nodes)
-    text, calcs = apply_calcs(str(response))
+    with span("answer.calc_and_verify", "TOOL", input_value=str(response)) as s:
+        text, calcs = apply_calcs(str(response))
+        unverified = verify_numbers(text, sources_text, question, calcs)
+        set_output(s, text, **{"calc.n_expressions": len(calcs), "verify.n_unverified": len(unverified),
+                               "verify.unverified": unverified or None})
     sources = [{"n": i, "node_id": s.node.metadata.get("origin_id"),
                 "filing_id": s.node.metadata.get("filing_id"), "form": s.node.metadata.get("form_type"),
                 "period": s.node.metadata.get("period"), "section": s.node.metadata.get("heading_path"),
@@ -121,8 +136,7 @@ def answer(question: str, decompose: bool = False) -> dict:
     contexts = [s.node.get_content(metadata_mode=MetadataMode.NONE) for s in response.source_nodes]
     return {"question": question, "sub_questions": sub_questions, "contexts": contexts,
             "answer": text.strip(), "sources": sources, "calculations": calcs,
-            "unverified_numbers": verify_numbers(text, sources_text, question, calcs),
-            "latency_ms": round(total_ms)}
+            "unverified_numbers": unverified, "latency_ms": round(total_ms)}
 
 
 def main() -> None:
