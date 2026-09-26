@@ -1,0 +1,20 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.19.1        # pinned: server and qdrant-client versions should match
+    container_name: sec-rag-qdrant
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6333:6333"          # REST (localhost only)
+      - "127.0.0.1:6334:6334"          # gRPC
+    volumes:
+      # Named volume, not a Windows bind mount: Qdrant warns that Windows-mounted
+      # folders can corrupt its storage. The volume lives in Docker's disk image,
+      # which is on D:\DockerData.
+      - qdrant_storage:/qdrant/storage
+    environment:
+      QDRANT__TELEMETRY_DISABLED: "true"
+    mem_limit: 3g                      # keep headroom on a 16 GB laptop
+
+volumes:
+  qdrant_storage:
+    name: sec-rag-qdrant-storage

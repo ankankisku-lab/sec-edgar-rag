@@ -59,6 +59,27 @@ labels are lower confidence.
   path, table caption and units; IDs are deterministic (`uuid5(accession/p/c)`).
 - Full corpus: ~240k children, ~103k parents; every child <=512 tokens incl. metadata.
 
+## Embeddings and Qdrant index
+
+```powershell
+# torch must come from the CUDA index first (see requirements.txt)
+.venv\Scripts\python -m src.embeddings.embedder --tickers AAPL MSFT NVDA --smoke-test
+#    -> data/embeddings/bge-small-en-v1.5/<TICKER>/<filing_id>.npz (cached vectors)
+
+docker compose up -d                      # Qdrant v1.19.1, dashboard: http://127.0.0.1:6333/dashboard
+.venv\Scripts\python -m src.retrieval.qdrant_index --tickers AAPL MSFT NVDA
+#    -> Qdrant collection sec_filings_bge_small (children: dense vector + payload)
+#    -> data/index/parents.sqlite (parents, fetched by id for context expansion)
+```
+
+- Collection has a named dense vector `text-dense` and a reserved sparse vector
+  `text-sparse-new` (IDF modifier, for BM25) in LlamaIndex's naming, so
+  `QdrantVectorStore` reads it directly; keyword/datetime payload indexes on ticker,
+  form, fiscal year/period, section, content type, dates.
+- Re-indexing is idempotent (points deleted by accession before upsert).
+- Use `127.0.0.1`, not `localhost`: on Windows `localhost` tries IPv6 first and each
+  request stalls ~2 s (indexing 24 filings: 3m46s -> 21s).
+
 Filing IDs are `<TICKER>_<FORM>_<period_of_report>`, e.g. `AAPL_10Q_2025-06-28`.
 Foreign private issuers (ARM, ASML, PDD, ...) file 20-F/40-F and are excluded by design.
 

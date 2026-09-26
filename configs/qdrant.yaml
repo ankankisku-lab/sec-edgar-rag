@@ -1,0 +1,10 @@
+# Not "localhost": on Windows it tries IPv6 (::1) first and every request stalls ~2 s.
+url: http://127.0.0.1:6333
+# One collection per embedding model, so models can be compared side by side.
+collection: sec_filings_bge_small
+dense_vector_name: text-dense          # LlamaIndex QdrantVectorStore defaults
+sparse_vector_name: text-sparse-new    # reserved now, filled in the BM25 phase
+upsert_batch_size: 256
+# Payload fields used in metadata filters get an index.
+keyword_indexes: [ticker, form_type, fiscal_year, fiscal_period, content_type, item, filing_id, doc_id]
+datetime_indexes: [period_of_report, filing_date]
