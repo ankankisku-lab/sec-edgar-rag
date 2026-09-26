@@ -1,0 +1,10 @@
+# Phase 5 baseline embedder. Changing model_name writes to a new cache folder,
+# so several models can be compared side by side later.
+model_name: BAAI/bge-small-en-v1.5
+dim: 384
+max_length: 512
+fp16: true                 # halves VRAM; negligible quality impact for inference
+batch_size: 64             # 4 GB VRAM: fine for bge-small at 512 tokens in fp16
+normalize: true            # cosine similarity == dot product
+# BGE v1.5: queries get this instruction, passages don't.
+query_instruction: "Represent this sentence for searching relevant passages: "

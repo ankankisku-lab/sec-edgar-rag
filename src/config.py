@@ -22,6 +22,12 @@ FILINGS_CSV = METADATA_DIR / "filings.csv"
 
 load_dotenv(PROJECT_ROOT / ".env")
 
+# Keep downloaded models on D: with the project (the default is the user profile on C:).
+MODELS_DIR = PROJECT_ROOT / "models"
+os.environ.setdefault("HF_HOME", str(MODELS_DIR / "huggingface"))
+# LlamaIndex's HuggingFaceEmbedding ignores HF_HOME and uses its own cache dir.
+os.environ.setdefault("LLAMA_INDEX_CACHE_DIR", str(MODELS_DIR / "llama_index"))
+
 
 def load_config(name: str = "ingestion") -> dict:
     with open(CONFIG_DIR / f"{name}.yaml", encoding="utf-8") as f:

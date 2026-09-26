@@ -12,3 +12,10 @@ llama-index-core==0.14.25
 
 # Later phases are added as we reach them (torch must be installed from the
 # CUDA wheel index, so it is not pinned here yet).
+
+# Phase 5: dense embeddings (GPU). Install torch FIRST from the CUDA index, e.g.
+#   pip install torch==2.14.0 --index-url https://download.pytorch.org/whl/cu126
+# (RTX 3050 / driver 555; keep PIP_CACHE_DIR and TMP on D: -- the wheel is 2.6 GB)
+llama-index-embeddings-huggingface==0.8.0
+sentence-transformers==6.1.0
+numpy

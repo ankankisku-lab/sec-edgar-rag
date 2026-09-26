@@ -3,13 +3,14 @@
 RAG/
 .env
 
-# Data (large, reproducible from the manifest)
-data/raw/*
-data/processed/*
-data/checkpoints/*
-data/chunks/
-data/metadata/submissions/
-!data/**/.gitkeep
+# Data: everything is ignored (large, reproducible) except the small manifests
+# under data/metadata that define exactly which filings make up the corpus.
+data/*
+!data/metadata/
+data/metadata/*
+!data/metadata/companies.csv
+!data/metadata/filings.csv
+!data/metadata/verification.csv
 logs/*
 !logs/.gitkeep
 
@@ -18,3 +19,7 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .ipynb_checkpoints/
+
+# Local caches and downloaded models (kept on D:)
+.cache/
+models/
