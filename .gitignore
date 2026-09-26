@@ -1,0 +1,19 @@
+# Environments
+.venv/
+RAG/
+.env
+
+# Data (large, reproducible from the manifest)
+data/raw/*
+data/processed/*
+data/checkpoints/*
+data/metadata/submissions/
+!data/**/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/

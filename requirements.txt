@@ -1,0 +1,11 @@
+# Phase 0-2: corpus acquisition
+requests>=2.32
+pandas>=2.2
+lxml>=5.2
+pyyaml>=6.0
+python-dotenv>=1.0
+tqdm>=4.66
+pytest>=8.0
+
+# Later phases are added as we reach them (torch must be installed from the
+# CUDA wheel index, so it is not pinned here yet).

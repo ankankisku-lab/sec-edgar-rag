@@ -1,0 +1,20 @@
+universe:
+  wikipedia_url: https://en.wikipedia.org/wiki/List_of_NASDAQ-100_companies
+
+sec:
+  user_agent_env: SEC_USER_AGENT
+  requests_per_second: 5        # SEC fair-access limit is 10; stay well under
+  timeout_seconds: 60
+  max_retries: 5
+  backoff_base_seconds: 2
+
+filings:
+  forms: ["10-K", "10-Q"]       # exact match: amendments (10-K/A, 10-Q/A) excluded
+  # Latest N per company. 2 annual + 6 quarterly = two fiscal years of Q1-Q3,
+  # which is what year-over-year quarter comparisons need.
+  per_company:
+    "10-K": 2
+    "10-Q": 6
+
+download:
+  min_bytes: 20000              # anything smaller is an error page, not a filing
