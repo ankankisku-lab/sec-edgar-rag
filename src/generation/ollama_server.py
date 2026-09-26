@@ -33,7 +33,11 @@ def start(kv_cache_type: str = "q8_0") -> subprocess.Popen:
                OLLAMA_MAX_LOADED_MODELS="1",
                # Default context for requests that don't set num_ctx (the OpenAI-compatible
                # endpoint can't): too small a default silently truncates long prompts.
-               OLLAMA_CONTEXT_LENGTH=str(cfg.get("default_context_length", 8192)))
+               OLLAMA_CONTEXT_LENGTH=str(cfg.get("default_context_length", 8192)),
+               # llama-server's host-RAM prompt cache (default 8 GiB) keeps every request's KV state
+               # (~0.1-0.4 GB each); RAG prompts never repeat, so it only grows until the OOM killer
+               # ends the runner. Ollama passes this env var through to llama-server.
+               LLAMA_ARG_CACHE_RAM="0")
     LOG_DIR.mkdir(exist_ok=True)
     log = open(LOG_DIR / f"ollama_{kv_cache_type}.log", "a", encoding="utf-8")
     proc = subprocess.Popen([str(PROJECT_ROOT / cfg["exe"]), "serve"], env=env, stdout=log, stderr=log,

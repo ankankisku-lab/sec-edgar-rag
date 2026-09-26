@@ -45,6 +45,7 @@ services:
       OLLAMA_CONTEXT_LENGTH: "8192"    # OpenAI-compatible calls can't set num_ctx
       OLLAMA_NUM_PARALLEL: "1"         # parallel slots multiply KV-cache memory
       OLLAMA_MAX_LOADED_MODELS: "1"
+      LLAMA_ARG_CACHE_RAM: "0"         # llama-server's RAM prompt cache (8 GiB default) got the runner OOM-killed
       OLLAMA_KEEP_ALIVE: "-1"         # keep Qwen loaded while the stack runs (a reload costs ~60 s)
     healthcheck:
       test: ["CMD", "ollama", "list"]

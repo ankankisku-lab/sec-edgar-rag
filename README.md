@@ -363,6 +363,10 @@ curl http://127.0.0.1:8000/health
   speed comparison, but the container is at least no slower.
 - The stack keeps Qwen loaded (`LLM_KEEP_ALIVE=24h`; natively 10m): after Ollama unloaded an idle model
   the next question took 63 s instead of 4 s.
+- llama-server (inside Ollama 0.34) keeps a host-RAM prompt cache, 8 GiB by default, saving every
+  request's KV state (0.1-0.4 GB). RAG prompts never repeat, so after ~18 questions the runner reached
+  5.6 GB, the Docker VM (7.6 GB) swapped (generation fell to 0.16 tok/s) and the OOM killer ended it.
+  `LLAMA_ARG_CACHE_RAM=0` (compose and the native launcher) disables it; memory now stays flat.
 - Seen while picking the chat examples: "Microsoft's total revenue in fiscal 2025" is refused because
   BM25 on "revenue" filled the context with *Unearned revenue* notes, not the income statement.
 - The comparison question "Apple's revenue in Q3 2024 and Q3 2025" was answered with fiscal 2025 Q3
