@@ -1,3 +1,5 @@
+# Default (`docker compose up -d`): infrastructure only -- Qdrant + Phoenix -- for native development.
+# Full stack (`docker compose --profile app up -d`): + Ollama (LLM) + the API, both on the GPU.
 services:
   qdrant:
     image: qdrant/qdrant:v1.19.1        # pinned: server and qdrant-client versions should match
@@ -27,6 +29,68 @@ services:
       PHOENIX_WORKING_DIR: /mnt/data
       PHOENIX_TELEMETRY_ENABLED: "false"
     mem_limit: 1g
+
+  ollama:
+    profiles: ["app"]
+    image: ollama/ollama:0.34.4        # same version as the portable install used natively
+    container_name: sec-rag-ollama
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ./models/ollama:/root/.ollama/models      # models already downloaded on D:, not re-pulled
+    environment:
+      OLLAMA_FLASH_ATTENTION: "1"
+      OLLAMA_KV_CACHE_TYPE: q8_0
+      OLLAMA_CONTEXT_LENGTH: "8192"    # OpenAI-compatible calls can't set num_ctx
+      OLLAMA_NUM_PARALLEL: "1"         # parallel slots multiply KV-cache memory
+      OLLAMA_MAX_LOADED_MODELS: "1"
+      OLLAMA_KEEP_ALIVE: 10m
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  api:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: sec-edgar-rag-api:1.0
+    container_name: sec-rag-api
+    restart: unless-stopped
+    depends_on:
+      qdrant:
+        condition: service_started
+      phoenix:
+        condition: service_started
+      ollama:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      QDRANT_URL: http://qdrant:6333
+      OLLAMA_HOST: ollama:11434
+      PHOENIX_COLLECTOR_ENDPOINT: http://phoenix:6006/v1/traces
+    volumes:
+      - ./models:/models                           # embedder, reranker, BM25 caches (offline)
+      - ./data/index:/app/data/index               # parent store, opened read-only + immutable
+      - ./data/eval/cache:/app/data/eval/cache     # decomposition cache (router + LLM results)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
 
 volumes:
   qdrant_storage:

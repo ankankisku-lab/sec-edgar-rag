@@ -1,0 +1,16 @@
+# Build context = code and configs only. Data and models are mounted at run time.
+.git
+.venv
+RAG
+.cache
+.env
+data
+models
+tools
+logs
+docs
+notebooks
+tests
+**/__pycache__
+**/*.pyc
+.pytest_cache

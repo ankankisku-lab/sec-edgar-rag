@@ -31,9 +31,25 @@ os.environ.setdefault("LLAMA_INDEX_CACHE_DIR", str(MODELS_DIR / "llama_index"))
 os.environ.setdefault("FASTEMBED_CACHE_PATH", str(MODELS_DIR / "fastembed"))
 
 
+# Environment overrides for service addresses, so the same YAML works natively (127.0.0.1)
+# and inside docker compose (service names such as qdrant:6333).
+ENV_OVERRIDES = {
+    ("qdrant", ("url",)): "QDRANT_URL",
+    ("llm", ("ollama", "host")): "OLLAMA_HOST",
+    ("observability", ("tracing", "endpoint")): "PHOENIX_COLLECTOR_ENDPOINT",
+}
+
+
 def load_config(name: str = "ingestion") -> dict:
     with open(CONFIG_DIR / f"{name}.yaml", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        cfg = yaml.safe_load(f)
+    for (cfg_name, keys), env in ENV_OVERRIDES.items():
+        if cfg_name == name and os.environ.get(env):
+            node = cfg
+            for k in keys[:-1]:
+                node = node[k]
+            node[keys[-1]] = os.environ[env]
+    return cfg
 
 
 def get_env(name: str) -> str | None:

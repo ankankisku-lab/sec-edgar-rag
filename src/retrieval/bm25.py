@@ -18,15 +18,32 @@ from __future__ import annotations
 import argparse
 import os
 from functools import lru_cache
+from pathlib import Path
 
 from src.config import load_config
+
+
+def _offline_snapshot(model: str, cache_dir: str) -> str | None:
+    """The cached snapshot dir, when running offline (Docker). fastembed's own offline check
+    compares files_metadata.json against the files, but that JSON was written on Windows with
+    backslash paths, so on Linux it always fails; loading the snapshot dir directly skips it."""
+    if os.environ.get("HF_HUB_OFFLINE") != "1":
+        return None
+    repo = Path(cache_dir) / f"models--{model.replace('/', '--')}"
+    ref = repo / "refs" / "main"
+    if not ref.exists():
+        return None
+    snapshot = repo / "snapshots" / ref.read_text().strip()
+    return str(snapshot) if snapshot.is_dir() else None
 
 
 @lru_cache(maxsize=1)
 def get_bm25():
     from fastembed import SparseTextEmbedding
     cfg = load_config("retrieval")["bm25"]
-    return SparseTextEmbedding(cfg["model"], cache_dir=os.environ["FASTEMBED_CACHE_PATH"],
+    cache_dir = os.environ["FASTEMBED_CACHE_PATH"]
+    return SparseTextEmbedding(cfg["model"], cache_dir=cache_dir,
+                               specific_model_path=_offline_snapshot(cfg["model"], cache_dir),
                                k=cfg["k"], b=cfg["b"], avg_len=cfg["avg_len"])
 
 

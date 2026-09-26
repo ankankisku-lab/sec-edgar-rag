@@ -44,3 +44,34 @@ def test_multi_fact_metrics():
     assert s["all_hit@5"] == 0 and s["all_hit@10"] == 1     # fact b only found at rank 6
     assert s["fact_recall@10"] == 1.0 and s["hit@1"] == 1
     assert score(["a1"], [["a1"], ["b1"]])["fact_recall@10"] == 0.5
+
+
+def test_parent_store_readonly_immutable_after_checkpoint(tmp_path):
+    rw = ParentStore(tmp_path / "p.sqlite")
+    rw.replace_filing("F1", [TextNode(id_="p0", text="parent 0")])
+    rw.checkpoint()
+    ro = ParentStore(tmp_path / "p.sqlite", readonly=True)
+    assert ro.get(["p0"])["p0"].text == "parent 0"
+
+
+def test_env_overrides_service_addresses(monkeypatch):
+    from src.config import load_config
+    monkeypatch.setenv("QDRANT_URL", "http://qdrant:6333")
+    monkeypatch.setenv("OLLAMA_HOST", "ollama:11434")
+    assert load_config("qdrant")["url"] == "http://qdrant:6333"
+    assert load_config("llm")["ollama"]["host"] == "ollama:11434"
+    monkeypatch.delenv("QDRANT_URL")
+    assert load_config("qdrant")["url"] == "http://127.0.0.1:6333"
+
+
+def test_bm25_offline_snapshot_only_when_offline(tmp_path, monkeypatch):
+    from src.retrieval.bm25 import _offline_snapshot
+    repo = tmp_path / "models--Qdrant--bm25"
+    (repo / "refs").mkdir(parents=True)
+    (repo / "refs" / "main").write_text("abc123\n")
+    (repo / "snapshots" / "abc123").mkdir(parents=True)
+    monkeypatch.delenv("HF_HUB_OFFLINE", raising=False)
+    assert _offline_snapshot("Qdrant/bm25", str(tmp_path)) is None       # online: fastembed's normal path
+    monkeypatch.setenv("HF_HUB_OFFLINE", "1")
+    assert _offline_snapshot("Qdrant/bm25", str(tmp_path)) == str(repo / "snapshots" / "abc123")
+    assert _offline_snapshot("Qdrant/other", str(tmp_path)) is None      # not cached

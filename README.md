@@ -325,6 +325,41 @@ curl -X POST http://127.0.0.1:8000/query -H "Content-Type: application/json" -d 
   a query-understanding step that maps a fiscal year without a quarter to the 10-K and "latest" to each
   company's newest filing via metadata filters.
 
+## Docker (Phase 21)
+
+```powershell
+docker compose up -d                          # infrastructure only (Qdrant + Phoenix) for native work
+docker compose --profile app up -d --build    # full stack: + Ollama + API, both on the GPU
+curl http://127.0.0.1:8000/health
+```
+
+- Four services: `qdrant` (v1.19.1, named volume), `phoenix` (named volume), `ollama` (0.34.4, same
+  env as native: flash attention, q8_0 KV, 8k context, one slot) and `api` (`docker/Dockerfile`,
+  `python:3.12-slim` + CUDA torch 2.14 cu126, 11.7 GB). Ports bind to 127.0.0.1 only.
+- Nothing is copied into the image but `src/` and `configs/`. Models (`./models`), the parent store
+  (`./data/index`) and the decomposition cache are bind-mounted from D:, and the container runs with
+  `HF_HUB_OFFLINE=1`, so it never downloads anything. Ollama reuses `models/ollama` (no re-pull).
+- Service addresses come from env overrides in `load_config` (`QDRANT_URL`, `OLLAMA_HOST`,
+  `PHOENIX_COLLECTOR_ENDPOINT`), so the same YAML works natively (127.0.0.1) and in compose.
+- Fixes needed for the container: the parent store opens read-only + immutable (SQLite WAL locking is
+  unreliable on a Windows bind mount; `checkpoint()` folds the WAL in after indexing), and BM25 loads
+  its cached snapshot directly when offline, because fastembed's `files_metadata.json` was written on
+  Windows with backslash paths and its offline check always fails on Linux.
+- Live check (Apple operating income fiscal 2025 Q3 -> $28,202M, same as native; traces in Phoenix):
+
+| | native (Phase 19) | Docker, warm |
+|---|---|---|
+| single fact: total / LLM | 18.7 s / 17.7 s | 3.9 s / 3.3 s |
+| comparison, 2 sub-questions: total / LLM | 26.0 s / 25.0 s | 11.8 s / 10.6 s |
+| cold start until `/health` 200 | ~67 s | 192 s (models read over the bind mount) |
+
+  Same model, quantisation, context and KV cache; in the container Ollama keeps 73% of Qwen on the GPU.
+  The native run's answer was also longer (it added the prior-year figure), so this is not a controlled
+  speed comparison, but the container is at least no slower.
+- The comparison question "Apple's revenue in Q3 2024 and Q3 2025" was answered with fiscal 2025 Q3
+  and fiscal 2026 Q3 figures: the same period-resolution limitation (calendar vs fiscal year). Both
+  numbers exist in the context, so number verification passes; wrong-period numbers are Phase 17's scope.
+
 ## Local LLM feasibility (4 GB VRAM)
 
 ```powershell

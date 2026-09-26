@@ -1,0 +1,22 @@
+# Runtime dependencies of the API image only (no parsing, evaluation, Ragas or LangChain).
+# Pinned to the exact versions of the development venv. torch is installed separately
+# from the CUDA wheel index (see Dockerfile).
+pyyaml==6.0.3
+python-dotenv==1.2.3
+numpy==2.5.3
+pandas==3.0.6
+requests==2.34.2
+tqdm==4.70.1
+llama-index-core==0.14.25
+llama-index-embeddings-huggingface==0.8.0
+sentence-transformers==6.1.0
+transformers==5.17.0
+llama-index-vector-stores-qdrant==0.10.3
+qdrant-client==1.19.1
+fastembed==0.8.1
+llama-index-llms-ollama==0.11.0
+fastapi==0.141.1
+uvicorn[standard]==0.54.0
+openinference-instrumentation-llama-index==4.5.2
+opentelemetry-sdk==1.45.0
+opentelemetry-exporter-otlp-proto-http==1.45.0
