@@ -14,3 +14,14 @@ hybrid:
   fusion: relative       # relative (score-normalised, weighted by alpha) | rrf
   alpha: 0.3             # weight of the dense side; selected on the dev split (fusion_sweep)
   rrf_k: 60
+
+rerank:
+  model: BAAI/bge-reranker-base   # 278M params; fp16 on GPU ~0.55 GB
+  fp16: true
+  linearize_tables: true         # rows as sentences for the cross-encoder (see src/retrieval/linearize.py)
+  top_n: 60                      # keep the full re-scored list; evaluation cuts to top 10
+  default_pool: bm25_60          # chosen on dev (MRR); ties union_45_15 (paired bootstrap)
+  pools:                         # candidates handed to the cross-encoder
+    bm25_60: {bm25: 60}
+    union_30_30: {bm25: 30, dense: 30}
+    union_45_15: {bm25: 45, dense: 15}

@@ -41,6 +41,10 @@ def pool_recall() -> pd.DataFrame:
     return table.join(by_type).round(3)
 
 
+RERANK_VARIANTS = [{"pool": p, "linearize": lin} for lin in (False, True)
+                   for p in ("bm25_60", "union_30_30", "union_45_15")]
+
+
 def main() -> None:
     import sys
     if "--pools" in sys.argv:
@@ -48,21 +52,26 @@ def main() -> None:
         print(table.to_string())
         table.to_csv(EVAL_DIR / "results" / "candidate_pools.csv")
         return
+    rerank = "--rerank" in sys.argv
+    retriever, variants = ("rerank", RERANK_VARIANTS) if rerank else ("hybrid", VARIANTS)
     rows = []
-    for v in VARIANTS:
-        df, _ = evaluate("hybrid", "retrieval_v0.jsonl", **v)
+    for v in variants:
+        df, _ = evaluate(retriever, "retrieval_v0.jsonl", **v)
         for split, g in [("dev", df[df.split == "dev"]), ("test", df[df.split == "test"])]:
             rows.append({**v, "split": split, "n": len(g),
                          **{m: round(g[m].mean(), 3) for m in ("precision@3", "recall@5", "mrr@10", "hit@10")},
                          "numeric_p@3": round(g[g.type == "numeric"]["precision@3"].mean(), 3),
-                         "narrative_p@3": round(g[g.type == "narrative"]["precision@3"].mean(), 3)})
+                         "narrative_p@3": round(g[g.type == "narrative"]["precision@3"].mean(), 3),
+                         "latency_p50_ms": round(g["latency_ms"].median())})
     table = pd.DataFrame(rows)
-    table["alpha"] = table["alpha"].fillna("-")
+    if "alpha" in table:
+        table["alpha"] = table["alpha"].fillna("-")
     print(table.to_string(index=False))
     dev = table[table.split == "dev"]
     best = dev.loc[dev[SELECT_BY].idxmax()]
-    print(f"\nselected on dev by {SELECT_BY}: fusion={best.fusion} alpha={best.alpha}")
-    table.to_csv(EVAL_DIR / "results" / "fusion_sweep.csv", index=False)
+    keys = dict.fromkeys(k for v in variants for k in v)
+    print(f"\nselected on dev by {SELECT_BY}: " + ", ".join(f"{k}={best[k]}" for k in keys))
+    table.to_csv(EVAL_DIR / "results" / ("rerank_sweep.csv" if rerank else "fusion_sweep.csv"), index=False)
 
 
 if __name__ == "__main__":

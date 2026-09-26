@@ -35,7 +35,7 @@ from src.parsing import tables
 
 log = logging.getLogger(__name__)
 
-CHUNKER_VERSION = 2
+CHUNKER_VERSION = 3
 CHUNKS_DIR = DATA_DIR / "chunks"
 CHUNK_CHECKPOINT = CHECKPOINT_DIR / "chunk_state.json"
 ID_NAMESPACE = uuid.UUID("5b0c3f4e-8d0a-4b8e-9a51-2f6f3f2c7a10")  # fixed: IDs stay stable across runs

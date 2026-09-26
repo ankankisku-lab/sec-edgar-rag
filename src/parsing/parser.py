@@ -35,7 +35,7 @@ from src.parsing.structure import SectionTracker
 
 log = logging.getLogger(__name__)
 
-PARSER_VERSION = 3  # bump when output changes, so --force isn't needed to re-parse
+PARSER_VERSION = 4  # bump when output changes, so --force isn't needed to re-parse
 PARSE_CHECKPOINT = CHECKPOINT_DIR / "parse_state.json"
 
 BLOCK_TAGS = {"div", "p", "li", "ul", "ol", "table", "center", "blockquote", "section",

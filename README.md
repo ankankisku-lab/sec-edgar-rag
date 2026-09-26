@@ -97,16 +97,28 @@ docker compose up -d                      # Qdrant v1.19.1, dashboard: http://12
 
 | Version | Retrieval | Reranker | P@3 | R@5 | MRR@10 | Hit@10 | numeric P@3 | narrative P@3 | p50 latency |
 |---|---|---|---|---|---|---|---|---|---|
-| V1 | Dense (bge-small) | - | 0.091 | 0.109 | 0.159 | 0.250 | 0.026 | 0.472 | 23 ms |
-| V2 | BM25 (Qdrant sparse) | - | **0.266** | **0.509** | **0.497** | 0.768 | **0.245** | 0.389 | 14 ms |
-| V3 | Hybrid: dense30 + BM25-30, relative fusion alpha=0.3 | - | 0.258 | 0.481 | 0.477 | **0.780** | 0.229 | 0.431 | 31 ms |
+| V1 | Dense (bge-small) | - | 0.089 | 0.108 | 0.153 | 0.244 | 0.024 | 0.472 | 31 ms |
+| V2 | BM25 (Qdrant sparse) | - | 0.285 | 0.526 | 0.528 | 0.774 | 0.264 | 0.403 | 14 ms |
+| V3 | Hybrid dense30 + BM25-30, relative fusion a=0.3 | - | 0.270 | 0.496 | 0.502 | 0.780 | 0.243 | 0.431 | 31 ms |
+| V4-md | BM25 top-60 | bge-reranker-base, markdown tables | 0.238 | - | 0.444 | - | 0.190 | 0.514 | ~480 ms |
+| **V4** | **BM25 top-60** | **bge-reranker-base, linearized tables** | **0.441** | **0.797** | **0.767** | **0.970** | **0.429** | 0.514 | 529 ms |
+| V4h | BM25-45 + dense-15 | same as V4 | 0.441 | - | 0.764 | - | 0.426 | 0.528 | ~490 ms |
 
-Fusion was chosen on the dev half (`python -m src.evaluation.fusion_sweep`): relative score
-fusion with alpha 0.3 (dev MRR 0.508) beat alpha 0.5 (0.365), 0.7 (0.243) and RRF (0.292) --
-RRF gives dense's mostly-wrong numeric candidates an equal vote. For top-10 ranking, hybrid
-ties BM25 on this 85%-numeric set; its value is the reranker's candidate pool
-(`fusion_sweep --pools`): dense top-60 contains a relevant chunk for 57% of questions,
-BM25 top-60 for 97%, and only the dense+BM25 union reaches 100% on narrative questions.
+P@3 ceiling on this set is 0.632 (most questions have 1-2 relevant chunks), so V4 reaches 70%
+of the achievable maximum. Significance: paired bootstrap over questions
+(`python -m src.evaluation.compare RUN_A RUN_B`, 95% CI):
+
+- V1 -> V2 BM25: MRR +0.375 [+0.30, +0.45]; numeric-driven (dense is better on narrative, n.s.)
+- V2 -> V3 hybrid: MRR -0.027 [-0.054, -0.000]; dense candidates add noise to numeric ranking
+- V2 -> V4 reranker: MRR +0.239 [+0.17, +0.30], significant for numeric and narrative
+- V4-md -> V4 linearization: MRR +0.323 [+0.26, +0.39]; numeric +0.379, narrative unchanged
+- V4 vs V4h (adding dense candidates to the pool): -0.003 [-0.019, +0.014], a tie
+
+Reranker notes: fp16 (0.55 GB VRAM), ranks on raw logits (the default sigmoid saturates at
+0.999 and turns the top of the list into ties), and reads table chunks linearized as sentences
+("Operating income: Three Months Ended June 28, 2025 = 28,202; ...") -- on markdown tables a
+prose-trained cross-encoder prefers MD&A text *about* a metric over the row that *contains* it
+(for 22 of 40 numeric questions the top-1 was such a text chunk).
 
 V1 finding: for numeric questions the top-3 is always the right company and 48% the right
 filing, but only 6% of those chunks contain the asked line item -- a table chunk's embedding

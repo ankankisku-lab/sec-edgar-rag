@@ -117,11 +117,25 @@ def classify(grid: list[list[str]]) -> str:
     return "data"
 
 
+PERIOD_LABEL = re.compile(r"^(three|six|nine|twelve)\s+months|^years?\s+ended|^quarter|^fiscal\s+year", re.I)
+UNITS_CAPTION = re.compile(r"^\(.*(million|thousand|billion|unaudited|except).*\)$", re.I)
+YEAR = re.compile(r"^(19|20)\d\d$")
+
+
 def header_rows(grid: list[list[str]]) -> list[list[str]]:
-    """Leading rows before the first row that carries a number (the column headers)."""
+    """Leading rows that label the value columns.
+
+    A header row has no line-item label: its first cell is empty, a period label
+    ("Year Ended June 30,") or a units caption ("(In millions) (Unaudited)"), and
+    its values are period text or years ("2025"), not amounts. The first row with
+    a real line-item label ("Revenue:", "Net income") starts the body.
+    """
     out = []
     for row in grid:
-        if row[0] or any(is_numeric(c) for c in row[1:] if c):  # label or value row
+        label = row[0]
+        if label and not (PERIOD_LABEL.match(label) or UNITS_CAPTION.match(label)):
+            break
+        if any(is_numeric(c) and not YEAR.match(c) for c in row[1:] if c):
             break
         out.append(row)
     return out[:4]

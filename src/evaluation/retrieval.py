@@ -54,6 +54,9 @@ def get_retriever(name: str, **options):
     if name == "bm25":
         from src.retrieval.hybrid import retrieve_bm25
         return retrieve_bm25
+    if name == "rerank":
+        from src.retrieval.reranker import retrieve_reranked
+        return lambda q, top_k=K: retrieve_reranked(q, top_k=top_k, **options)
     if name == "hybrid":
         from src.retrieval.hybrid import retrieve_hybrid
         return lambda q, top_k=K: retrieve_hybrid(q, top_k=top_k, **options)
@@ -79,7 +82,7 @@ def evaluate(retriever_name: str, dataset: str, **options) -> tuple[pd.DataFrame
                      "ticker": q["ticker"], "latency_ms": ms,
                      **score(ranked, set(q["gold_ids"]))})
         traces.append({"qid": q["qid"], "question": q["question"], "ranked": ranked,
-                       "scores": [round(h.score, 4) for h in hits], "n_gold": len(q["gold_ids"])})
+                       "scores": [round(float(h.score), 4) for h in hits], "n_gold": len(q["gold_ids"])})
     return pd.DataFrame(rows), traces
 
 
@@ -104,9 +107,14 @@ def main() -> None:
     parser.add_argument("--notes", default="")
     parser.add_argument("--fusion", choices=["relative", "rrf"])
     parser.add_argument("--alpha", type=float)
+    parser.add_argument("--pool", help="rerank candidate pool name (configs/retrieval.yaml)")
+    parser.add_argument("--no-linearize", action="store_true", help="rerank on markdown tables")
     args = parser.parse_args()
 
-    options = {k: v for k, v in (("fusion", args.fusion), ("alpha", args.alpha)) if v is not None}
+    options = {k: v for k, v in (("fusion", args.fusion), ("alpha", args.alpha), ("pool", args.pool))
+               if v is not None}
+    if args.retriever == "rerank":
+        options["linearize"] = not args.no_linearize
     df, traces = evaluate(args.retriever, args.dataset, **options)
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     run = f"{args.version}_{args.retriever}"

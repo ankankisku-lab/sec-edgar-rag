@@ -136,3 +136,27 @@ def test_emphasis_counts_large_font_as_heading():
         '<div style="font-size:9pt"><span style="font-size:14pt;font-weight:400">Market Trends</span></div>')
     assert emphasis_fraction(el, body_pt=9.0) == 1.0
     assert emphasis_fraction(el, body_pt=14.0) == 0.0
+
+
+def test_header_rows_include_year_rows_and_period_labels():
+    # Microsoft 10-Q: units caption + group header, then a separate year row
+    q = [["(In millions) (Unaudited)", "Three Months Ended March 31,", "", "Nine Months Ended March 31,", ""],
+         ["", "2025", "2024", "2025", "2024"], ["Revenue:", "", "", "", ""], ["Total revenue", "70,066", "61,858", "1", "2"]]
+    assert len(tables.header_rows(q)) == 2
+    # Microsoft 10-K: period label in the label column, years across
+    k = [["(In millions)", "", "", ""], ["Year Ended June 30,", "2025", "2024", "2023"], ["Total revenue", "281,724", "1", "2"]]
+    assert len(tables.header_rows(k)) == 2
+    # Apple: plain date header, then data
+    a = [["", "June 28, 2025", "June 29, 2024"], ["Net sales", "94,036", "85,777"]]
+    assert len(tables.header_rows(a)) == 1
+
+
+def test_linearized_rows_name_their_period():
+    from src.retrieval.linearize import linearize_table
+    g = [["", "Three Months Ended", "", "Nine Months Ended", ""],
+         ["", "June 28, 2025", "June 29, 2024", "June 28, 2025", "June 29, 2024"],
+         ["Operating expenses:", "", "", "", ""],
+         ["Research and development", "8,866", "8,006", "25,684", "23,605"]]
+    out = linearize_table(tables.to_markdown(g))
+    assert out.startswith("Operating expenses - Research and development: Three Months Ended June 28, 2025 = 8,866;")
+    assert "Nine Months Ended June 29, 2024 = 23,605." in out
