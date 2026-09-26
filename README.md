@@ -80,6 +80,29 @@ docker compose up -d                      # Qdrant v1.19.1, dashboard: http://12
 - Use `127.0.0.1`, not `localhost`: on Windows `localhost` tries IPv6 first and each
   request stalls ~2 s (indexing 24 filings: 3m46s -> 21s).
 
+## Local LLM feasibility (4 GB VRAM)
+
+```powershell
+# Ollama portable v0.34.4 unzipped to tools\ollama (not the C: installer); models in models\ollama
+.venv\Scripts\python -m src.generation.llm_feasibility --pull
+.venv\Scripts\python -m src.generation.llm_feasibility             # 3 models x 3 contexts x 2 KV types
+.venv\Scripts\python -m src.generation.llm_feasibility --coresident qwen3-4b --context 8192
+```
+
+One real RAG prompt (Apple FY2025 Q3 parents; answer: operating income $28,202M vs $25,352M).
+All candidates are Q4_K_M, flash attention on, one parallel slot.
+
+| model (Q4_K_M) | on GPU | gen tok/s 4k / 8k (q8 KV) | co-resident 8k* | right values | wrong numbers |
+|---|---|---|---|---|---|
+| Qwen3-4B-Instruct-2507 | ~2.25 of 3.1-3.4 GB | 17.0 / 7.3 | 8.2 tok/s, 21 s | 6/6 | 0/6 |
+| Llama-3.2-3B-Instruct | 2.2 GB (fully at 4k) | 61.0 / 31.4 | 32.0 tok/s, 15 s | 5/6 | 2/6 |
+| Phi-4-mini-instruct | ~2.25 of 3.2-3.5 GB | 25.7 / 13.1 | - | 4/6 | 4/6 |
+
+\* embedder + bge-reranker-base (fp16, 927 MiB) loaded first, as in the live API; total GPU 3.3/4.0 GB.
+Windows reserves ~0.8 GB of the GPU and llama.cpp keeps ~1 GB free, so every model gets ~2.25 GB of
+VRAM and spills the rest to CPU; an 8-bit KV cache cuts memory and speeds up every configuration.
+This is feasibility only: quality is decided on the evaluation set in the generation phase.
+
 Filing IDs are `<TICKER>_<FORM>_<period_of_report>`, e.g. `AAPL_10Q_2025-06-28`.
 Foreign private issuers (ARM, ASML, PDD, ...) file 20-F/40-F and are excluded by design.
 

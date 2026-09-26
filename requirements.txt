@@ -23,3 +23,7 @@ numpy
 # Phase 6: Qdrant (server runs in Docker: docker compose up -d; keep versions in sync)
 qdrant-client==1.19.1
 llama-index-vector-stores-qdrant==0.10.3
+
+# Local LLM feasibility (Ollama portable in tools/ollama, models in models/ollama)
+psutil
+requests

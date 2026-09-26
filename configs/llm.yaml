@@ -1,0 +1,21 @@
+# Local LLM runtime (Ollama, portable install in tools/ollama, models in models/ollama).
+ollama:
+  host: 127.0.0.1:11434          # not "localhost" (IPv6 stall on Windows)
+  exe: tools/ollama/ollama.exe
+  models_dir: models/ollama
+  flash_attention: true          # required for a quantized KV cache
+
+# Generator candidates: same quantization (Q4_K_M) so the comparison is fair.
+candidates:
+  - name: qwen3-4b
+    tag: qwen3:4b-instruct-2507-q4_K_M
+  - name: llama3.2-3b
+    tag: llama3.2:3b-instruct-q4_K_M
+  - name: phi4-mini
+    tag: phi4-mini:3.8b-q4_K_M
+
+feasibility:
+  contexts: [4096, 8192, 16384]
+  kv_cache_types: [f16, q8_0]
+  prompt_fill: 0.7               # fraction of the context filled with real RAG context
+  max_output_tokens: 256
