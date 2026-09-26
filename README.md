@@ -28,6 +28,22 @@ copy .env.example .env   # then set SEC_USER_AGENT="Name email@domain"
 #    -> data/metadata/verification.csv (also records fiscal year / fiscal quarter)
 ```
 
+## Parsing
+
+```powershell
+.venv\Scripts\python -m src.parsing.parser --tickers AAPL MSFT NVDA   # or no args for all
+#    -> data/processed/<TICKER>/<filing_id>.json
+```
+
+Each filing becomes an ordered list of elements (`heading`, `paragraph`, `table`,
+`footnote`) labelled with `part`, `item`, `section`, `note` and `subsection`.
+Tables are rebuilt into clean markdown grids (currency/parenthesis cells merged,
+period headers aligned, continuation tables inherit their headers) and carry a
+caption, units and linked footnotes. Page headers/footers and the table of
+contents are dropped. `stats.section_mode` is `titles` for the few filers that
+don't use standard "Item N" headings (Intel, Honeywell 10-K); their section
+labels are lower confidence.
+
 Filing IDs are `<TICKER>_<FORM>_<period_of_report>`, e.g. `AAPL_10Q_2025-06-28`.
 Foreign private issuers (ARM, ASML, PDD, ...) file 20-F/40-F and are excluded by design.
 
