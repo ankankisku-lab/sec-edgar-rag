@@ -255,6 +255,28 @@ HyDE adds ~3 s per query (one local LLM call) and no measurable gain: once the c
 reranks a BM25 pool, dense candidates barely affect the final ranking (V4h, V5h and V6 all tie).
 It stays implemented behind the `union_45_hyde15` pool, off by default.
 
+## Scaling to 726 filings (Phase 16)
+
+`python -m src.pipeline.scale` adds companies stage by stage (AAPL, MSFT, NVDA -- the eval
+companies -- first, then by ticker; `data/eval/scaling_stages.json`), embeds and indexes only the
+new filings, records the footprint and re-runs V2 / V4 / V5 on the unchanged eval v1 questions.
+Every added filing is a potential distractor. Parser v4 / chunker v3 across all 726 filings
+(240,832 children, max 490 tokens); BM25 `avg_len` kept at 113.5 (full corpus 114.8).
+
+| Stage | Filings | Companies | Chunks | V2 MRR | V4 MRR | V5 MRR | V5 P@3 | V5 all-hit@10 | V5 p50 | Qdrant RAM | Qdrant disk | Parents DB | Embed / index |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| S24 | 24 | 3 | 5,810 | 0.428 | 0.614 | 0.725 | 0.422 | 0.932 | 538 ms | 308.6MiB | 88M | 13 MB | 27s / 5s |
+| S50 | 56 | 7 | 13,950 | 0.424 | 0.608 | 0.722 | 0.419 | 0.932 | 524 ms | 381.9MiB | 104M | 31 MB | 71s / 43s |
+| S100 | 104 | 13 | 36,207 | 0.406 | 0.605 | 0.722 | 0.422 | 0.924 | 520 ms | 451.6MiB | 227M | 76 MB | 101s / 55s |
+| S250 | 254 | 32 | 85,890 | 0.403 | 0.602 | 0.721 | 0.412 | 0.924 | 509 ms | 486.3MiB | 564M | 182 MB | 183s / 131s |
+| Sall | 726 | 93 | 240,832 | 0.406 | 0.592 | 0.715 | 0.411 | 0.907 | 493 ms | 898MiB | 1.2G | 508 MB | 518s / 366s |
+
+V5 at 30x the corpus: MRR -0.010 (95% CI [-0.031, +0.009]), all-hit@10 -0.025 (n.s.) -- the full
+pipeline holds. V4 without decomposition loses a little but significantly (MRR -0.022
+[-0.042, -0.003], all-hit@10 -0.034): more BM25 distractors, which decomposition's narrower
+sub-queries mostly avoid. Latency is flat (~0.5 s, dominated by reranking 60 candidates; BM25 search
+14 -> 18 ms at 41x the chunks). Dense (V1) was not re-measured at scale: it is not part of V4/V5.
+
 ## Local LLM feasibility (4 GB VRAM)
 
 ```powershell

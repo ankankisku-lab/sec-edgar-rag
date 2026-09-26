@@ -4,7 +4,8 @@ bm25:
   b: 0.75
   # Mean BM25 length (stemmed, stopwords removed) of child embedding texts, measured
   # with `python -m src.retrieval.bm25 --avg-len` (24 filings: 113.5). fastembed's
-  # default of 256 would under-penalise long chunks. Re-measure after scaling up.
+  # default of 256 would under-penalise long chunks. Full corpus (726 filings): 114.8 -- kept at
+  # 113.5 so results stay comparable across scaling stages (1% difference, negligible).
   avg_len: 113.5
 
 hybrid:
