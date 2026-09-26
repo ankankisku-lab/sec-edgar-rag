@@ -15,7 +15,7 @@ import argparse
 import numpy as np
 import pandas as pd
 
-from src.evaluation.retrieval import RESULTS_DIR
+from src.evaluation.retrieval import results_dir
 
 
 def paired_bootstrap(a: np.ndarray, b: np.ndarray, n: int = 10_000, seed: int = 0) -> tuple[float, float, float]:
@@ -26,9 +26,10 @@ def paired_bootstrap(a: np.ndarray, b: np.ndarray, n: int = 10_000, seed: int = 
     return float(diff.mean()), float(np.percentile(samples, 2.5)), float(np.percentile(samples, 97.5))
 
 
-def compare(run_a: str, run_b: str, metric: str) -> dict:
-    a = pd.read_csv(RESULTS_DIR / f"{run_a}_per_query.csv").set_index("qid")
-    b = pd.read_csv(RESULTS_DIR / f"{run_b}_per_query.csv").set_index("qid")
+def compare(run_a: str, run_b: str, metric: str, dataset: str = "retrieval_v1.jsonl") -> dict:
+    folder = results_dir(dataset)
+    a = pd.read_csv(folder / f"{run_a}_per_query.csv").set_index("qid")
+    b = pd.read_csv(folder / f"{run_b}_per_query.csv").set_index("qid")
     joined = a[[metric, "type"]].join(b[[metric]], rsuffix="_b", how="inner")
     out = {}
     for name, g in [("all", joined), *joined.groupby("type")]:
@@ -44,8 +45,9 @@ def main() -> None:
     parser.add_argument("run_a")
     parser.add_argument("run_b")
     parser.add_argument("--metric", default="mrr@10")
+    parser.add_argument("--dataset", default="retrieval_v1.jsonl")
     args = parser.parse_args()
-    for name, r in compare(args.run_a, args.run_b, args.metric).items():
+    for name, r in compare(args.run_a, args.run_b, args.metric, args.dataset).items():
         print(f"{args.metric:12} {name:10} n={r['n']:3}  A={r['A']:.3f}  B={r['B']:.3f}  "
               f"diff={r['diff']:+.3f}  95% CI [{r['ci95'][0]:+.3f}, {r['ci95'][1]:+.3f}]  "
               f"{'significant' if r['significant'] else 'not significant'}")

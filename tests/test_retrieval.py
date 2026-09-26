@@ -36,3 +36,11 @@ def test_rrf_fusion_rewards_agreement():
     fused = rrf_fusion(dense, sparse, top_k=3)
     assert fused.ids[0] == "c"               # ranked by both lists
     assert len(fused.ids) == 3 and set(fused.ids) <= set("abcd")
+
+
+def test_multi_fact_metrics():
+    from src.evaluation.retrieval import score
+    s = score(["a1", "x", "y", "z", "q", "b1"], [["a1", "a2"], ["b1"]])
+    assert s["all_hit@5"] == 0 and s["all_hit@10"] == 1     # fact b only found at rank 6
+    assert s["fact_recall@10"] == 1.0 and s["hit@1"] == 1
+    assert score(["a1"], [["a1"], ["b1"]])["fact_recall@10"] == 0.5

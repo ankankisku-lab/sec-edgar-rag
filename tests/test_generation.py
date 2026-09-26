@@ -36,3 +36,17 @@ def test_value_stated():
     assert value_stated("about $28.2 billion", "$28,202")
     assert value_stated("a loss of (171) million", "(171)")
     assert not value_stated("It was $25,352 million.", "28,202")
+
+
+def test_score_answer_by_type():
+    from src.evaluation.generation import score_answer
+    yoy = {"type": "yoy", "answer_values": ["28,202", "25,352"], "expected_change": 2850.0}
+    assert score_answer(yoy, "$28,202 million vs $25,352 million, up $2,850 million [1].")["correct"]
+    assert not score_answer(yoy, "$28,202 million vs $25,352 million, up $850 million [1].")["correct"]
+    pct = {"type": "pct_change", "answer_values": ["31,653", "27,032"], "expected_pct": 17.0946}
+    assert score_answer(pct, "It rose 17.09% [1].")["correct"]
+    assert score_answer(pct, "It rose 17.1% [1].")["correct"]
+    assert not score_answer(pct, "It rose 16.2% [1].")["correct"]
+    cc = {"type": "cross_company", "answer_values": ["416,161", "$331,839"]}
+    assert score_answer(cc, "Apple $416,161 million [1] vs Microsoft $331,839 million [2].")["correct"]
+    assert not score_answer(cc, "Apple $416,161 million [1].")["correct"]

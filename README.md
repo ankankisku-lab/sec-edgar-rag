@@ -154,6 +154,50 @@ layers around them; reranker batch 16 (60 pairs: 439 ms / 906 MiB vs 939 ms / 12
 `ollama_server.stop()` also kills orphaned `llama-server.exe` runners, which otherwise keep VRAM
 and push the next run into shared-memory spill (prompt processing fell to ~70 tok/s).
 
+## Evaluation set v1 (Phase 12)
+
+`python -m src.evaluation.dataset --tickers AAPL MSFT NVDA` -> `data/eval/retrieval_v1.jsonl`, 236 questions:
+140 numeric, 24 year-over-year, 15 % change, 24 cross-quarter (2 filings), 9 cross-company,
+24 narrative. Facts come from primary-statement rows (current + prior-period column, periods
+validated); multi-fact questions carry one gold group per fact. Fixes over v0: cash-flow
+working-capital rows are phrased as "change in ...", groups end at their total/"Net cash" row,
+current balance-sheet items are marked "(current)", % change only for positive levels.
+v0 results are kept for history; v1 results live in `data/eval/results/retrieval_v1/`.
+
+| Version | Retrieval | P@3 | R@5 | MRR@10 | Hit@10 | All-hit@10 | p50 |
+|---|---|---|---|---|---|---|---|
+| V1 | Dense | 0.071 | 0.104 | 0.132 | 0.233 | 0.225 | 28 ms |
+| V2 | BM25 | 0.223 | 0.466 | 0.428 | 0.661 | 0.661 | 14 ms |
+| V3 | Hybrid (relative, a=0.3) | 0.218 | 0.457 | 0.427 | 0.653 | 0.653 | 34 ms |
+| **V4** | BM25 top-60 -> BGE rerank (linearized) | **0.321** | **0.611** | **0.614** | **0.805** | **0.792** | 483 ms |
+
+All-hit@10 by question type (every required fact retrieved):
+
+| Version | numeric | yoy | pct_change | cross_quarter | cross_company | narrative |
+|---|---|---|---|---|---|---|
+| V1 | 0.157 | 0.167 | 0.267 | 0.000 | 0.000 | 0.958 |
+| V2 | 0.786 | 0.542 | 0.867 | 0.000 | 0.000 | 0.833 |
+| V3 | 0.764 | 0.500 | 0.867 | 0.000 | 0.000 | 0.917 |
+| V4 | 0.907 | 0.958 | 0.933 | 0.000 | 0.000 | 0.958 |
+
+Single-query retrieval cannot serve multi-fact questions: cross-quarter/cross-company all-hit@10
+is 0.000 for every retriever. The gold labels are right -- asked alone, "What was Apple's net
+income in fiscal 2025 Q3?" puts the gold row at rank 1, but the compound comparison question
+pulls MD&A comparison tables instead. This is the measured case for sub-question decomposition.
+
+Generation on a stratified 40-question sample (`python -m src.evaluation.generation --version G3`):
+
+| Run | correct | correct given all facts in context | numeric | yoy | pct_change | cross_quarter | cross_company | wrong refusals | unverified numbers | p50 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| G2 | 40.0% | 56.5% | 91.7% | 12.5% | 50.0% | 0.0% | 16.7% | 3 | 0% | 10.8 s |
+| G3 | 52.5% | 78.3% | 91.7% | 62.5% | 66.7% | 0.0% | 16.7% | 0 | 0% | 12.4 s |
+
+G2 -> G3 is a prompt change only (same questions): every change/percentage must be a `<calc>`
+(no self-rounding), comparisons must state the difference, and the refusal sentence may not be
+appended to an answer. 5 answers fixed, 0 broken. Remaining misses are retrieval (multi-fact
+questions never get both facts into context) and period ambiguity ("fiscal 2025" answered from
+the Q3 10-Q's nine-month column instead of the 10-K).
+
 ## Local LLM feasibility (4 GB VRAM)
 
 ```powershell
