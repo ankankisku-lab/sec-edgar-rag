@@ -1,0 +1,9 @@
+# Token counts use LlamaIndex's default tokenizer (tiktoken cl100k).
+text:
+  child_tokens: 256          # retrieval unit; must fit the embedder's 512-token limit incl. metadata
+  child_overlap_tokens: 32
+  parent_min_tokens: 300     # merge smaller neighbouring groups in the same section
+  parent_max_tokens: 1024    # context unit handed to the LLM
+tables:
+  child_tokens: 256          # row groups, each repeating the table's header rows
+  parent_max_tokens: 2048    # larger tables are split into several parents

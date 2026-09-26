@@ -44,6 +44,21 @@ contents are dropped. `stats.section_mode` is `titles` for the few filers that
 don't use standard "Item N" headings (Intel, Honeywell 10-K); their section
 labels are lower confidence.
 
+## Chunking (LlamaIndex parent-child nodes)
+
+```powershell
+.venv\Scripts\python -m src.chunking.hierarchical      # settings in configs/chunking.yaml
+#    -> data/chunks/<TICKER>/<filing_id>.jsonl  (LlamaIndex TextNodes, parents then children)
+```
+
+- **Parents** (LLM context): heading-delimited text groups (<=1024 tokens) and whole
+  tables with caption, units and footnotes (<=2048 tokens, split with repeated headers).
+- **Children** (retrieval units, ~256 tokens): sentence-split text, or table row
+  groups that repeat the period header rows so every number keeps its column label.
+- Each child's embedding text is prefixed with company, form, fiscal period, heading
+  path, table caption and units; IDs are deterministic (`uuid5(accession/p/c)`).
+- Full corpus: ~240k children, ~103k parents; every child <=512 tokens incl. metadata.
+
 Filing IDs are `<TICKER>_<FORM>_<period_of_report>`, e.g. `AAPL_10Q_2025-06-28`.
 Foreign private issuers (ARM, ASML, PDD, ...) file 20-F/40-F and are excluded by design.
 

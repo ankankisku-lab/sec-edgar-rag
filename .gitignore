@@ -7,6 +7,7 @@ RAG/
 data/raw/*
 data/processed/*
 data/checkpoints/*
+data/chunks/
 data/metadata/submissions/
 !data/**/.gitkeep
 logs/*
