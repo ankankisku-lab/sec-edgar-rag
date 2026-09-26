@@ -26,6 +26,6 @@ __pycache__/
 # Local caches and downloaded models (kept on D:)
 .cache/
 models/
-tools/
+/tools/
 # Ragas judge-response cache (binary sqlite, changes every run)
 data/eval/cache/ragas/
