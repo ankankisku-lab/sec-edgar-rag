@@ -60,6 +60,8 @@ def test_env_overrides_service_addresses(monkeypatch):
     monkeypatch.setenv("OLLAMA_HOST", "ollama:11434")
     assert load_config("qdrant")["url"] == "http://qdrant:6333"
     assert load_config("llm")["ollama"]["host"] == "ollama:11434"
+    monkeypatch.setenv("LLM_KEEP_ALIVE", "24h")
+    assert load_config("generation")["llm"]["keep_alive"] == "24h"
     monkeypatch.delenv("QDRANT_URL")
     assert load_config("qdrant")["url"] == "http://127.0.0.1:6333"
 

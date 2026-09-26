@@ -37,6 +37,8 @@ ENV_OVERRIDES = {
     ("qdrant", ("url",)): "QDRANT_URL",
     ("llm", ("ollama", "host")): "OLLAMA_HOST",
     ("observability", ("tracing", "endpoint")): "PHOENIX_COLLECTOR_ENDPOINT",
+    # per-request keep-alive overrides Ollama's own setting; the serving stack keeps the LLM loaded
+    ("generation", ("llm", "keep_alive")): "LLM_KEEP_ALIVE",
 }
 
 

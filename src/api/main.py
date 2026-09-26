@@ -1,5 +1,6 @@
 """Phase 20: FastAPI service for the SEC-EDGAR RAG pipeline.
 
+    GET  /         chat page (static HTML calling /query; no build step, works offline)
     POST /query    question -> grounded answer with citations, calculations, unverified
                    numbers, sub-questions, latency breakdown and the Phoenix trace id
     GET  /health   Qdrant, Ollama and model readiness (503 until everything is up)
@@ -25,11 +26,12 @@ import time
 import uuid
 from collections import deque
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any
 
 import requests
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
 
@@ -38,6 +40,7 @@ from src.config import load_config
 log = logging.getLogger("sec_rag.api")
 CFG = load_config("api")
 REFUSAL = "do not contain this information"
+STATIC_DIR = Path(__file__).parent / "static"
 
 
 # ------------------------------------------------------------------ schemas
@@ -120,6 +123,11 @@ app = FastAPI(title="SEC-EDGAR Financial RAG", version="1.0", lifespan=lifespan,
 
 
 # ------------------------------------------------------------------ endpoints
+@app.get("/", include_in_schema=False)
+async def chat() -> FileResponse:
+    return FileResponse(STATIC_DIR / "chat.html")
+
+
 @app.post("/query", response_model=QueryResponse)
 async def query(req: QueryRequest) -> QueryResponse:
     if not STATE.ready:

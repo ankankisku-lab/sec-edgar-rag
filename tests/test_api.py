@@ -64,3 +64,10 @@ def test_pipeline_error_is_500_and_counted(client, monkeypatch):
     assert r.status_code == 500 and "RuntimeError" in r.json()["detail"]
     assert client.get("/metrics").json()["errors_total"] == 1
     assert api.STATE.lock.locked() is False   # the GPU lock is always released
+
+
+def test_chat_page_is_served_and_calls_the_api(client):
+    r = client.get("/")
+    assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
+    assert 'fetch("/query"' in r.text and 'fetch("/health"' in r.text
+    assert "/" not in client.get("/openapi.json").json()["paths"]

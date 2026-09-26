@@ -312,6 +312,11 @@ docker compose up -d
 curl -X POST http://127.0.0.1:8000/query -H "Content-Type: application/json" -d "{\"question\": \"...\"}"
 ```
 
+- Chat UI at **http://127.0.0.1:8000/** (`src/api/static/chat.html`, one self-contained file, no build
+  step or CDN): answers with clickable `[n]` citations, cited SEC filings with links, a "numbers match a
+  source" / unverified-numbers badge, sub-questions, `<calc>` results, latency and the Phoenix trace id.
+  History stays in the browser (localStorage); each question is answered independently. Interactive
+  API docs at `/docs`.
 - `POST /query` -> answer, sub-questions, cited sources (filing, period, section, SEC URL), `<calc>`
   calculations, unverified numbers, latency `{total, retrieval, generation}`, request id and the
   Phoenix `trace_id`. `GET /health` (503 until Qdrant, Ollama and the models are ready), `GET /metrics`
@@ -356,6 +361,10 @@ curl http://127.0.0.1:8000/health
   Same model, quantisation, context and KV cache; in the container Ollama keeps 73% of Qwen on the GPU.
   The native run's answer was also longer (it added the prior-year figure), so this is not a controlled
   speed comparison, but the container is at least no slower.
+- The stack keeps Qwen loaded (`LLM_KEEP_ALIVE=24h`; natively 10m): after Ollama unloaded an idle model
+  the next question took 63 s instead of 4 s.
+- Seen while picking the chat examples: "Microsoft's total revenue in fiscal 2025" is refused because
+  BM25 on "revenue" filled the context with *Unearned revenue* notes, not the income statement.
 - The comparison question "Apple's revenue in Q3 2024 and Q3 2025" was answered with fiscal 2025 Q3
   and fiscal 2026 Q3 figures: the same period-resolution limitation (calendar vs fiscal year). Both
   numbers exist in the context, so number verification passes; wrong-period numbers are Phase 17's scope.
