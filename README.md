@@ -404,3 +404,14 @@ Foreign private issuers (ARM, ASML, PDD, ...) file 20-F/40-F and are excluded by
 ```powershell
 .venv\Scripts\python -m pytest -q
 ```
+
+## License
+
+The code is released under the [MIT License](LICENSE). It covers this repository's code and
+documentation only:
+
+- SEC EDGAR filings are public data from the U.S. Securities and Exchange Commission. The filings
+  themselves are downloaded at run time (see the SEC's fair-access policy for request limits); only
+  short excerpts appear here, as retrieved contexts in the evaluation files.
+- Models are downloaded separately and keep their own licenses: bge-small-en-v1.5 and
+  bge-reranker-base (MIT), Qwen3-4B-Instruct-2507 (Apache 2.0), Llama 3.1 8B (Llama 3.1 Community License).
