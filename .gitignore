@@ -29,3 +29,6 @@ models/
 /tools/
 # Ragas judge-response cache (binary sqlite, changes every run)
 data/eval/cache/ragas/
+
+# Office lock files (created while a document is open in Word)
+~$*

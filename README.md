@@ -6,7 +6,7 @@ BGE cross-encoder reranking, HyDE / sub-question decomposition, and Ragas evalua
 ## Setup
 
 ```powershell
-C:\Users\ACER\AppData\Local\Programs\Python\Python312\python.exe -m venv .venv
+py -3.12 -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 copy .env.example .env   # then set SEC_USER_AGENT="Name email@domain"
 ```
