@@ -3,6 +3,19 @@
 RAG over Nasdaq-100 10-K / 10-Q filings with hybrid retrieval (BM25 + dense in Qdrant),
 BGE cross-encoder reranking, HyDE / sub-question decomposition, and Ragas evaluation.
 
+## Architecture at a glance
+
+[![Full architecture with key numbers per stage](docs/figures/architecture_overview.png)](docs/figures/architecture_overview.png)
+
+Every pipeline stage with its measured numbers and the alternatives it was compared against.
+The full write-up is [docs/SEC_EDGAR_RAG_Architecture_Report.docx](docs/SEC_EDGAR_RAG_Architecture_Report.docx).
+Both are generated from the result files by `docs/tools/report_data.py`:
+
+```powershell
+.venv\Scripts\python docs\tools\build_architecture_diagram.py   # -> docs/figures/architecture_overview.png
+.venv\Scripts\python docs\tools\build_report.py                 # -> docs/SEC_EDGAR_RAG_Architecture_Report.docx
+```
+
 ## Setup
 
 ```powershell
