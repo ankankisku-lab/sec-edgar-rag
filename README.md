@@ -16,6 +16,120 @@ Both are generated from the result files by `docs/tools/report_data.py`:
 .venv\Scripts\python docs\tools\build_report.py                 # -> docs/SEC_EDGAR_RAG_Architecture_Report.docx
 ```
 
+## System architecture
+
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 360
+---
+flowchart TB
+    user(["User: chat UI at GET / or curl"])
+
+    subgraph api["FastAPI service · src/api/main.py"]
+        direction TB
+        query["POST /query<br/>one GPU pipeline at a time (asyncio lock)"]
+        busy["503 busy<br/>more than 4 requests queued"]
+        ops["GET /health · GET /metrics"]
+    end
+
+    subgraph retrieval["Retrieval · src/query, src/retrieval"]
+        direction TB
+        router{"Regex router<br/>comparison or<br/>multi-period cue?"}
+        decomp["Decomposer<br/>Qwen3-4B, JSON mode, cached<br/>one lookup per company / metric / period"]
+        bm25["BM25 top-60 per sub-question<br/>Qdrant sparse vectors"]
+        rerank["Cross-encoder rerank<br/>bge-reranker-base, fp16, raw logits<br/>tables read as sentences"]
+        merge["Round-robin interleave<br/>top 8 across sub-questions"]
+        expand["Parent expansion<br/>5,000-token budget"]
+    end
+
+    subgraph generation["Generation · src/generation"]
+        llm["CitationQueryEngine → Qwen3-4B-Instruct<br/>Ollama, Q4_K_M, 8k context, temperature 0"]
+    end
+
+    subgraph checks["Deterministic checks: Python, never the LLM"]
+        direction TB
+        calc["#lt;calc#gt; arithmetic<br/>AST evaluator, no eval"]
+        verify["Every number in the answer<br/>matched against the sources"]
+    end
+
+    answer(["JSON answer: [n] citations, SEC links, calculations,<br/>unverified numbers, latency, Phoenix trace id"])
+
+    subgraph stores["Stores"]
+        qdrant[("Qdrant v1.19.1<br/>240,832 child chunks<br/>dense + BM25 sparse + payload")]
+        parents[("SQLite parent store<br/>103,145 sections")]
+    end
+
+    phoenix["Arize Phoenix<br/>OpenTelemetry span per stage"]
+
+    subgraph offline["Offline indexing · resumable and idempotent"]
+        direction LR
+        sec["SEC EDGAR<br/>726 filings, 93 companies"] --> download["Download 5 req/s<br/>iXBRL check 726/726"]
+        download --> parse["Parser<br/>44,870 tables rebuilt"]
+        parse --> chunk["Parent–child chunker"]
+        chunk --> embed["bge-small dense<br/>+ BM25 sparse"]
+    end
+
+    user --> query
+    query -.->|"queue full"| busy
+    query --> router
+    router -->|"no: single fact"| bm25
+    router -->|"yes"| decomp
+    decomp --> bm25
+    bm25 --> rerank --> merge --> expand --> llm --> calc --> verify --> answer
+    qdrant --> bm25
+    parents --> expand
+    embed --> qdrant
+    chunk --> parents
+    query -.->|"OTLP spans"| phoenix
+
+    classDef io fill:#374151,stroke:#1F2937,color:#fff
+    classDef ret fill:#6B4C9A,stroke:#4A3370,color:#fff
+    classDef gen fill:#B8561B,stroke:#7A3710,color:#fff
+    classDef det fill:#3F7D3A,stroke:#2A5427,color:#fff
+    classDef store fill:#17736B,stroke:#0F4F49,color:#fff
+    classDef off fill:#2F5496,stroke:#1F3864,color:#fff
+    classDef warn fill:#B42318,stroke:#7A1810,color:#fff
+    class user,answer,query,ops,phoenix io
+    class router,bm25,rerank,merge,expand ret
+    class decomp,llm gen
+    class calc,verify det
+    class qdrant,parents store
+    class sec,download,parse,chunk,embed off
+    class busy warn
+```
+
+In Docker (`docker compose --profile app up`) the same pipeline runs as four services on
+127.0.0.1: `qdrant`, `phoenix`, `ollama` and `api`, with Ollama and the API on the GPU.
+
+### How the retrieval pipeline was chosen
+
+Each step was kept only if it beat the previous one on eval set v1 (236 questions with
+deterministic answer keys; paired bootstrap, 95% CI). Dashed branches were measured and rejected.
+
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 360
+---
+flowchart LR
+    v1["V1 dense<br/>MRR@10 0.132"] --> v2["V2 BM25<br/>MRR@10 0.428"]
+    v2 --> v4["V4 + cross-encoder rerank<br/>MRR@10 0.614"]
+    v4 --> v5["V5 + sub-question decomposition<br/>MRR@10 0.725 · all-hit@10 0.932"]
+    v2 -.-> v3["V3 hybrid fusion<br/>0.427: no gain"]
+    v5 -.-> v6["V6 + HyDE<br/>0.720, +3 s per query"]
+
+    classDef kept fill:#3B4A5E,stroke:#1F2937,color:#fff
+    classDef rejected fill:#E5E7EB,stroke:#9CA3AF,color:#6B7280,stroke-dasharray: 4 3
+    class v1,v2,v4,v5 kept
+    class v3,v6 rejected
+```
+
+With decomposition, answer accuracy on the same 40 questions went from 52.5% to 87.5%, and no
+answer in any run contained a number that the sources don't support.
+
 ## Setup
 
 ```powershell
