@@ -134,6 +134,11 @@ def phase17() -> dict:
     return {k: pd.read_csv(RES / f"phase17_{k}.csv") for k in ("audit", "numbers", "stress", "arithmetic")}
 
 
+def example_questions() -> pd.DataFrame:
+    """80 questions asked through the live API and checked against the filings' iXBRL facts."""
+    return pd.read_csv(RES / "example_questions.csv")
+
+
 def test_count() -> int:
     out = subprocess.run([str(ROOT / ".venv" / "Scripts" / "python"), "-m", "pytest", "--collect-only", "-q"],
                          cwd=ROOT, capture_output=True, text=True).stdout

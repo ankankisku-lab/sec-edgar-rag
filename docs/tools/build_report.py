@@ -334,6 +334,9 @@ def build():
             "calc_n": len(calc_wrong)}
     assert (calc_wrong.outcome == "wrong, not flagged").all(), "update the summary wording: a <calc> run flagged a wrong answer"
     p17fa = p17["audit"][p17["audit"].outcome == "correct"].groupby("run").flagged.mean().to_dict()  # false alarms
+    exq = R.example_questions()
+    exq_ok = exq[exq.outcome == "verified"]
+    exq_wrong = exq[exq.auto_check_passed & (exq.outcome == "wrong")]
     ar = p17["arithmetic"]
     p17a = {f"{r}_err": int(((ar.run == r) & (ar.status == "arithmetic error")).sum()) for r in ar.run.unique()}
     e0 = exp[exp.dataset == V0].set_index("version"); e1 = exp[exp.dataset == V1].set_index("version")
@@ -416,6 +419,10 @@ def build():
                               + "<calc> stays because it keeps the number "
                               f"check meaningful: without it {pct(p17fa['G8'], 0)} of correct answers were flagged, vs "
                               f"{pct(p17fa['G7'], 0)} with it."),
+        ("Tested example questions: ", f"{len(exq_ok)} of {len(exq)} questions across 16 companies were verified against "
+                                       f"the filings' own iXBRL facts; {len(exq_wrong)} answers passed the automatic number "
+                                       "check but quoted the wrong period, a segment instead of the total, or a wrong unit "
+                                       "(Section 5.18)."),
         ("Negative results, kept on record: ", "dense retrieval and hybrid fusion did not help on this workload, HyDE gave no "
                                                "measurable gain, and a local 8B model was not a reliable faithfulness judge."),
     ])
@@ -602,7 +609,8 @@ def build():
         "deviations are recorded: a local-LLM feasibility benchmark was inserted before generation, sub-question "
         "decomposition (Phase 14) was done before Ragas (Phase 13) because multi-fact questions were the largest measured gap, "
         "and the serving phases (19-21) were built before the numerical-hallucination evaluation (Phase 17); vector "
-        "quantization (Phase 18) is still open.")
+        "quantization (Phase 18) is still open. docs/JOURNEY.md draws the whole chronology as flowcharts: for each step, "
+        "the problems that came up, the fixes and the measurement that confirmed them.")
     D.table(["Commit", "Date", "Subject"], log.values.tolist(), caption="Commit history (chronology)", widths=[1.6, 2.8, 12.6],
             font=7.5, numeric_right=False)
     D.source("git log --reverse")
@@ -878,6 +886,39 @@ def build():
         "Warm, the containerised stack answered the single-fact question in 3.9 s and the comparison in 11.8 s; a cold start "
         "takes 192 s until /health returns 200 (README; not a controlled speed comparison with the native run).")
     D.source("README.md (Phases 19-21); src/api/main.py; docker-compose.yml")
+
+    D.h("5.18 Example questions: answers checked against the filings' own tags", 2)
+    auto = exq[exq.auto_check_passed]
+    D.meta("a list of questions users can rely on, and a stricter end-to-end test across 16 companies.",
+           "data/eval/results/example_questions.csv; the 'Example questions for the chat UI' section of README.md",
+           f"{len(exq_ok)} of {len(exq)} verified; the automatic number check alone was not enough, and the review found two "
+           "bugs in it (fixed, Sections 5.16 and 5.17).")
+    D.p(f"{len(exq)} questions across eight types (single quarter, annual, balance sheet and cash flow, year over year, "
+        "percentage change, quarter vs quarter, company vs company, narrative) were asked through the live API of the Docker "
+        f"stack; {int((exq['round'] == 'rephrased').sum())} of them rephrase first-round failures with exact period-end dates. "
+        f"{len(auto)} passed the automatic check: an answer, with citations, and every number found in a source. Each "
+        "number stated in a numeric answer was then looked up among the tagged iXBRL facts of that company's filings, which "
+        "name the concept, the reporting period and any segment. An answer counted as verified only if every stated figure "
+        "is a fact with the asked concept and period and is not a single segment's figure; narrative answers had to be "
+        "cited and grounded.")
+    ct = pd.crosstab(exq.outcome, exq.kind).reindex(["verified", "wrong", "not grounded", "refused"], fill_value=0)
+    D.table(["Outcome", "numeric", "narrative", "total"],
+            [(o, int(ct.loc[o].get("numeric", 0)), int(ct.loc[o].get("narrative", 0)), int(ct.loc[o].sum())) for o in ct.index],
+            caption=f"Outcome of the {len(exq)} example questions")
+    D.source("data/eval/results/example_questions.csv")
+    k_period = int(exq_wrong.reason.str.startswith("wrong period").sum())
+    k_segment = int(exq_wrong.reason.str.contains("segment").sum())
+    k_calc = len(exq_wrong) - k_period - k_segment
+    D.p(f"Of the {len(exq_wrong)} answers that passed the automatic check but were wrong, {k_period} used the wrong period "
+        f"(six-month or year-to-date figures), {k_segment} quoted a single segment as the company total, and {k_calc} "
+        "contained the model's own faulty calculation (a percentage no filing figure supports, and a unit error). The "
+        "first two kinds quote real figures from the right filing, so a check that only asks whether a number appears in "
+        "the sources cannot tell them from the right ones: these are the wrong-cell errors Phase 17 measured, now seen on "
+        "live questions. The last kind passed because the check accepts calculated numbers. The same review found two "
+        "bugs in the check "
+        "itself: amounts between 1,900 and 2,100 ('$2,002 million') were skipped as years, and a segment figure passed "
+        "as the company total. Both are fixed (Sections 5.16 and 5.17). The verified questions are listed in the README "
+        f"as examples for the chat UI; their median answer time was {exq_ok.seconds.median():.0f} s.")
 
     # ------------------------------------------------------------ 6 ledger
     D.h("6. Experiment ledger", 1)
