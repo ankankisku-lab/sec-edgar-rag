@@ -130,6 +130,32 @@ flowchart LR
 With decomposition, answer accuracy on the same 40 questions went from 52.5% to 87.5%, and no
 answer in any run contained a number that the sources don't support.
 
+## How this was built
+
+23 steps, each kept only if it beat the previous version on a fixed evaluation set. The full story,
+with the problem, the fix and the measurement for every step, is in **[docs/JOURNEY.md](docs/JOURNEY.md)**.
+
+```mermaid
+---
+config:
+  flowchart:
+    wrappingWidth: 220
+---
+flowchart LR
+    a["<b>1 · Corpus and index</b><br/>726 filings<br/>240,832 chunks"] --> b["<b>2 · What works</b><br/>MRR 0.132 → 0.725<br/>answers 52.5% → 87.5%"]
+    b --> c["<b>3 · Shipping</b><br/>FastAPI, Phoenix, Docker<br/>3.9 s warm answers"]
+    c --> d["<b>4 · Proving the numbers</b><br/>97.5% of invented numbers caught<br/>cited cells highlighted"]
+    a -.- pa["⚠ glued words, lost table headers, slow localhost calls"]
+    b -.- pb["⚠ reranker preferred prose over tables; comparisons at 0.000"]
+    c -.- pc["⚠ LLM killed for memory, Windows bind mounts, idle unloads"]
+    d -.- pd["⚠ wrong-cell numbers invisible, segment figures, year-like amounts"]
+
+    classDef stage fill:#2F5496,stroke:#1F3864,color:#fff
+    classDef issue fill:#FDECEA,stroke:#B42318,color:#7A1810
+    class a,b,c,d stage
+    class pa,pb,pc,pd issue
+```
+
 ## Example questions for the chat UI
 
 63 questions across 16 companies that were asked through the live API (Docker stack, V5 retrieval +
