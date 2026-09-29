@@ -275,15 +275,15 @@ G6,q0171,yoy,wrong cell,"same column, other row","$5,413","$1,122",False
 G6,q0171,yoy,wrong cell,"same line item, other table","$5,413","$8,408",False
 G6,q0160,yoy,invented,last digit +1,"$2,161","$2,162",True
 G6,q0160,yoy,invented,+10%,"$2,161","$2,377",True
-G6,q0160,yoy,invented,-10%,"$2,161","$1,945",False
+G6,q0160,yoy,invented,-10%,"$2,161","$1,945",True
 G6,q0160,yoy,invented,transposed digits,"$2,161","$2,116",True
 G6,q0160,yoy,wrong cell,"same row, other column","$2,161","$6,688",False
 G6,q0160,yoy,wrong cell,"same column, other row","$2,161","$6,721",False
 G6,q0160,yoy,wrong cell,"same line item, other table","$2,161","$6,358",False
-G6,q0160,yoy,invented,last digit +1,"$1,941","$1,942",False
+G6,q0160,yoy,invented,last digit +1,"$1,941","$1,942",True
 G6,q0160,yoy,invented,+10%,"$1,941","$2,135",True
 G6,q0160,yoy,invented,-10%,"$1,941","$1,747",True
-G6,q0160,yoy,invented,transposed digits,"$1,941","$1,914",False
+G6,q0160,yoy,invented,transposed digits,"$1,941","$1,914",True
 G6,q0160,yoy,wrong cell,"same row, other column","$1,941","$6,688",False
 G6,q0160,yoy,wrong cell,"same column, other row","$1,941","$3,350",False
 G6,q0160,yoy,wrong cell,"same line item, other table","$1,941","$6,358",False
@@ -667,15 +667,15 @@ G7,q0170,yoy,wrong cell,"same column, other row",$52,$244,False
 G7,q0170,yoy,wrong cell,"same line item, other table",$52,$33,False
 G7,q0160,yoy,invented,last digit +1,"$2,161","$2,162",True
 G7,q0160,yoy,invented,+10%,"$2,161","$2,377",True
-G7,q0160,yoy,invented,-10%,"$2,161","$1,945",False
+G7,q0160,yoy,invented,-10%,"$2,161","$1,945",True
 G7,q0160,yoy,invented,transposed digits,"$2,161","$2,116",True
 G7,q0160,yoy,wrong cell,"same row, other column","$2,161","$6,688",False
 G7,q0160,yoy,wrong cell,"same column, other row","$2,161","$6,721",False
 G7,q0160,yoy,wrong cell,"same line item, other table","$2,161","$6,358",False
-G7,q0160,yoy,invented,last digit +1,"$1,941","$1,942",False
+G7,q0160,yoy,invented,last digit +1,"$1,941","$1,942",True
 G7,q0160,yoy,invented,+10%,"$1,941","$2,135",True
 G7,q0160,yoy,invented,-10%,"$1,941","$1,747",True
-G7,q0160,yoy,invented,transposed digits,"$1,941","$1,914",False
+G7,q0160,yoy,invented,transposed digits,"$1,941","$1,914",True
 G7,q0160,yoy,wrong cell,"same row, other column","$1,941","$6,688",False
 G7,q0160,yoy,wrong cell,"same column, other row","$1,941","$3,350",False
 G7,q0160,yoy,wrong cell,"same line item, other table","$1,941","$6,358",False

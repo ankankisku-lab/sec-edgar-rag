@@ -820,7 +820,10 @@ def build():
         f"{', '.join(missed.planted.head(3))}), so they are indistinguishable from a wrong-cell read. A second gap: whole "
         "percentages up to 31% are skipped by the day-of-month "
         f"rule, so they are never checked; {int((nums.origin == 'unchecked percentage').sum())} such percentages appear in "
-        f"{nums[nums.origin == 'unchecked percentage'].groupby(['run', 'qid']).ngroups} answers.")
+        f"{nums[nums.origin == 'unchecked percentage'].groupby(['run', 'qid']).ngroups} answers. A third gap was found "
+        "later, while testing example questions, and has been fixed: amounts between 1,900 and 2,100 ('$2,002 million') "
+        "were skipped as years. A $ sign or thousands comma now always marks an amount, and the figures above are from "
+        "after the fix, which caught six more planted numbers.")
     ac = pd.crosstab(ar.run, ar.status)
     order = [c for c in ["right", "rounded or approximate", "arithmetic right, values wrong", "sign lost",
                          "arithmetic error", "no change stated", "refused"] if c in ac.columns]
@@ -866,7 +869,10 @@ def build():
         "ready; GET /metrics reports request counts, p50/p95 and refusal and unverified-number rates. One GPU means one pipeline "
         "run at a time (asyncio lock) with at most 4 requests queued, then 503. A chat UI is served at GET /: every number "
         "in an answer is traced to the table cell or sentence it was quoted from (the Phase 17 parser), and clicking it "
-        "opens the source passage with that cell highlighted.")
+        "opens the source passage with that cell highlighted, with a link to the same spot in the original filing. A "
+        "number that the filing's iXBRL tags as one business segment's figure, while the filing also reports a different "
+        "company total, is flagged with the segment name and the total (e.g. Microsoft's Productivity and Business "
+        "Processes operating income quoted as 'operating income').")
     D.p("Docker (Phase 21): four services bound to 127.0.0.1 - Qdrant, Phoenix, Ollama and the API, with Ollama and the API on "
         "the GPU. Models, the parent store and the decomposition cache are bind-mounted from D: and the container runs offline. "
         "Warm, the containerised stack answered the single-fact question in 3.9 s and the comparison in 11.8 s; a cold start "

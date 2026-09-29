@@ -9,6 +9,8 @@ FILING = """<html xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"><head><title>10
 <a href="javascript:alert(1)">bad link</a><iframe src="https://example.com"></iframe>
 <div style="display:none"><ix:header><ix:resources>
 <xbrli:context id="c-q3"><xbrli:period><xbrli:startDate>2025-03-30</xbrli:startDate><xbrli:endDate>2025-06-28</xbrli:endDate></xbrli:period></xbrli:context>
+<xbrli:context id="c-q3-americas"><xbrli:entity><xbrli:segment><xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">aapl:AmericasSegmentMember</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:startDate>2025-03-30</xbrli:startDate><xbrli:endDate>2025-06-28</xbrli:endDate></xbrli:period></xbrli:context>
+<xbrli:context id="c-q3-products"><xbrli:entity><xbrli:segment><xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">us-gaap:ProductMember</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:startDate>2025-03-30</xbrli:startDate><xbrli:endDate>2025-06-28</xbrli:endDate></xbrli:period></xbrli:context>
 </ix:resources></ix:header></div>
 <div><span>Item 1. Financial Statements</span></div>
 <div>CONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS</div>
@@ -19,7 +21,8 @@ FILING = """<html xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"><head><title>10
 </table>
 <div><span>Item 2. Management's Discussion and Analysis</span></div>
 <table>
-<tr><td>Americas</td><td>9,800</td></tr>
+<tr><td>Americas</td><td><ix:nonFraction contextRef="c-q3-americas" name="us-gaap:OperatingIncomeLoss" id="f-8">9,800</ix:nonFraction></td></tr>
+<tr><td>Products</td><td><ix:nonFraction contextRef="c-q3-products" name="us-gaap:Revenues" id="f-7">66,613</ix:nonFraction></td></tr>
 <tr><td>Total operating income</td><td><ix:nonFraction contextRef="c-q3" name="us-gaap:OperatingIncomeLoss" id="f-9">28,202</ix:nonFraction></td></tr>
 </table>
 <p>Gross margin increased $1.9 billion or 15% driven by growth in Services.</p>
@@ -54,6 +57,17 @@ def test_same_fact_in_two_tables_is_told_apart_by_row_label(filing):
     assert segment["fact_id"] == "f-9" and segment["unique"]
     assert idx["elements"][segment["node"]].get("id") == "f-9"
     assert F._item_of(idx, idx["elements"][segment["node"]]) == "2"
+
+
+def test_segment_figure_is_named_with_the_company_total(filing):
+    seg = F.locate_cell(filing, 9800.0, "Americas", "Three Months Ended June 28, 2025")
+    assert seg["fact_id"] == "f-8"
+    assert seg["segment"] == {"member": "Americas Segment", "axis": "StatementBusinessSegmentsAxis",
+                              "total": "28,202", "total_fact_id": "f-2"}
+    # a product/service breakdown is not a segment, and consolidated figures carry no note
+    assert F.locate_cell(filing, 66613.0, "Products")["segment"] is None
+    assert F.locate_cell(filing, 28202.0, "Operating income")["segment"] is None
+    assert F._member_label("msft:ProductivityAndBusinessProcessesMember") == "Productivity and Business Processes"
 
 
 def test_period_score_uses_the_column_header():

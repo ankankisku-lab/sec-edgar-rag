@@ -26,6 +26,7 @@ G5,q0141,yoy,"2,282",2282.0,False,calculation,False,calculation
 G5,q0170,yoy,$52,52.0,True,source,True,right cell
 G5,q0170,yoy,$40,40.0,True,source,True,right cell
 G5,q0160,yoy,"$2,161",2161.0,True,source,False,right cell
+G5,q0160,yoy,"$1,941",1941.0,True,source,False,right cell
 G5,q0162,yoy,"$9,541",9541.0,False,source,False,"same line item, other table"
 G5,q0162,yoy,"$(1,165)",1165.0,False,source,False,"same line item, other table"
 G5,q0162,yoy,"10,706",10706.0,False,calculation,False,calculation
@@ -82,6 +83,7 @@ G6,q0170,yoy,$941,941.0,False,source,False,"same column, other row"
 G6,q0170,yoy,$22,22.0,False,source,False,"same column, other row"
 G6,q0170,yoy,919,919.0,False,calculation,False,calculation
 G6,q0160,yoy,"$2,161",2161.0,True,source,True,right cell
+G6,q0160,yoy,"$1,941",1941.0,True,source,True,right cell
 G6,q0160,yoy,220,220.0,True,calculation,True,calculation
 G6,q0162,yoy,$(637),637.0,True,source,True,right cell
 G6,q0162,yoy,$(16),16.0,True,source,True,right cell
@@ -171,6 +173,7 @@ G7,q0141,yoy,859,859.0,False,calculation,False,calculation
 G7,q0170,yoy,$52,52.0,True,source,True,right cell
 G7,q0170,yoy,$40,40.0,True,source,True,right cell
 G7,q0160,yoy,"$2,161",2161.0,True,source,True,right cell
+G7,q0160,yoy,"$1,941",1941.0,True,source,True,right cell
 G7,q0160,yoy,220,220.0,True,calculation,True,calculation
 G7,q0162,yoy,$(637),637.0,True,source,True,right cell
 G7,q0162,yoy,$(16),16.0,True,source,True,right cell
@@ -286,6 +289,7 @@ G8,q0170,yoy,$52,52.0,True,source,True,right cell
 G8,q0170,yoy,$12,12.0,True,unverified,True,not in sources
 G8,q0170,yoy,$40,40.0,True,source,True,right cell
 G8,q0160,yoy,"$2,161",2161.0,True,source,True,right cell
+G8,q0160,yoy,"$1,941",1941.0,True,source,True,right cell
 G8,q0160,yoy,$220,220.0,True,unverified,True,not in sources
 G8,q0162,yoy,$(637),637.0,True,source,True,right cell
 G8,q0162,yoy,$(16),16.0,True,source,True,right cell
@@ -299,6 +303,7 @@ G8,q0147,yoy,"$9,792",9792.0,True,source,False,right cell
 G8,q0147,yoy,"$4,886",4886.0,True,source,False,right cell
 G8,q0147,yoy,"$4,906",4906.0,False,unverified,False,not in sources
 G8,q0165,pct_change,11,11.0,False,unchecked percentage,True,"same row, other column"
+G8,q0165,pct_change,"$1,931",1931.0,True,source,True,right cell
 G8,q0165,pct_change,"$1,737",1737.0,True,source,True,right cell
 G8,q0165,pct_change,$194,194.0,False,source,True,text
 G8,q0165,pct_change,$194,194.0,False,source,True,text

@@ -241,7 +241,7 @@ reliable way to name a period.
 Of the 80 questions tried, 17 were left out. The misses show where the system is still weak:
 
 - **Wrong period:** Nvidia's revenue change "from fiscal 2025 to fiscal 2026" was answered from six-month figures. Microsoft's operating income for "fiscal 2026 Q2 vs Q3" was answered from year-to-date totals.
-- **Segment instead of total:** "Microsoft's operating income" quarters were answered from the Productivity and Business Processes segment. The value is real and correctly tagged, but it is not the company total.
+- **Segment instead of total:** "Microsoft's operating income" quarters were answered from the Productivity and Business Processes segment. The value is real and correctly tagged, but it is not the company total. The chat UI now warns about this and shows the company total.
 - **Numbers the model changed:** Netflix's 2024 revenue was quoted with swapped digits, and a unit conversion produced "5,700 billion". The number check flagged the swapped digits.
 - **Refusals and missing citations:** three questions were refused, and one answer gave numbers without citing a source.
 
@@ -539,15 +539,18 @@ error, and verification is re-run on the same sources.
 
 | planted error | n | flagged |
 |---|---|---|
-| invented: last digit +1 | 149 | 98.7% |
+| invented: last digit +1 | 149 | 100% |
 | invented: +10% | 149 | 98.0% |
-| invented: -10% | 149 | 96.0% |
-| invented: transposed digits | 145 | 93.1% |
+| invented: -10% | 149 | 97.3% |
+| invented: transposed digits | 145 | 94.5% |
 | wrong cell: same row, other column | 118 | **0%** |
 | wrong cell: same column, other row | 140 | **0%** |
 | wrong cell: same line item, other table | 118 | **0%** |
 
-The invented numbers that pass happen to match another number in the sources or its rounding ($44, $979).
+The 15 invented numbers that pass all happen to match another number in the sources (13) or its
+rounding (2). An earlier run also missed $1,942, $1,914 and $1,945: amounts from 1,900 to 2,100 were
+skipped as if they were years. That was fixed later (a `$` sign or a thousands comma now always marks an
+amount), and the table above is from after the fix.
 
 Audit of every answer-keyed question:
 
@@ -633,6 +636,12 @@ curl -X POST http://127.0.0.1:8000/query -H "Content-Type: application/json" -d 
   land in an HTML table holding at least 80% of the quoted table's numbers. Every downloaded filing
   carries a script sec.gov's bot protection injected at download time, so the served copy is stripped
   of scripts, frames and event handlers and sent with a no-script Content-Security-Policy.
+- Segment figures: when a quoted number is tagged in iXBRL as one business segment's (or region's)
+  figure and the filing also reports a different company-wide figure for the same line item and period,
+  the answer shows a warning with the segment and the company total. For example, "Microsoft's operating
+  income" answered with $20,973 million gets "Productivity and Business Processes (company total 38,398)".
+  Product and service breakdowns such as Costco's net sales are not segments and are not flagged; on the
+  434 numbers of the saved G5-G8 answers the warning did not fire once.
 - `POST /query` -> answer, sub-questions, cited sources (filing, period, section, SEC URL, and the
   passage the LLM read as text and table blocks), `numbers` (each number's offsets in the answer and the
   cells or sentences it was found in), `<calc>` calculations, unverified numbers, latency

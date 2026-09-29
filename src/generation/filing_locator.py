@@ -75,6 +75,8 @@ def _index(filing_id: str) -> dict | None:
     for ctx in root.iter("xbrli:context"):
         p = {el.tag.split(":")[-1]: (el.text or "").strip() for el in ctx.iter() if isinstance(el.tag, str)
              and el.tag in ("xbrli:startdate", "xbrli:enddate", "xbrli:instant")}
+        # dimensions, e.g. (us-gaap:StatementBusinessSegmentsAxis, msft:ProductivityAndBusinessProcessesMember)
+        p["dims"] = [(m.get("dimension", ""), (m.text or "").strip()) for m in ctx.iter("xbrldi:explicitmember")]
         periods[ctx.get("id")] = p
     facts = []
     for el in root.iter("ix:nonfraction"):
@@ -252,7 +254,42 @@ def locate_cell(filing_id: str, value: float, label: str, column: str = "", capt
     tagged = el.tag == "ix:nonfraction"
     return {"node": idx["order"][el], "method": "ixbrl" if tagged else "table", "unique": unique,
             "fact_id": fact.get("id") if fact is not None else None,
-            "concept": fact.get("name") if fact is not None else None}
+            "concept": fact.get("name") if fact is not None else None,
+            "segment": segment_note(idx, fact) if fact is not None else None}
+
+
+SEGMENT_AXES = {"us-gaap:StatementBusinessSegmentsAxis", "srt:StatementGeographicalAxis"}
+
+
+def _member_label(member: str) -> str:
+    """msft:ProductivityAndBusinessProcessesMember -> Productivity and Business Processes"""
+    name = member.split(":")[-1].removesuffix("Member")
+    words = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", name).split()
+    return " ".join(w.lower() if w in ("And", "Of", "The", "For", "In") and i else w for i, w in enumerate(words))
+
+
+def segment_note(idx: dict, fact) -> dict | None:
+    """When a quoted value is one business segment's (or region's) figure and the filing reports a
+    different company-wide figure for the same line item and period, name the segment and give the
+    total -- e.g. Microsoft's Productivity and Business Processes operating income quoted as
+    "operating income". Product/service breakdowns (Costco's net sales) are not segments."""
+    ctx = idx["periods"].get(fact.get("contextref"), {})
+    segments = [(axis, member) for axis, member in ctx.get("dims", []) if axis in SEGMENT_AXES]
+    if not segments:
+        return None
+    period = (ctx.get("startdate"), ctx.get("enddate"), ctx.get("instant"))
+    value, totals = _value(_text(fact)), []
+    for el, _ in idx["facts"]:
+        c = idx["periods"].get(el.get("contextref"), {})
+        if el.get("name") == fact.get("name") and not c.get("dims") \
+                and (c.get("startdate"), c.get("enddate"), c.get("instant")) == period:
+            totals.append(el)
+    if not totals or any(_value(_text(t)) == value for t in totals):
+        return None  # no company-wide figure, or the segment is the whole company
+    total = totals[0]
+    sign = "-" if total.get("sign") == "-" else ""
+    return {"member": _member_label(segments[0][1]), "axis": segments[0][0].split(":")[-1],
+            "total": f"{sign}{_text(total)}", "total_fact_id": total.get("id")}
 
 
 def locate_text(filing_id: str, token: str, before: str, after: str, item: str | None = None) -> dict | None:

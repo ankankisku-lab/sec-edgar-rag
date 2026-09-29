@@ -85,8 +85,11 @@ def number_spans(answer: str, keep_percent: bool = False) -> list[tuple[int, int
             continue
         v = abs(v)
         percent = keep_percent and text[m.end():m.end() + 1] == "%"
-        if v.is_integer() and (1900 <= v <= 2100 or (v <= 31 and "$" not in token)) and not percent:
-            continue  # years and day-of-month numbers
+        # Years ("2025") and day-of-month numbers are skipped; "$2,002" or "2,002 million" is an
+        # amount, not a year, so a $ sign or thousands comma always keeps the number.
+        amount = "$" in token or re.search(r"\d,\d", token) is not None   # not "June 28," / "2025,"
+        if v.is_integer() and not amount and (1900 <= v <= 2100 or v <= 31) and not percent:
+            continue
         out.append((m.start(), m.end(), token, v))
     return out
 

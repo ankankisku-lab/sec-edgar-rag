@@ -107,7 +107,7 @@ details.sources[open] > summary::before { transform: rotate(90deg); }
 .num { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer;
   border-bottom: 1.5px dotted var(--accent); border-radius: 2px; }
 .num:hover, .num:focus-visible { background: var(--hl); outline: none; }
-.num.off { border-bottom-color: var(--warn); }
+.num.off, .num.seg { border-bottom-color: var(--warn); }
 
 /* passage behind a citation */
 details.passage { grid-column: 1 / -1; margin-top: 2px; }
@@ -283,7 +283,8 @@ function answerHTML(e) {
   const body = formatAnswer(markNumbers(r.answer, numbers))
     .replace(/(\d+)/g, (m, k) => {
       const n = numbers[+k];
-      return `<button class="num${n.in_cited_source ? "" : " off"}" type="button" data-num="${id}:${k}" title="${esc(numberTitle(n))}">`;
+      const cls = (n.in_cited_source ? "" : " off") + (segmentOf(n) ? " seg" : "");
+      return `<button class="num${cls}" type="button" data-num="${id}:${k}" title="${esc(numberTitle(n))}">`;
     })
     .replace(//g, "</button>")
     .replace(/\[(\d+)\]/g, (m, n) =>
@@ -298,6 +299,11 @@ function answerHTML(e) {
   } else if (r.unverified_numbers.length) {
     html += `<div class="note warn">⚠ Not found in the sources, treat with care:
       <b>${r.unverified_numbers.map(esc).join(", ")}</b></div>`;
+  }
+  const segments = numbers.map((n) => [n, segmentOf(n)]).filter(([, s]) => s);
+  if (!refused && segments.length) {
+    html += `<div class="note warn">⚠ Segment figures, not company totals: ${segments.map(([n, s]) =>
+      `<b>${esc(n.token)}</b> is ${esc(s.member)} (company total ${esc(s.total)})`).join("; ")}.</div>`;
   }
 
   const chips = [];
@@ -379,11 +385,16 @@ function markNumbers(answer, numbers) {
   return t;
 }
 
+// A number quoted from one business segment (or region) while the filing also reports a company total.
+const segmentOf = (n) => (n.cells || []).map((c) => c.filing && c.filing.segment).find(Boolean) || null;
+
 function numberTitle(n) {
+  const seg = segmentOf(n);
+  const segLine = seg ? `\nSegment figure: ${seg.member}; company total ${seg.total}` : "";
   const where = n.cells.length
     ? n.cells.slice(0, 2).map((c) => `Source ${c.source}: ${c.label}${c.column ? " · " + c.column : ""}`).join("\n")
     : n.text.slice(0, 2).map((t) => `Source ${t.source}: quoted in the text`).join("\n");
-  return where + (n.in_cited_source ? "" : "\nNot in the source this sentence cites") +
+  return where + segLine + (n.in_cited_source ? "" : "\nNot in the source this sentence cites") +
     "\nClick to show it (the passage links to the original filing)";
 }
 

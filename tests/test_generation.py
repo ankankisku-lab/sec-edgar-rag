@@ -31,6 +31,15 @@ def test_verify_flags_numbers_not_in_sources():
     assert verify_numbers("About $28.2 billion in Q3 2025, quarter ended June 28, 2025 [1][2].", sources) == []
 
 
+def test_amounts_that_look_like_years_are_still_verified():
+    sources = "| Net income | $2,002 | $2,666 |"
+    assert verify_numbers("Net income was $2,002 million in fiscal 2026 Q3 [1].", sources) == []
+    assert verify_numbers("Net income was $2,012 million [1].", sources) == ["$2,012"]
+    assert verify_numbers("Net income was 2,012 million [1].", sources) == ["2,012"]
+    # plain years and day-of-month numbers are still not claims about the figures
+    assert verify_numbers("In 2025, on June 28, net income was $2,002 million [1].", sources) == []
+
+
 def test_value_stated():
     assert value_stated("Operating income was $28,202 million [1].", "28,202")
     assert value_stated("about $28.2 billion", "$28,202")
