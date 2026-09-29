@@ -129,6 +129,17 @@ def mcnemar(run_a: str, run_b: str) -> dict:
     return {"n": len(j), "fixed": fixed, "broke": broke, "p": p}
 
 
+def phase17() -> dict:
+    """Numerical-hallucination evaluation outputs (src/evaluation/numeric_hallucination.py)."""
+    return {k: pd.read_csv(RES / f"phase17_{k}.csv") for k in ("audit", "numbers", "stress", "arithmetic")}
+
+
+def test_count() -> int:
+    out = subprocess.run([str(ROOT / ".venv" / "Scripts" / "python"), "-m", "pytest", "--collect-only", "-q"],
+                         cwd=ROOT, capture_output=True, text=True).stdout
+    return sum(1 for line in out.splitlines() if "::" in line)
+
+
 def feasibility() -> pd.DataFrame:
     return pd.read_csv(ROOT / "data/benchmarks/llm_feasibility.csv")
 

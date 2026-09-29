@@ -165,6 +165,10 @@ def build(out: Path = OUT) -> Path:
     c, es, exp, sc, sw, cfg = R.corpus(), R.eval_sets(), R.experiments(), R.scaling(), R.sweeps(), R.configs()
     G = {g: R.gen_summary(g) for g in ("G1", "G2", "G3", "G4", "G5", "G6")}
     mc, ja, feas = R.mcnemar("G3", "G4"), R.judge_agreement(), R.feasibility()
+    p17 = R.phase17()
+    p17s = p17["stress"].groupby("kind").flagged.mean().to_dict()
+    p17fa = p17["audit"][p17["audit"].outcome == "correct"].groupby("run").flagged.mean().to_dict()
+    p17g7, p17g8 = R.gen_summary("G7")["correct"], R.gen_summary("G8")["correct"]
     e0, e1 = exp[exp.dataset == V0].set_index("version"), exp[exp.dataset == V1].set_index("version")
     B = R.bootstrap
     sig = {"v1_v2": B("V1_dense", "V2_bm25", "mrr@10", V0), "v2_v3": B("V2_bm25", "V3_hybrid", "mrr@10", V0),
@@ -373,12 +377,14 @@ def build(out: Path = OUT) -> Path:
           "Prompt v2: <calc> for every change, state differences, refuse only when no figure exists"],
          "LLM feasibility (4k ctx, all runs)", ["Chosen on correctness, not speed|b"], llm_table),
         (C_VER, "13 · <calc> + number verification", "src/generation/numbers.py",
-         ["The LLM writes <calc> expressions; Python evaluates them (every benchmark error was a subtraction or a misread value)",
-          "Every number in the answer is checked against the sources",
-          "Unsupported numbers are listed with the answer, never hidden"],
+         ["The LLM writes <calc> expressions; Python evaluates and logs each one",
+          "Every number in the answer is checked against the sources; unsupported ones are listed, never hidden",
+          f"Phase 17 ablation without <calc>: {pct(p17g8, 1)} vs {pct(p17g7, 1)} correct (n.s.), but {pct(p17fa['G8'], 0)} "
+          f"of correct answers flagged vs {pct(p17fa['G7'], 0)} → kept for auditability"],
          f"Answer accuracy (same {G['G4']['n']} questions)",
          [f"{pct(max_unverified, 0)} answers with unverified numbers (G1–G6)|b",
-          f"G3 → G4: {mc['fixed']} fixed, {mc['broke']} broken, p = {mc['p']:.4f}"], acc_bars),
+          f"Phase 17: planted invented numbers flagged {pct(p17s['invented'], 0)}, wrong-cell numbers {pct(p17s['wrong cell'], 0)}|x"],
+         acc_bars),
     ]
     PILL = 0.52
     on_h = (TOP - BOT - 2 * PILL - 7 * GAP) / 6
@@ -515,13 +521,13 @@ def build(out: Path = OUT) -> Path:
     ], iw - 0.1, fs=8.3, lh=1.3)
 
     rbox(LX + 7.6, FT - FH, 6.2, FH, "white", MUTED, lw=1.4, ls=(0, (4, 3)))
-    ax.text(LX + 7.75, FT - 0.2, "Serving layer (Phases 19–21, after the report)", fontsize=11, fontweight="bold", color=INK, va="center")
+    ax.text(LX + 7.75, FT - 0.2, "Serving layer (Phases 19–21)", fontsize=11, fontweight="bold", color=INK, va="center")
     lines(LX + 7.75, FT - 0.5, [
         "Phase 19: tracing with Arize Phoenix (local, open source)",
         "Phase 20: FastAPI service — query, health, metrics",
-        "Chat UI served by the API at GET /",
+        "Chat UI at GET /: click a number to see the source cell it was quoted from",
         "Phase 21: Docker — full stack with GPU API, Ollama and Qdrant",
-        "Not covered by the architecture report; summarised from the commit history|n",
+        "Generation is ~95% of end-to-end latency; retrieval + rerank < 1 s|n",
     ], 5.9, fs=8.3, lh=1.3)
 
     ix, iy, iw, ih = panel(LX + 14.1, FT, 5.1, FH, "Legend", color=INK)

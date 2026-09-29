@@ -54,7 +54,7 @@ flowchart TB
         verify["Every number in the answer<br/>matched against the sources"]
     end
 
-    answer(["JSON answer: [n] citations, SEC links, calculations,<br/>unverified numbers, latency, Phoenix trace id"])
+    answer(["JSON answer: [n] citations, source passages, number → cell map,<br/>calculations, unverified numbers, latency, Phoenix trace id"])
 
     subgraph stores["Stores"]
         qdrant[("Qdrant v1.19.1<br/>240,832 child chunks<br/>dense + BM25 sparse + payload")]
@@ -404,6 +404,64 @@ pipeline holds. V4 without decomposition loses a little but significantly (MRR -
 sub-queries mostly avoid. Latency is flat (~0.5 s, dominated by reranking 60 candidates; BM25 search
 14 -> 18 ms at 41x the chunks). Dense (V1) was not re-measured at scale: it is not part of V4/V5.
 
+## Numerical-hallucination evaluation (Phase 17)
+
+```powershell
+.venv\Scripts\python -m src.evaluation.generation --version G7 --decompose              # G4 setup on the full index
+.venv\Scripts\python -m src.evaluation.generation --version G8 --decompose --no-calc    # same, own arithmetic
+.venv\Scripts\python -m src.evaluation.numeric_hallucination --runs G5 G6 G7 G8        # offline, saved contexts
+#    -> data/eval/results/phase17_{audit,numbers,stress,arithmetic}.csv
+```
+
+`verify_numbers()` accepts a number when it appears anywhere in the sources. Phase 17 measures what
+that misses. The saved LLM contexts are parsed back into table cells (`src/generation/source_view.py`,
+the same parser as the chat UI's citation view), so every number of an answer is traced to the cell it
+came from. G7 re-runs G4 on the full 726-filing index; G8 is G7 with a prompt that asks the model to do
+its own arithmetic (rules 4-5 swapped, nothing else changed).
+
+Stress test: in every correct answer each exactly quoted answer-key value is replaced by a planted
+error, and verification is re-run on the same sources.
+
+| planted error | n | flagged |
+|---|---|---|
+| invented: last digit +1 | 149 | 98.7% |
+| invented: +10% | 149 | 98.0% |
+| invented: -10% | 149 | 96.0% |
+| invented: transposed digits | 145 | 93.1% |
+| wrong cell: same row, other column | 118 | **0%** |
+| wrong cell: same column, other row | 140 | **0%** |
+| wrong cell: same line item, other table | 118 | **0%** |
+
+The invented numbers that pass happen to match another number in the sources or its rounding ($44, $979).
+
+Audit of every answer-keyed question:
+
+| Run | correct | refused | wrong, flagged | wrong, not flagged | correct answers flagged |
+|---|---|---|---|---|---|
+| G5 (no decomposition) | 21 | 11 | 0 | 8 | 0% |
+| G6 (decomposition) | 35 | 0 | 0 | 5 | 0% |
+| G7 (G4 setup, 726 filings) | 33 | 1 | 0 | 6 | 3% |
+| G8 (G7 without `<calc>`) | 35 | 1 | 4 | 0 | 60% |
+
+- None of the 19 wrong answers in the `<calc>` runs was flagged. Causes across all 23: the right line
+  item from another filing or period 7, the same line item in another table 4, facts not retrieved 3,
+  values right but the change missing or wrong 3, another row of the right column 2, another column of
+  the right row (e.g. a "% change" column) 2, a rounded figure from MD&A text 1, a value missing 1.
+- G8's 4 wrong answers were flagged only for the model's own subtraction, which the sources don't
+  contain; the wrong values themselves passed.
+- `<calc>` ablation (G7 -> G8, same questions and index): 82.5% -> 87.5% correct, 2 fixed, 0 broken,
+  McNemar p = 0.5, so no measurable difference. No stated change was an arithmetic error in either
+  run; each lost one sign (a `(4,886)` cash outflow quoted as $4,886, then subtracted correctly). With
+  Qwen3-4B, `<calc>` does not buy accuracy here. It is kept because every calculation is logged with
+  its expression and the number check stays usable: 3% of correct answers flagged with `<calc>`, 60%
+  without.
+- G7 vs G4 (726 vs 24 filings): 87.5% -> 82.5% (2 fixed, 4 broken, p = 0.69); facts in context
+  95% -> 85%, so the difference is retrieval, not generation.
+- "0% unverified numbers" therefore means no invented numbers, not that every number is the right
+  one. Next safeguard: a period-aware check that compares the period and filing of the quoted cell
+  with the period the question asks for. Also found: whole percentages up to 31% ("11%") are skipped
+  by the day-of-month rule and never checked (7 in 5 answers).
+
 ## Observability with Arize Phoenix (Phase 19)
 
 ```powershell
@@ -444,9 +502,15 @@ curl -X POST http://127.0.0.1:8000/query -H "Content-Type: application/json" -d 
   source" / unverified-numbers badge, sub-questions, `<calc>` results, latency and the Phoenix trace id.
   History stays in the browser (localStorage); each question is answered independently. Interactive
   API docs at `/docs`.
-- `POST /query` -> answer, sub-questions, cited sources (filing, period, section, SEC URL), `<calc>`
-  calculations, unverified numbers, latency `{total, retrieval, generation}`, request id and the
-  Phoenix `trace_id`. `GET /health` (503 until Qdrant, Ollama and the models are ready), `GET /metrics`
+- Citation view: every number in an answer is traced to the table cell or sentence it was quoted from,
+  in the source its citation points to (`src/generation/source_view.py`). Clicking a number opens that
+  source's passage -- the table rendered as a table -- with the cell highlighted and its row label and
+  column header in the tooltip; clicking `[n]` opens passage *n* at its highlights. A number found only in
+  a source the sentence does not cite is underlined as a warning. Phase 17 uses the same parser.
+- `POST /query` -> answer, sub-questions, cited sources (filing, period, section, SEC URL, and the
+  passage the LLM read as text and table blocks), `numbers` (each number's offsets in the answer and the
+  cells or sentences it was found in), `<calc>` calculations, unverified numbers, latency
+  `{total, retrieval, generation}`, request id and the Phoenix `trace_id`. `GET /health` (503 until Qdrant, Ollama and the models are ready), `GET /metrics`
   (requests, errors, busy rejections, in-flight/queued, p50/p95, refusal and unverified-number rates).
 - One GPU: pipeline runs are serialised by an asyncio lock in a worker thread, at most 4 requests may
   queue (then 503). Startup warms BM25 + reranker + embedder before Ollama loads the LLM (~67 s).

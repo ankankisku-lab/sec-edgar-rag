@@ -140,6 +140,22 @@ def fig_generation(g3, g4):
     fig.tight_layout(); p = FIG / "fig5_generation_by_type.png"; fig.savefig(p, dpi=200); plt.close(fig); return p
 
 
+def fig_stress(st):
+    s = st.groupby(["kind", "plant"]).flagged.agg(["mean", "size"]).reset_index()
+    s = s.sort_values(["kind", "mean"], ascending=[True, False])
+    fig, ax = plt.subplots(figsize=(7.2, 3.2))
+    cols = [ACCENT if k == "invented" else "#C0392B" for k in s.kind]
+    labels = [f"{k}: {p}" for k, p in zip(s.kind, s.plant)]
+    bars = ax.barh(range(len(s)), s["mean"], color=cols)
+    for b, (m, n) in zip(bars, zip(s["mean"], s["size"])):
+        ax.text(max(m, 0) + 0.01, b.get_y() + b.get_height() / 2, f"{m:.0%} of {n}", va="center", fontsize=8)
+    ax.set_yticks(range(len(s))); ax.set_yticklabels(labels, fontsize=8); ax.invert_yaxis()
+    ax.set_xlim(0, 1.15); ax.set_xlabel("share of planted errors flagged by verify_numbers()")
+    ax.set_title("Planted numerical errors caught by the number check", fontsize=10)
+    ax.spines[["top", "right"]].set_visible(False)
+    fig.tight_layout(); p = FIG / "fig7_verifier_stress.png"; fig.savefig(p, dpi=200); plt.close(fig); return p
+
+
 def fig_scaling(sc):
     fig, ax = plt.subplots(figsize=(7, 3.2))
     for v, col in [("V2", "#9DB3D6"), ("V4", "#5B7DB8"), ("V5", ACCENT)]:
@@ -307,8 +323,19 @@ def _is_num(s):
 def build():
     c = R.corpus(); es = R.eval_sets(); exp = R.experiments(); sw = R.sweeps(); sc = R.scaling()
     feas = R.feasibility(); ja = R.judge_agreement(); log = R.git_log(); head = R.head_commit()
-    G = {g: R.gen_summary(g) for g in ("G1", "G2", "G3", "G4", "G5", "G6")}
-    mc34 = R.mcnemar("G3", "G4")
+    G = {g: R.gen_summary(g) for g in ("G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8")}
+    mc34, mc78 = R.mcnemar("G3", "G4"), R.mcnemar("G7", "G8")
+    p17 = R.phase17()
+    p17s = p17["stress"].groupby("kind").flagged.mean().to_dict()
+    p17_wrong = p17["audit"][p17["audit"].outcome.str.startswith("wrong")]
+    calc_wrong = p17_wrong[p17_wrong.run != "G8"]
+    p17w = {"n": len(p17_wrong), "flagged": int((p17_wrong.outcome == "wrong, flagged").sum()),
+            "calc_runs": ", ".join(sorted(r for r in p17["audit"].run.unique() if r != "G8")),
+            "calc_n": len(calc_wrong)}
+    assert (calc_wrong.outcome == "wrong, not flagged").all(), "update the summary wording: a <calc> run flagged a wrong answer"
+    p17fa = p17["audit"][p17["audit"].outcome == "correct"].groupby("run").flagged.mean().to_dict()  # false alarms
+    ar = p17["arithmetic"]
+    p17a = {f"{r}_err": int(((ar.run == r) & (ar.status == "arithmetic error")).sum()) for r in ar.run.unique()}
     e0 = exp[exp.dataset == V0].set_index("version"); e1 = exp[exp.dataset == V1].set_index("version")
     B = lambda a, b, m, ds, sub=None: R.bootstrap(a, b, m, ds, sub)  # noqa: E731
     sig = {
@@ -331,7 +358,7 @@ def build():
         return f"{s['diff']:+.3f} (95% CI [{s['lo']:+.3f}, {s['hi']:+.3f}], {'significant' if s['sig'] else 'not significant'})"
 
     figs = {"off": fig_offline(c), "on": fig_online(), "mrr": fig_mrr(exp), "allhit": fig_allhit(exp),
-            "gen": fig_generation(G["G3"], G["G4"]), "scale": fig_scaling(sc)}
+            "gen": fig_generation(G["G3"], G["G4"]), "scale": fig_scaling(sc), "stress": fig_stress(p17["stress"])}
     D = Doc()
     title = "SEC-EDGAR Financial RAG & Evaluation Engine"
     D.header_footer(f"{title} - Architecture & Engineering Report")
@@ -378,13 +405,24 @@ def build():
                                "(all generation runs G1-G6)."),
         ("Scale: ", f"at {int(sc.iloc[-1].filings)} filings ({int(sc.iloc[-1].points):,} chunks) V5 MRR@10 changed by "
                     f"{ci('s_v5_mrr')} relative to 24 filings; retrieval p50 {sc.iloc[-1]['V5_latency_p50_ms']:.0f} ms."),
+        ("What the number check cannot see: ", f"planted invented numbers were flagged {pct(p17s['invented'])} of the time, planted "
+                                               f"wrong-cell numbers {pct(p17s['wrong cell'])}. In the <calc> runs ({p17w['calc_runs']}) "
+                                               f"none of the {p17w['calc_n']} wrong answers was flagged: they quote real figures from "
+                                               "another period, filing, row or column, or miss a fact retrieval did not find (Section 5.16)."),
+        ("<calc> ablation: ", f"without <calc> (G8) {pct(G['G8']['correct'])} of answers were correct vs {pct(G['G7']['correct'])} "
+                              f"with it (G7; McNemar p = {mc78['p']:.2f}, not significant), and "
+                              + ("neither run made an arithmetic error. " if not (p17a.get('G7_err') or p17a.get('G8_err')) else
+                                 f"arithmetic errors were {p17a.get('G7_err', 0)} vs {p17a.get('G8_err', 0)}. ")
+                              + "<calc> stays because it keeps the number "
+                              f"check meaningful: without it {pct(p17fa['G8'], 0)} of correct answers were flagged, vs "
+                              f"{pct(p17fa['G7'], 0)} with it."),
         ("Negative results, kept on record: ", "dense retrieval and hybrid fusion did not help on this workload, HyDE gave no "
                                                "measurable gain, and a local 8B model was not a reliable faithfulness judge."),
     ])
     D.p("Constraints that shaped everything: an NVIDIA RTX 3050 Laptop GPU with 4 GB VRAM, 16 GB RAM, Windows 11, all data on "
-        "the D: drive, and free models only (local open-weight models; hosted judges only on free tiers). Open items: Ragas "
-        "scoring is paused at 32 answers because of free-tier limits; numerical-hallucination evaluation, vector quantization, "
-        "Phoenix tracing, FastAPI and Docker are the remaining phases.")
+        "the D: drive, and free models only (local open-weight models; hosted judges only on free tiers). The pipeline is served "
+        "by a FastAPI service with a chat UI, traced in Arize Phoenix and packaged with Docker (Section 5.17). Open items: Ragas "
+        "scoring is paused at 32 answers because of free-tier limits, and vector quantization (Phase 18) has not been run.")
 
     # ------------------------------------------------------------ 1a naming key
     D.h("1a. Naming key: short forms used throughout", 2)
@@ -409,6 +447,9 @@ def build():
         ("G4", "Generation run 4", "same 40 questions, prompt v2 + decomposition (V5 retrieval)", "v1", "14", "G4_generation.csv"),
         ("G5", "Generation run 5", "G3 setup on 64 questions (40 + 24 narrative); answers and exact contexts saved for Ragas", "v1", "13", "G5_generation.csv, G5_ragas_input.jsonl"),
         ("G6", "Generation run 6", "G4 setup on the same 64 questions; contexts saved for Ragas", "v1", "13", "G6_generation.csv, G6_ragas_input.jsonl"),
+        ("G7", "Generation run 7", "G4 setup re-run on the full 726-filing index (the <calc> control for G8)", "v1", "17", "G7_generation.csv, G7_ragas_input.jsonl"),
+        ("G8", "Generation run 8", "G7 with the no-<calc> prompt: the model does its own arithmetic (ablation)", "v1", "17", "G8_generation.csv, G8_ragas_input.jsonl"),
+        ("phase17_*", "Phase 17 outputs", "per-question audit, per-number origins, planted-error stress test, arithmetic status", "v1", "17", "phase17_audit/numbers/stress/arithmetic.csv"),
         ("S24 ... Sall", "Scaling stages", "index containing 24, 56, 104, 254 and 726 filings (3, 7, 13, 32, 93 companies)", "v1", "16", "scaling_stages.json, scaling.csv"),
         ("v0 / v1", "Evaluation sets", f"v0: {es[V0]['n']} questions (numeric + narrative); v1: {es[V1]['n']} questions (6 types, multi-fact gold groups)", "-", "7, 12", "data/eval/retrieval_v*.jsonl"),
         ("prompt v1 / v2", "Generation prompts", "v2 added rules 4-6: calc for every change incl. rounding, state differences, refusal only if no figure", "-", "11, 12", "src/generation/generator.py (git history)"),
@@ -478,10 +519,15 @@ def build():
         ("src/retrieval/", "Qdrant index, BM25, hybrid fusion, dense/HyDE, linearization, reranker, decomposed retriever, parent store"),
         ("src/query/", "decomposition + router, HyDE"),
         ("src/generation/", "Ollama server control, parent expansion, CitationQueryEngine generator, <calc> + number verification, LLM benchmark"),
-        ("src/evaluation/", "eval-set builder, retrieval metrics, sweeps, bootstrap comparison, generation accuracy, Ragas"),
+        ("src/evaluation/", "eval-set builder, retrieval metrics, sweeps, bootstrap comparison, generation accuracy, Ragas, "
+                            "numerical-hallucination audit and stress test"),
         ("src/pipeline/scale.py", "staged scaling with footprint capture and re-evaluation"),
+        ("src/observability/", "OpenTelemetry setup for Arize Phoenix, custom spans, latency report"),
+        ("src/api/", "FastAPI service (POST /query, GET /health, GET /metrics) and the chat UI at GET /"),
+        ("docker/, docker-compose.yml", "API image; Qdrant, Phoenix, Ollama and API services"),
         ("configs/*.yaml", "every tunable with its rationale"),
-        ("tests/", "42 unit tests pinning parser, chunker, retrieval metrics, number safeguards, judge guards"),
+        ("tests/", f"{R.test_count()} unit tests pinning parser, chunker, retrieval metrics, number safeguards, judge guards, "
+                   "API, tracing and the Phase 17 locators"),
     ], caption="Repository layout", widths=[5, 12], numeric_right=False)
 
     # ------------------------------------------------------------ 4 models
@@ -529,7 +575,8 @@ def build():
           "model fits on the GPU; the rest runs on the CPU.",
           "Why: in the feasibility benchmark it was the only candidate that quoted both correct values in all six configurations "
           "with no unsupported numbers (Section 5.6). Arithmetic is delegated to Python through <calc> tags because every observed "
-          "error in the benchmark was a subtraction or a misread value."]),
+          "error in the benchmark was a subtraction or a misread value. Phase 17 later found no arithmetic errors without <calc> on "
+          "the evaluation set; it is kept because it makes every calculation auditable and the number check usable (Section 5.16)."]),
         ("4.7 Judges for Ragas",
          ["groq-gpt-oss-120b: open-weight 120B model on Groq's free plan (no billing), reasoning effort low; not the Qwen family, so "
           "the generator does not grade itself. Limits observed on this plan: 8,000 tokens/minute (logs/ragas_full.log) and "
@@ -551,9 +598,11 @@ def build():
 
     # ------------------------------------------------------------ 5 chronology
     D.h("5. Chronological account of the phases", 1)
-    D.p("The project followed a frozen plan with checkpoints (data, retrieval, reranking, generation, production). Two "
-        "deviations are recorded: a local-LLM feasibility benchmark was inserted before generation, and sub-question "
-        "decomposition (Phase 14) was done before Ragas (Phase 13) because multi-fact questions were the largest measured gap.")
+    D.p("The project followed a frozen plan with checkpoints (data, retrieval, reranking, generation, production). Three "
+        "deviations are recorded: a local-LLM feasibility benchmark was inserted before generation, sub-question "
+        "decomposition (Phase 14) was done before Ragas (Phase 13) because multi-fact questions were the largest measured gap, "
+        "and the serving phases (19-21) were built before the numerical-hallucination evaluation (Phase 17); vector "
+        "quantization (Phase 18) is still open.")
     D.table(["Commit", "Date", "Subject"], log.values.tolist(), caption="Commit history (chronology)", widths=[1.6, 2.8, 12.6],
             font=7.5, numeric_right=False)
     D.source("git log --reverse")
@@ -728,6 +777,102 @@ def build():
     D.source("data/eval/results/scaling.csv; data/eval/scaling_stages.json")
     D.figure(figs["scale"], "MRR@10 across scaling stages. Source: data/eval/results/scaling.csv.", 15)
 
+    D.h("5.16 Phase 17: numerical-hallucination evaluation", 2)
+    aud, st, nums = p17["audit"], p17["stress"], p17["numbers"]
+    D.meta("measure the numerical errors the number check misses, and whether <calc> earns its place.",
+           "src/evaluation/numeric_hallucination.py; --no-calc in src/evaluation/generation.py (G8); tests/test_numeric_hallucination.py",
+           "<calc> kept for auditability, not accuracy (no measurable difference); the number check is an invented-number "
+           "detector - wrong-cell and wrong-period figures pass it, so the remaining numerical risk is choosing the right "
+           "cell, not inventing one.")
+    D.p("verify_numbers() accepts a number when it appears anywhere in the sources. Phase 17 measures what that misses, on "
+        "generation runs whose exact LLM contexts were saved (G5, G6 and two new runs on the full 726-filing index: G7, the G4 "
+        "setup with <calc>, and G8, the same run with a prompt that asks the model to do its own arithmetic). The parser's "
+        "markdown tables in each context are read back into cells (source, table, row, column, row label, value) plus the "
+        "company and period of the source, so every number in an answer can be traced to the cell it came from.")
+    runs = sorted(aud.run.unique())
+    oc = pd.crosstab(aud.run, aud.outcome).reindex(columns=["correct", "refused", "wrong, flagged", "wrong, not flagged"], fill_value=0)
+    D.table(["Run", "questions", "correct", "refused", "wrong, flagged", "wrong, not flagged"],
+            [(r, int(oc.loc[r].sum()), *[int(oc.loc[r, k]) for k in oc.columns]) for r in runs],
+            caption="Outcome of every answer-keyed question (flagged = verify_numbers() reported an unsupported number)")
+    wrong = aud[aud.outcome.str.startswith("wrong")]
+    causes = wrong.groupby("cause").size().sort_values(ascending=False)
+    flagged_runs = sorted(wrong[wrong.outcome == "wrong, flagged"].run.unique())
+    D.p(f"Across {', '.join(runs)} there are {len(wrong)} wrong answers; the number check flagged "
+        f"{int((wrong.outcome == 'wrong, flagged').sum())} of them"
+        + (f", all in {', '.join(flagged_runs)}, and there only because the model's own subtraction is a number the "
+           "sources don't contain - the wrong values themselves are real figures and pass" if flagged_runs == ["G8"] else "")
+        + ". Causes: "
+        + "; ".join(f"{c} {n}" for c, n in causes.items()) + ". 'Same line item, other filing or period' is the right metric "
+        "from a table of another quarter or filing (for example a Q2 10-Q figure for a fiscal-year question); 'same column, "
+        "other row' is another line item of the right period; 'text' is a rounded figure quoted from MD&A prose.")
+    D.source("data/eval/results/phase17_audit.csv, phase17_numbers.csv")
+    D.p("Stress test: in every correct answer, each exactly quoted answer-key value was replaced by a planted error, and "
+        "verify_numbers() was run again on the same sources. Invented numbers are the last digit +1, +/-10% and two "
+        "transposed digits; wrong-cell numbers are real values from the same sources (another column of the same row, the "
+        "same column of another row, the same line item in another table).")
+    D.figure(figs["stress"], "Planted errors flagged by the number check. Source: data/eval/results/phase17_stress.csv.", 15)
+    missed = st[(st.kind == "invented") & ~st.flagged]
+    calc_runs = [r for r in runs if r != "G8"]
+    calc_err = int(((ar.status == "arithmetic error") & ar.run.isin(calc_runs)).sum())
+    D.p(f"The check flagged {pct(p17s['invented'])} of {int((st.kind == 'invented').sum())} invented numbers and "
+        f"{pct(p17s['wrong cell'])} of {int((st.kind == 'wrong cell').sum())} wrong-cell numbers. The {len(missed)} invented "
+        f"numbers it missed happen to match another number in the sources or its rounding (for example "
+        f"{', '.join(missed.planted.head(3))}), so they are indistinguishable from a wrong-cell read. A second gap: whole "
+        "percentages up to 31% are skipped by the day-of-month "
+        f"rule, so they are never checked; {int((nums.origin == 'unchecked percentage').sum())} such percentages appear in "
+        f"{nums[nums.origin == 'unchecked percentage'].groupby(['run', 'qid']).ngroups} answers.")
+    ac = pd.crosstab(ar.run, ar.status)
+    order = [c for c in ["right", "rounded or approximate", "arithmetic right, values wrong", "sign lost",
+                         "arithmetic error", "no change stated", "refused"] if c in ac.columns]
+    D.table(["Run", *order], [(r, *[int(ac.loc[r, c]) for c in order]) for r in ac.index],
+            caption="Questions that ask for a change or % change: how the stated change relates to the answer key", font=8)
+    D.source("data/eval/results/phase17_arithmetic.csv")
+    g7, g8 = G["G7"], G["G8"]
+    mc47 = R.mcnemar("G4", "G7")
+    D.p(f"G7 repeats G4 on the full 726-filing index instead of the 24-filing one: {pct(G['G4']['correct'])} -> "
+        f"{pct(g7['correct'])} correct ({mc47['fixed']} fixed, {mc47['broke']} broken, McNemar p = {mc47['p']:.3f}; facts in "
+        f"context {pct(G['G4']['ctx'])} -> {pct(g7['ctx'])}). The difference comes from retrieval - more filings, more "
+        "distractors - not from generation; on the full 236-question set the retrieval change at scale was small and not "
+        "significant (Section 5.15).")
+    sign_lost = sorted(ar[ar.status == "sign lost"].run.unique())
+    D.p(f"<calc> ablation, same 40 questions and index: correct {pct(g7['correct'])} (G7, <calc>) vs {pct(g8['correct'])} "
+        f"(G8, own arithmetic); {mc78['fixed']} answers fixed and {mc78['broke']} broken without <calc>, McNemar p = "
+        f"{mc78['p']:.3f}, so no measurable accuracy difference. "
+        + (f"No stated change was an arithmetic error in any run, with <calc> ({', '.join(calc_runs)}) or without it (G8): "
+           "Qwen3-4B subtracted and computed percentages correctly on its own. "
+           if calc_err == 0 and not p17a.get("G8_err") else
+           f"Stated changes that were arithmetic errors: {calc_err} with <calc> ({', '.join(calc_runs)}), "
+           f"{p17a.get('G8_err', 0)} without (G8). ")
+        + (f"One question lost a sign in {' and '.join(sign_lost)}: a negative value in parentheses was quoted without "
+           "its sign and then subtracted correctly - a quoting error that <calc> cannot prevent. " if sign_lost else "")
+        + f"What changes is the number check: correct answers flagged {pct(p17fa.get('G7', 0), 0)} with <calc> vs "
+        f"{pct(p17fa.get('G8', 0), 0)} without, because every self-computed difference is a number the sources don't "
+        "contain. Without <calc> the flag stops separating right answers from wrong ones, so <calc> stays: it is what "
+        "makes the arithmetic auditable (each calculation is logged with its expression) and the number check usable.")
+    D.p("Consequence: the '0% unverified numbers' result means no answer contained an invented number; it does not mean every "
+        "number is the right one. The next safeguard is period-aware: compare the period and filing of the quoted cell with "
+        "the period the question asks for, which is the same period-resolution problem seen live in Phase 20.")
+
+    D.h("5.17 Phases 19-21: tracing, API service and Docker", 2)
+    D.meta("run the pipeline as an observable, containerised service on the same 4 GB laptop.",
+           "src/observability/; src/api/ (FastAPI + chat UI); docker/Dockerfile; docker-compose.yml",
+           "done - every request is traced per stage; the full stack runs in Docker with the GPU.")
+    D.p("Tracing (Phase 19): the OpenTelemetry SDK exports to a local Arize Phoenix over OTLP/HTTP, with OpenInference's "
+        "LlamaIndex instrumentation plus custom spans for decomposition, the candidate pool, reranking and the <calc>/number "
+        "check. A warm single-fact query took 18.7 s, of which 17.7 s was the LLM; a two-part comparison took 26.0 s (25.0 s "
+        "LLM): generation is about 95% of end-to-end latency, retrieval and reranking under a second (README).")
+    D.p("API (Phase 20): POST /query returns the answer, sub-questions, cited SEC filings with links, <calc> results, "
+        "unverified numbers, latency and the Phoenix trace id; GET /health returns 503 until Qdrant, Ollama and the models are "
+        "ready; GET /metrics reports request counts, p50/p95 and refusal and unverified-number rates. One GPU means one pipeline "
+        "run at a time (asyncio lock) with at most 4 requests queued, then 503. A chat UI is served at GET /: every number "
+        "in an answer is traced to the table cell or sentence it was quoted from (the Phase 17 parser), and clicking it "
+        "opens the source passage with that cell highlighted.")
+    D.p("Docker (Phase 21): four services bound to 127.0.0.1 - Qdrant, Phoenix, Ollama and the API, with Ollama and the API on "
+        "the GPU. Models, the parent store and the decomposition cache are bind-mounted from D: and the container runs offline. "
+        "Warm, the containerised stack answered the single-fact question in 3.9 s and the comparison in 11.8 s; a cold start "
+        "takes 192 s until /health returns 200 (README; not a controlled speed comparison with the native run).")
+    D.source("README.md (Phases 19-21); src/api/main.py; docker-compose.yml")
+
     # ------------------------------------------------------------ 6 ledger
     D.h("6. Experiment ledger", 1)
     D.h("6.1 Retrieval on eval v0 (164 questions)", 2)
@@ -767,7 +912,8 @@ def build():
             [(g, s["n"], pct(s["correct"]), pct(s["ctx"]), pct(s["correct_given_ctx"]), pct(s["refused"]), s["bad_refusals"],
               pct(s["unverified"], 0), pct(s["cited"]), f"{s['p50_s']:.1f}") for g, s in G.items()],
             caption="Generation runs (answer-keyed questions only)", font=7.5)
-    D.source("data/eval/results/G1..G6_generation.csv; McNemar G3 -> G4 computed from G3/G4 files")
+    D.source("data/eval/results/G1..G8_generation.csv; McNemar G3 -> G4 and G7 -> G8 computed from the per-question files. "
+             "G1-G6 were generated on the 24-filing index, G7-G8 on the full 726-filing index.")
 
     # ------------------------------------------------------------ 7 bottlenecks
     D.h("7. Bottlenecks, bugs and fixes", 1)
@@ -793,6 +939,13 @@ def build():
         ("Async connection errors", "judge calls failing", "new event loop per metric", "one event loop per run", "src/evaluation/ragas_eval.py"),
         ("Free-tier limits", "per-minute and daily 429s", "Groq free plan quotas", "wait on per-minute, stop on daily, cache", "src/evaluation/ragas_eval.py"),
         ("Small judge echoed schema", "local 8B output invalid", "free JSON mode on long prompts", "schema-constrained decoding", "configs/evaluation.yaml"),
+        ("phoenix.otel.register() failed", "no traces", "reads an attribute removed in opentelemetry-exporter 1.45", "configure the OTel SDK directly", "src/observability/tracing.py"),
+        ("Retrieved documents missing in traces", "empty retriever spans", "OTel's default 128-attribute cap", "span limit 2048, 4,000-char values", "src/observability/tracing.py"),
+        ("SQLite locking errors in Docker", "parent store failed in the container", "WAL locking on a Windows bind mount", "open read-only + immutable; checkpoint WAL after indexing", "src/retrieval/parent_store.py"),
+        ("BM25 model not found offline", "API container failed to start", "fastembed metadata written with backslash paths", "load the cached snapshot directly", "src/retrieval/bm25.py"),
+        ("Ollama runner OOM-killed", "generation fell to 0.16 tok/s, then crash", "llama-server's 8 GiB host-RAM prompt cache", "LLAMA_ARG_CACHE_RAM=0", "docker-compose.yml"),
+        ("63 s answer after idle", "first question after a pause", "Ollama unloaded the idle model", "keep_alive 24h in the stack", "docker-compose.yml"),
+        ("Wrong-cell numbers pass verification", "Phase 17 stress test: 0% flagged", "check is 'anywhere in the sources'", "measured; period-aware check proposed", "src/evaluation/numeric_hallucination.py"),
     ]
     D.table(["Problem", "How it showed up", "Root cause", "Fix", "Where"], bugs, caption="Bottlenecks and fixes (chronological)",
             widths=[3.4, 3.3, 3.6, 3.6, 3.4], font=7.2, numeric_right=False)
@@ -820,17 +973,21 @@ def build():
         "candidates rarely change the final ranking (V4 vs V4h, V5h vs V6 are ties). Why decomposition helped so much: a comparison question "
         "is two lookups whose vocabulary ('compare', 'higher', 'by how much') matches MD&A comparison prose; each single lookup matches the "
         "statement row. Remaining failure modes after G4: wrong-column reads with the right table in context, 'fiscal 2025' answered from a "
-        "10-Q's year-to-date column, and occasional self-rounding instead of <calc>.")
+        "10-Q's year-to-date column, and occasional self-rounding instead of <calc>. Phase 17 puts a number on this: the wrong answers "
+        "that remain are real figures from the wrong cell, period or filing, which a presence-in-sources check cannot see, while "
+        "invented numbers are almost always caught.")
 
     # ------------------------------------------------------------ 10 open items
     D.h("10. Open items and next steps", 1)
     D.bullets([
         ("Ragas (paused): ", "relevancy for all 128 answers with the validated local judge; 120B faithfulness mainly on narrative answers, "
                              "resuming from cache as free quota allows."),
-        ("Phase 17: ", "numerical-hallucination evaluation - invented numbers, wrong-cell numbers, and a no-<calc> ablation."),
         ("Phase 18: ", "vector quantization experiment (index size, RAM, latency, recall)."),
-        ("Phases 19-21: ", "Phoenix tracing, FastAPI service, Docker packaging."),
-        ("Known issues: ", "period ambiguity ('fiscal 2025' without a quarter); lower-confidence sections for Intel and Honeywell 10-Ks."),
+        ("Period-aware number check: ", "compare the period and filing of each quoted cell with the period the question asks for "
+                                        "(the gap Phase 17 measured), and check whole percentages up to 31% instead of skipping them."),
+        ("Known issues: ", "period ambiguity ('fiscal 2025' without a quarter, 'latest' filing, calendar vs fiscal year); BM25 on "
+                           "'revenue' can fill the context with unearned-revenue notes; lower-confidence sections for Intel and "
+                           "Honeywell 10-Ks."),
     ])
 
     # ------------------------------------------------------------ appendices
@@ -850,6 +1007,10 @@ docker compose up -d                                                   # Qdrant
 .venv\\Scripts\\python -m src.evaluation.generation --version G4 --decompose            # GPU + LLM
 .venv\\Scripts\\python -m src.pipeline.scale                                            # GPU
 .venv\\Scripts\\python -m src.evaluation.ragas_eval --input G5 G6 --judge groq-gpt-oss-120b   # network, free tier
+.venv\\Scripts\\python -m src.evaluation.generation --version G7 --decompose            # GPU + LLM, full index
+.venv\\Scripts\\python -m src.evaluation.generation --version G8 --decompose --no-calc  # <calc> ablation
+.venv\\Scripts\\python -m src.evaluation.numeric_hallucination --runs G5 G6 G7 G8      # Phase 17 (offline)
+docker compose --profile app up -d --build                                             # full stack; UI at :8000
 .venv\\Scripts\\python docs\\tools\\build_report.py                                    # this report
 """)
     D.h("Appendix B. Configuration reference", 1)
