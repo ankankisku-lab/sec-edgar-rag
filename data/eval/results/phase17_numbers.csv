@@ -1,0 +1,393 @@
+run,qid,type,token,value,key,origin,answer_correct,location
+G5,q0115,numeric,"$3,122",3122.0,True,source,True,right cell
+G5,q0119,numeric,"$49,510",49510.0,False,source,False,"same line item, other filing or period"
+G5,q0130,numeric,"$10,275",10275.0,True,source,True,other table
+G5,q0048,numeric,$13.70,13.7,True,source,True,right cell
+G5,q0047,numeric,"$12,016",12016.0,True,source,True,right cell
+G5,q0131,numeric,"$64,000",64000.0,True,source,True,right cell
+G5,q0121,numeric,$70,70.0,True,source,True,right cell
+G5,q0024,numeric,"$28,031",28031.0,True,source,True,right cell
+G5,q0114,numeric,$244,244.0,True,source,True,right cell
+G5,q0077,numeric,"$7,832",7832.0,True,source,True,right cell
+G5,q0036,numeric,"$18,896",18896.0,True,source,True,right cell
+G5,q0023,numeric,"$53,887",53887.0,True,source,True,right cell
+G5,q0168,yoy,$101,101.0,True,source,True,right cell
+G5,q0168,yoy,$129,129.0,True,source,True,right cell
+G5,q0175,yoy,$997,997.0,True,source,True,right cell
+G5,q0175,yoy,$611,611.0,True,source,True,right cell
+G5,q0175,yoy,386,386.0,True,calculation,True,calculation
+G5,q0171,yoy,"$5,413",5413.0,True,source,True,right cell
+G5,q0171,yoy,"$3,932",3932.0,True,source,True,right cell
+G5,q0171,yoy,"$1,481",1481.0,True,source,True,"same row, other column"
+G5,q0171,yoy,38,38.0,False,source,True,"same row, other column"
+G5,q0141,yoy,"$9,682",9682.0,False,source,False,"same line item, other filing or period"
+G5,q0141,yoy,"$7,400",7400.0,False,source,False,"same line item, other filing or period"
+G5,q0141,yoy,"2,282",2282.0,False,calculation,False,calculation
+G5,q0170,yoy,$52,52.0,True,source,True,right cell
+G5,q0170,yoy,$40,40.0,True,source,True,right cell
+G5,q0160,yoy,"$2,161",2161.0,True,source,False,right cell
+G5,q0162,yoy,"$9,541",9541.0,False,source,False,"same line item, other table"
+G5,q0162,yoy,"$(1,165)",1165.0,False,source,False,"same line item, other table"
+G5,q0162,yoy,"10,706",10706.0,False,calculation,False,calculation
+G5,q0147,yoy,"$(4,886)",4886.0,True,source,True,right cell
+G5,q0147,yoy,"$9,792",9792.0,True,source,True,right cell
+G5,q0147,yoy,"-14,678",14678.0,True,calculation,True,calculation
+G5,q0165,pct_change,11,11.0,False,unchecked percentage,False,"same row, other column"
+G5,q0143,pct_change,"15,509,763",15509763.0,True,source,True,right cell
+G5,q0143,pct_change,"15,081,724",15081724.0,True,source,True,right cell
+G5,q0143,pct_change,-2.76,2.76,True,calculation,True,calculation
+G5,q0163,pct_change,"$28,849",28849.0,True,source,True,right cell
+G5,q0163,pct_change,"$20,840",20840.0,True,source,True,right cell
+G5,q0163,pct_change,38.43,38.43,True,calculation,True,calculation
+G5,q0163,pct_change,38.33,38.33,False,calculation,True,calculation
+G5,q0146,pct_change,13.62,13.62,True,calculation,True,calculation
+G5,q0176,pct_change,83.64,83.64,True,calculation,True,calculation
+G5,q0167,pct_change,27.3,27.3,False,source,False,"same line item, other table"
+G5,q0167,pct_change,25.0,25.0,False,unchecked percentage,False,"same line item, other table"
+G5,q0167,pct_change,-2.3,2.3,False,source,False,other table
+G5,q0185,cross_quarter,$2.2,2.2,False,source,False,text
+G5,q0185,cross_quarter,16,16.0,False,unchecked percentage,False,text
+G5,q0185,cross_quarter,$4.6,4.6,False,source,False,text
+G5,q0185,cross_quarter,17,17.0,False,unchecked percentage,False,text
+G5,q0185,cross_quarter,"2,400",2400.0,False,calculation,False,calculation
+G5,q0208,cross_company,"$155,237",155237.0,True,source,False,right cell
+G5,q0208,cross_company,"$139,297",139297.0,False,source,False,other table
+G5,q0205,cross_company,"$331,839",331839.0,True,source,True,right cell
+G5,q0205,cross_company,"$215,938",215938.0,True,source,True,other table
+G5,q0205,cross_company,"115,901",115901.0,False,calculation,True,calculation
+G6,q0115,numeric,"$3,122",3122.0,True,source,True,right cell
+G6,q0119,numeric,"$49,510",49510.0,False,source,False,"same line item, other filing or period"
+G6,q0130,numeric,"$10,275",10275.0,True,source,True,other table
+G6,q0048,numeric,$13.70,13.7,True,source,True,right cell
+G6,q0047,numeric,"$12,016",12016.0,True,source,True,right cell
+G6,q0131,numeric,"$64,000",64000.0,True,source,True,right cell
+G6,q0121,numeric,$70,70.0,True,source,True,right cell
+G6,q0024,numeric,"$28,031",28031.0,True,source,True,right cell
+G6,q0114,numeric,$244,244.0,True,source,True,right cell
+G6,q0077,numeric,"$7,832",7832.0,True,source,True,right cell
+G6,q0036,numeric,"$18,896",18896.0,True,source,True,right cell
+G6,q0023,numeric,"$53,887",53887.0,True,source,True,right cell
+G6,q0168,yoy,$101,101.0,True,source,True,right cell
+G6,q0168,yoy,$129,129.0,True,source,True,right cell
+G6,q0175,yoy,$997,997.0,True,source,True,right cell
+G6,q0175,yoy,$611,611.0,True,source,True,right cell
+G6,q0175,yoy,386,386.0,True,calculation,True,calculation
+G6,q0171,yoy,"$5,413",5413.0,True,source,True,right cell
+G6,q0171,yoy,"$3,932",3932.0,True,source,True,right cell
+G6,q0171,yoy,"1,481",1481.0,True,source,True,"same row, other column"
+G6,q0141,yoy,"$4,009",4009.0,False,source,False,"same line item, other filing or period"
+G6,q0141,yoy,"$3,150",3150.0,False,source,False,"same line item, other filing or period"
+G6,q0141,yoy,859,859.0,False,calculation,False,calculation
+G6,q0170,yoy,$941,941.0,False,source,False,"same column, other row"
+G6,q0170,yoy,$22,22.0,False,source,False,"same column, other row"
+G6,q0170,yoy,919,919.0,False,calculation,False,calculation
+G6,q0160,yoy,"$2,161",2161.0,True,source,True,right cell
+G6,q0160,yoy,220,220.0,True,calculation,True,calculation
+G6,q0162,yoy,$(637),637.0,True,source,True,right cell
+G6,q0162,yoy,$(16),16.0,True,source,True,right cell
+G6,q0162,yoy,621,621.0,True,calculation,True,calculation
+G6,q0147,yoy,"$(4,886)",4886.0,True,source,True,right cell
+G6,q0147,yoy,"$9,792",9792.0,True,source,True,right cell
+G6,q0147,yoy,"-14,678",14678.0,True,calculation,True,calculation
+G6,q0165,pct_change,$194,194.0,False,source,False,text
+G6,q0165,pct_change,11,11.0,False,unchecked percentage,False,"same row, other column"
+G6,q0143,pct_change,"15,509,763",15509763.0,True,source,True,right cell
+G6,q0143,pct_change,"15,081,724",15081724.0,True,source,True,right cell
+G6,q0143,pct_change,-2.76,2.76,True,calculation,True,calculation
+G6,q0163,pct_change,"$28,849",28849.0,True,source,True,right cell
+G6,q0163,pct_change,"$20,840",20840.0,True,source,True,right cell
+G6,q0163,pct_change,38.43,38.43,True,calculation,True,calculation
+G6,q0146,pct_change,"$4,046",4046.0,True,source,True,right cell
+G6,q0146,pct_change,"$4,597",4597.0,True,source,True,right cell
+G6,q0146,pct_change,13.62,13.62,True,calculation,True,calculation
+G6,q0176,pct_change,83.64,83.64,True,calculation,True,calculation
+G6,q0167,pct_change,"$16,621",16621.0,True,source,True,right cell
+G6,q0167,pct_change,"$32,639",32639.0,True,source,True,right cell
+G6,q0167,pct_change,96.37,96.37,True,calculation,True,calculation
+G6,q0185,cross_quarter,"$30,552",30552.0,True,source,True,right cell
+G6,q0185,cross_quarter,"$31,653",31653.0,True,source,True,right cell
+G6,q0185,cross_quarter,"1,101",1101.0,True,calculation,True,calculation
+G6,q0186,cross_quarter,"$53,536",53536.0,True,source,True,right cell
+G6,q0186,cross_quarter,"$63,734",63734.0,True,source,True,right cell
+G6,q0186,cross_quarter,"10,198",10198.0,True,calculation,True,calculation
+G6,q0198,cross_quarter,"$18,775",18775.0,True,source,True,right cell
+G6,q0198,cross_quarter,"$26,422",26422.0,True,source,True,right cell
+G6,q0198,cross_quarter,"7,647",7647.0,True,calculation,True,calculation
+G6,q0179,cross_quarter,"$21,638",21638.0,True,source,True,right cell
+G6,q0179,cross_quarter,"$28,440",28440.0,True,source,True,right cell
+G6,q0179,cross_quarter,"6,802",6802.0,True,calculation,True,calculation
+G6,q0193,cross_quarter,"$38,458",38458.0,True,source,True,right cell
+G6,q0193,cross_quarter,"$31,778",31778.0,True,source,True,right cell
+G6,q0193,cross_quarter,"6,680",6680.0,True,calculation,True,calculation
+G6,q0189,cross_quarter,"$36,330",36330.0,True,source,True,right cell
+G6,q0189,cross_quarter,"$24,780",24780.0,True,source,True,right cell
+G6,q0189,cross_quarter,"11,550",11550.0,True,calculation,True,calculation
+G6,q0200,cross_quarter,"$57,006",57006.0,True,source,True,right cell
+G6,q0200,cross_quarter,"$46,743",46743.0,True,source,True,right cell
+G6,q0200,cross_quarter,"10,263",10263.0,True,calculation,True,calculation
+G6,q0202,cross_quarter,"$42,832",42832.0,True,source,True,right cell
+G6,q0202,cross_quarter,"$29,589",29589.0,True,source,True,right cell
+G6,q0202,cross_quarter,"13,243",13243.0,True,calculation,True,calculation
+G6,q0211,cross_company,"$133,749",133749.0,True,source,True,right cell
+G6,q0211,cross_company,"$120,067",120067.0,True,source,True,right cell
+G6,q0211,cross_company,"13,682",13682.0,False,calculation,True,calculation
+G6,q0206,cross_company,"$133,050",133050.0,True,source,True,right cell
+G6,q0206,cross_company,"$155,237",155237.0,True,source,True,right cell
+G6,q0206,cross_company,"22,187",22187.0,False,calculation,True,calculation
+G6,q0208,cross_company,"$155,237",155237.0,True,source,False,right cell
+G6,q0208,cross_company,"$139,297",139297.0,False,source,False,"same line item, other table"
+G6,q0208,cross_company,"15,940",15940.0,False,calculation,False,calculation
+G6,q0205,cross_company,"$331,839",331839.0,True,source,True,right cell
+G6,q0205,cross_company,"$215,938",215938.0,True,source,True,right cell
+G6,q0210,cross_company,"$112,010",112010.0,True,source,True,right cell
+G6,q0210,cross_company,"$120,067",120067.0,True,source,True,right cell
+G6,q0210,cross_company,"8,057",8057.0,False,calculation,True,calculation
+G6,q0203,cross_company,"$416,161",416161.0,True,source,True,right cell
+G6,q0203,cross_company,"$331,839",331839.0,True,source,True,right cell
+G6,q0203,cross_company,"84,322",84322.0,False,calculation,True,calculation
+G7,q0115,numeric,"$3,122",3122.0,True,source,True,right cell
+G7,q0119,numeric,"$49,510",49510.0,False,source,False,"same line item, other filing or period"
+G7,q0130,numeric,"$10,275",10275.0,True,source,True,other table
+G7,q0048,numeric,$13.70,13.7,True,source,True,other table
+G7,q0047,numeric,"$12,016",12016.0,True,source,True,right cell
+G7,q0131,numeric,"$64,000",64000.0,True,source,True,right cell
+G7,q0121,numeric,$70,70.0,True,source,True,right cell
+G7,q0024,numeric,"$28,031",28031.0,True,source,True,right cell
+G7,q0114,numeric,$244,244.0,True,source,True,right cell
+G7,q0077,numeric,"$7,832",7832.0,True,source,True,right cell
+G7,q0036,numeric,"$18,896",18896.0,True,source,True,right cell
+G7,q0023,numeric,"$53,887",53887.0,True,source,True,right cell
+G7,q0168,yoy,$101,101.0,True,source,True,right cell
+G7,q0168,yoy,$129,129.0,True,source,True,right cell
+G7,q0175,yoy,$997,997.0,True,source,True,right cell
+G7,q0175,yoy,$611,611.0,True,source,True,right cell
+G7,q0175,yoy,386,386.0,True,calculation,True,calculation
+G7,q0171,yoy,"$5,413",5413.0,True,source,True,right cell
+G7,q0171,yoy,"$3,932",3932.0,True,source,True,right cell
+G7,q0171,yoy,"1,481",1481.0,True,source,True,"same row, other column"
+G7,q0141,yoy,"$4,009",4009.0,False,source,False,"same line item, other filing or period"
+G7,q0141,yoy,"$3,150",3150.0,False,source,False,"same line item, other filing or period"
+G7,q0141,yoy,859,859.0,False,calculation,False,calculation
+G7,q0170,yoy,$52,52.0,True,source,True,right cell
+G7,q0170,yoy,$40,40.0,True,source,True,right cell
+G7,q0160,yoy,"$2,161",2161.0,True,source,True,right cell
+G7,q0160,yoy,220,220.0,True,calculation,True,calculation
+G7,q0162,yoy,$(637),637.0,True,source,True,right cell
+G7,q0162,yoy,$(16),16.0,True,source,True,right cell
+G7,q0162,yoy,621,621.0,True,calculation,True,calculation
+G7,q0147,yoy,"$4,886",4886.0,True,source,False,right cell
+G7,q0147,yoy,"$9,792",9792.0,True,source,False,right cell
+G7,q0147,yoy,"4,906",4906.0,False,calculation,False,calculation
+G7,q0165,pct_change,11.17,11.17,True,calculation,True,calculation
+G7,q0143,pct_change,"15,509,763",15509763.0,True,source,True,right cell
+G7,q0143,pct_change,"15,081,724",15081724.0,True,source,True,right cell
+G7,q0143,pct_change,-2.76,2.76,True,calculation,True,calculation
+G7,q0163,pct_change,"$17,482",17482.0,False,source,False,"same column, other row"
+G7,q0163,pct_change,"$28,849",28849.0,True,source,False,right cell
+G7,q0163,pct_change,65.02,65.02,False,calculation,False,calculation
+G7,q0146,pct_change,"$4,597",4597.0,True,source,True,right cell
+G7,q0146,pct_change,"$4,046",4046.0,True,source,True,right cell
+G7,q0146,pct_change,$551,551.0,False,unverified,True,not in sources
+G7,q0146,pct_change,13.62,13.62,True,calculation,True,calculation
+G7,q0176,pct_change,83.64,83.64,True,calculation,True,calculation
+G7,q0167,pct_change,"$16,621",16621.0,True,source,True,right cell
+G7,q0167,pct_change,"$32,639",32639.0,True,source,True,right cell
+G7,q0167,pct_change,96.37,96.37,True,calculation,True,calculation
+G7,q0185,cross_quarter,"$37,961",37961.0,False,source,False,"same row, other column"
+G7,q0185,cross_quarter,"$38,275",38275.0,False,source,False,"same row, other column"
+G7,q0185,cross_quarter,314,314.0,False,calculation,False,calculation
+G7,q0186,cross_quarter,"$53,536",53536.0,True,source,True,right cell
+G7,q0186,cross_quarter,"$63,734",63734.0,True,source,True,right cell
+G7,q0186,cross_quarter,"10,198",10198.0,True,calculation,True,calculation
+G7,q0198,cross_quarter,"$18,775",18775.0,True,source,True,right cell
+G7,q0198,cross_quarter,"$26,422",26422.0,True,source,True,right cell
+G7,q0198,cross_quarter,"7,647",7647.0,True,calculation,True,calculation
+G7,q0179,cross_quarter,"$21,638",21638.0,True,source,True,right cell
+G7,q0179,cross_quarter,"$28,440",28440.0,True,source,True,right cell
+G7,q0179,cross_quarter,"6,802",6802.0,True,calculation,True,calculation
+G7,q0193,cross_quarter,"$38,458",38458.0,True,source,True,right cell
+G7,q0193,cross_quarter,"$31,778",31778.0,True,source,True,right cell
+G7,q0193,cross_quarter,"6,680",6680.0,True,calculation,True,calculation
+G7,q0189,cross_quarter,"$36,330",36330.0,True,source,True,right cell
+G7,q0189,cross_quarter,"$24,780",24780.0,True,source,True,right cell
+G7,q0189,cross_quarter,"11,550",11550.0,True,calculation,True,calculation
+G7,q0202,cross_quarter,"$42,832",42832.0,True,source,True,right cell
+G7,q0202,cross_quarter,"$29,589",29589.0,True,source,True,right cell
+G7,q0202,cross_quarter,"13,243",13243.0,True,calculation,True,calculation
+G7,q0211,cross_company,"$133,749",133749.0,True,source,True,right cell
+G7,q0211,cross_company,"$120,067",120067.0,True,source,True,right cell
+G7,q0211,cross_company,"13,682",13682.0,False,calculation,True,calculation
+G7,q0206,cross_company,"$133,050",133050.0,True,source,True,right cell
+G7,q0206,cross_company,"$155,237",155237.0,True,source,True,right cell
+G7,q0208,cross_company,"$155,237",155237.0,True,source,False,right cell
+G7,q0208,cross_company,"$139,297",139297.0,False,source,False,"same line item, other table"
+G7,q0208,cross_company,"$155,237",155237.0,True,source,False,right cell
+G7,q0208,cross_company,"$139,297",139297.0,False,source,False,"same line item, other table"
+G7,q0205,cross_company,"$331,839",331839.0,True,source,True,other table
+G7,q0205,cross_company,"$215,938",215938.0,True,source,True,right cell
+G7,q0205,cross_company,"115,901",115901.0,False,calculation,True,calculation
+G7,q0210,cross_company,"$112,010",112010.0,True,source,True,right cell
+G7,q0210,cross_company,"$120,067",120067.0,True,source,True,right cell
+G7,q0210,cross_company,"8,057",8057.0,False,calculation,True,calculation
+G7,q0203,cross_company,"$416,161",416161.0,True,source,True,right cell
+G7,q0203,cross_company,"$331,839",331839.0,True,source,True,other table
+G7,q0203,cross_company,"84,322",84322.0,False,calculation,True,calculation
+G8,q0115,numeric,"$3,122",3122.0,True,source,True,right cell
+G8,q0119,numeric,"$49,510",49510.0,False,source,True,"same line item, other filing or period"
+G8,q0119,numeric,"$91,288",91288.0,False,source,True,"same line item, other filing or period"
+G8,q0119,numeric,"$40,609",40609.0,True,source,True,right cell
+G8,q0119,numeric,"$40,609",40609.0,True,source,True,right cell
+G8,q0119,numeric,"$40,609",40609.0,True,source,True,right cell
+G8,q0130,numeric,"$10,275",10275.0,True,source,True,other table
+G8,q0048,numeric,$13.70,13.7,True,source,True,other table
+G8,q0047,numeric,"$12,016",12016.0,True,source,True,right cell
+G8,q0131,numeric,"$64,000",64000.0,True,source,True,right cell
+G8,q0121,numeric,$70,70.0,True,source,True,right cell
+G8,q0024,numeric,"$28,031",28031.0,True,source,True,right cell
+G8,q0114,numeric,$244,244.0,True,source,True,right cell
+G8,q0077,numeric,"$7,832",7832.0,True,source,True,right cell
+G8,q0036,numeric,"$18,896",18896.0,True,source,True,right cell
+G8,q0023,numeric,"$53,887",53887.0,True,source,True,right cell
+G8,q0168,yoy,$101,101.0,True,source,True,right cell
+G8,q0168,yoy,$129,129.0,True,source,True,right cell
+G8,q0168,yoy,$28,28.0,True,source,True,not in sources
+G8,q0168,yoy,$129,129.0,True,source,True,right cell
+G8,q0168,yoy,$101,101.0,True,source,True,right cell
+G8,q0168,yoy,$28,28.0,True,source,True,not in sources
+G8,q0175,yoy,$997,997.0,True,source,True,right cell
+G8,q0175,yoy,$611,611.0,True,source,True,right cell
+G8,q0175,yoy,$386,386.0,True,unverified,True,not in sources
+G8,q0171,yoy,"$5,413",5413.0,True,source,True,right cell
+G8,q0171,yoy,"$3,932",3932.0,True,source,True,right cell
+G8,q0171,yoy,"$1,481",1481.0,True,source,True,"same row, other column"
+G8,q0171,yoy,38,38.0,False,source,True,"same row, other column"
+G8,q0141,yoy,"$2,164",2164.0,False,source,False,"same line item, other filing or period"
+G8,q0141,yoy,"$1,009",1009.0,False,source,False,"same line item, other filing or period"
+G8,q0141,yoy,"$1,155",1155.0,False,unverified,False,not in sources
+G8,q0170,yoy,$52,52.0,True,source,True,right cell
+G8,q0170,yoy,$52,52.0,True,source,True,right cell
+G8,q0170,yoy,$0,0.0,False,unverified,True,not in sources
+G8,q0170,yoy,$52,52.0,True,source,True,right cell
+G8,q0170,yoy,$40,40.0,True,source,True,right cell
+G8,q0170,yoy,$52,52.0,True,source,True,right cell
+G8,q0170,yoy,$40,40.0,True,source,True,right cell
+G8,q0170,yoy,$12,12.0,True,unverified,True,not in sources
+G8,q0170,yoy,$52,52.0,True,source,True,right cell
+G8,q0170,yoy,$40,40.0,True,source,True,right cell
+G8,q0170,yoy,$12,12.0,True,unverified,True,not in sources
+G8,q0170,yoy,$52,52.0,True,source,True,right cell
+G8,q0170,yoy,$40,40.0,True,source,True,right cell
+G8,q0170,yoy,$52,52.0,True,source,True,right cell
+G8,q0170,yoy,$40,40.0,True,source,True,right cell
+G8,q0170,yoy,$12,12.0,True,unverified,True,not in sources
+G8,q0170,yoy,$52,52.0,True,source,True,right cell
+G8,q0170,yoy,$40,40.0,True,source,True,right cell
+G8,q0170,yoy,$52,52.0,True,source,True,right cell
+G8,q0170,yoy,$12,12.0,True,unverified,True,not in sources
+G8,q0170,yoy,$40,40.0,True,source,True,right cell
+G8,q0160,yoy,"$2,161",2161.0,True,source,True,right cell
+G8,q0160,yoy,$220,220.0,True,unverified,True,not in sources
+G8,q0162,yoy,$(637),637.0,True,source,True,right cell
+G8,q0162,yoy,$(16),16.0,True,source,True,right cell
+G8,q0162,yoy,$621,621.0,True,unverified,True,not in sources
+G8,q0147,yoy,"$4,886",4886.0,True,source,False,right cell
+G8,q0147,yoy,"$9,792",9792.0,True,source,False,right cell
+G8,q0147,yoy,"$4,906",4906.0,False,unverified,False,not in sources
+G8,q0147,yoy,"$4,886",4886.0,True,source,False,right cell
+G8,q0147,yoy,"$9,792",9792.0,True,source,False,right cell
+G8,q0147,yoy,"$9,792",9792.0,True,source,False,right cell
+G8,q0147,yoy,"$4,886",4886.0,True,source,False,right cell
+G8,q0147,yoy,"$4,906",4906.0,False,unverified,False,not in sources
+G8,q0165,pct_change,11,11.0,False,unchecked percentage,True,"same row, other column"
+G8,q0165,pct_change,"$1,737",1737.0,True,source,True,right cell
+G8,q0165,pct_change,$194,194.0,False,source,True,text
+G8,q0165,pct_change,$194,194.0,False,source,True,text
+G8,q0165,pct_change,"$1,737",1737.0,True,source,True,right cell
+G8,q0165,pct_change,100,100.0,False,unverified,True,not in sources
+G8,q0165,pct_change,11.17,11.17,True,unverified,True,not in sources
+G8,q0165,pct_change,11,11.0,False,unchecked percentage,True,"same row, other column"
+G8,q0143,pct_change,"15,509,763",15509763.0,True,source,True,right cell
+G8,q0143,pct_change,"15,081,724",15081724.0,True,source,True,right cell
+G8,q0143,pct_change,"15,081,724",15081724.0,True,source,True,right cell
+G8,q0143,pct_change,"15,509,763",15509763.0,True,source,True,right cell
+G8,q0143,pct_change,"-428,039",428039.0,False,unverified,True,not in sources
+G8,q0143,pct_change,"(-428,039",428039.0,False,unverified,True,not in sources
+G8,q0143,pct_change,"15,509,763)",15509763.0,True,source,True,right cell
+G8,q0143,pct_change,100,100.0,False,unverified,True,not in sources
+G8,q0143,pct_change,-2.76,2.76,True,unverified,True,not in sources
+G8,q0143,pct_change,2.76,2.76,True,unverified,True,not in sources
+G8,q0163,pct_change,"$20,840",20840.0,True,source,True,right cell
+G8,q0163,pct_change,"$28,849",28849.0,True,source,True,right cell
+G8,q0163,pct_change,"$8,009",8009.0,False,unverified,True,not in sources
+G8,q0163,pct_change,38.4,38.4,True,unverified,True,not in sources
+G8,q0146,pct_change,"$4,597",4597.0,True,source,True,right cell
+G8,q0146,pct_change,"$4,046",4046.0,True,source,True,right cell
+G8,q0146,pct_change,$551,551.0,False,unverified,True,not in sources
+G8,q0146,pct_change,$551,551.0,False,unverified,True,not in sources
+G8,q0146,pct_change,"$4,046",4046.0,True,source,True,right cell
+G8,q0146,pct_change,100,100.0,False,unverified,True,not in sources
+G8,q0146,pct_change,13.63,13.63,True,unverified,True,not in sources
+G8,q0146,pct_change,13.63,13.63,True,unverified,True,not in sources
+G8,q0176,pct_change,"$50,344",50344.0,True,source,True,right cell
+G8,q0176,pct_change,"$27,414",27414.0,True,source,True,right cell
+G8,q0176,pct_change,"$22,930",22930.0,False,unverified,True,not in sources
+G8,q0176,pct_change,"$22,930",22930.0,False,unverified,True,not in sources
+G8,q0176,pct_change,"$27,414)",27414.0,True,source,True,right cell
+G8,q0176,pct_change,100,100.0,False,unverified,True,not in sources
+G8,q0176,pct_change,83.67,83.67,True,unverified,True,not in sources
+G8,q0176,pct_change,83.67,83.67,True,unverified,True,not in sources
+G8,q0167,pct_change,"$16,621",16621.0,True,source,True,right cell
+G8,q0167,pct_change,"$32,639",32639.0,True,source,True,right cell
+G8,q0167,pct_change,"(32,639",32639.0,True,source,True,right cell
+G8,q0167,pct_change,"16,621)",16621.0,True,source,True,right cell
+G8,q0167,pct_change,"16,621)",16621.0,True,source,True,right cell
+G8,q0167,pct_change,100,100.0,False,source,True,other table
+G8,q0167,pct_change,"(16,018",16018.0,False,unverified,True,not in sources
+G8,q0167,pct_change,"16,621)",16621.0,True,source,True,right cell
+G8,q0167,pct_change,100,100.0,False,source,True,other table
+G8,q0167,pct_change,96.35,96.35,True,unverified,True,not in sources
+G8,q0167,pct_change,96.35,96.35,True,unverified,True,not in sources
+G8,q0185,cross_quarter,"$37,961",37961.0,False,source,False,"same row, other column"
+G8,q0185,cross_quarter,"$38,275",38275.0,False,source,False,"same row, other column"
+G8,q0185,cross_quarter,$314,314.0,False,unverified,False,not in sources
+G8,q0186,cross_quarter,"$53,536",53536.0,True,source,True,right cell
+G8,q0186,cross_quarter,"$63,734",63734.0,True,source,True,right cell
+G8,q0186,cross_quarter,"$10,198",10198.0,True,unverified,True,not in sources
+G8,q0198,cross_quarter,"$18,775",18775.0,True,source,True,right cell
+G8,q0198,cross_quarter,"$26,422",26422.0,True,source,True,right cell
+G8,q0198,cross_quarter,"$7,647",7647.0,True,unverified,True,not in sources
+G8,q0179,cross_quarter,"$21,638",21638.0,True,source,True,right cell
+G8,q0179,cross_quarter,"$28,440",28440.0,True,source,True,right cell
+G8,q0179,cross_quarter,"$6,802",6802.0,True,unverified,True,not in sources
+G8,q0193,cross_quarter,"$38,458",38458.0,True,source,True,right cell
+G8,q0193,cross_quarter,"$31,778",31778.0,True,source,True,right cell
+G8,q0193,cross_quarter,"$6,680",6680.0,True,unverified,True,not in sources
+G8,q0189,cross_quarter,"$36,330",36330.0,True,source,True,right cell
+G8,q0189,cross_quarter,"$24,780",24780.0,True,source,True,right cell
+G8,q0189,cross_quarter,"$11,550",11550.0,True,unverified,True,not in sources
+G8,q0202,cross_quarter,"$42,832",42832.0,True,source,True,right cell
+G8,q0202,cross_quarter,"$29,589",29589.0,True,source,True,right cell
+G8,q0202,cross_quarter,"$13,243",13243.0,True,unverified,True,not in sources
+G8,q0202,cross_quarter,"$42,832",42832.0,True,source,True,right cell
+G8,q0202,cross_quarter,"$29,589",29589.0,True,source,True,right cell
+G8,q0202,cross_quarter,"$13,243",13243.0,True,unverified,True,not in sources
+G8,q0211,cross_company,"$133,749",133749.0,True,source,True,right cell
+G8,q0211,cross_company,"$120,067",120067.0,True,source,True,right cell
+G8,q0211,cross_company,"$13,682",13682.0,False,unverified,True,not in sources
+G8,q0206,cross_company,"$133,050",133050.0,True,source,True,right cell
+G8,q0206,cross_company,"$155,237",155237.0,True,source,True,right cell
+G8,q0206,cross_company,"$22,187",22187.0,False,unverified,True,not in sources
+G8,q0208,cross_company,"$155,237",155237.0,True,source,False,right cell
+G8,q0208,cross_company,"$139,297",139297.0,False,source,False,"same line item, other table"
+G8,q0208,cross_company,"$15,940",15940.0,False,unverified,False,not in sources
+G8,q0208,cross_company,"$155,237",155237.0,True,source,False,right cell
+G8,q0208,cross_company,"$139,297",139297.0,False,source,False,"same line item, other table"
+G8,q0205,cross_company,"$331,839",331839.0,True,source,True,other table
+G8,q0205,cross_company,"$215,938",215938.0,True,source,True,right cell
+G8,q0205,cross_company,"$115,901",115901.0,False,unverified,True,not in sources
+G8,q0210,cross_company,"$112,010",112010.0,True,source,True,right cell
+G8,q0210,cross_company,"$120,067",120067.0,True,source,True,right cell
+G8,q0210,cross_company,"$8,057",8057.0,False,unverified,True,not in sources
+G8,q0203,cross_company,"$416,161",416161.0,True,source,True,right cell
+G8,q0203,cross_company,"$331,839",331839.0,True,source,True,other table
+G8,q0203,cross_company,"$84,322",84322.0,False,unverified,True,not in sources

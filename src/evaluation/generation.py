@@ -79,6 +79,8 @@ def main() -> None:
     parser.add_argument("--decompose", action="store_true", help="sub-question decomposition (V5 retrieval)")
     parser.add_argument("--include-narrative", action="store_true",
                         help="also answer the narrative questions (no exact answer key; for Ragas)")
+    parser.add_argument("--no-calc", action="store_true",
+                        help="Phase 17 ablation: prompt without <calc>, the model does its own arithmetic")
     args = parser.parse_args()
 
     questions = [json.loads(line) for line in open(EVAL_DIR / args.dataset, encoding="utf-8")]
@@ -98,10 +100,10 @@ def main() -> None:
     ragas_path = RESULTS_DIR / f"{args.version}_ragas_input.jsonl"
     ragas_path.write_text("", encoding="utf-8")
     with ollama_running():
-        answer("warm-up: what was Apple's net income?", decompose=args.decompose)
+        answer("warm-up: what was Apple's net income?", decompose=args.decompose, calc=not args.no_calc)
         for i, q in enumerate(sample, 1):
             try:
-                r = answer(q["question"], decompose=args.decompose)
+                r = answer(q["question"], decompose=args.decompose, calc=not args.no_calc)
             except Exception as e:  # one failing question must not lose the whole run
                 print(f"{i:3}/{len(sample)} FAILED {q['qid']}: {type(e).__name__}: {e}", flush=True)
                 continue

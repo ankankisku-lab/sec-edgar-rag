@@ -1,0 +1,969 @@
+run,qid,type,kind,plant,original,planted,flagged
+G5,q0115,numeric,invented,last digit +1,"$3,122","$3,123",True
+G5,q0115,numeric,invented,+10%,"$3,122","$3,434",True
+G5,q0115,numeric,invented,-10%,"$3,122","$2,810",True
+G5,q0115,numeric,invented,transposed digits,"$3,122","$3,212",True
+G5,q0115,numeric,wrong cell,"same row, other column","$3,122","$4,004",False
+G5,q0115,numeric,wrong cell,"same column, other row","$3,122",$467,False
+G5,q0115,numeric,wrong cell,"same line item, other table","$3,122","$11,226",False
+G5,q0130,numeric,invented,last digit +1,"$10,275","$10,276",True
+G5,q0130,numeric,invented,+10%,"$10,275","$11,303",True
+G5,q0130,numeric,invented,-10%,"$10,275","$9,248",True
+G5,q0130,numeric,invented,transposed digits,"$10,275","$10,257",True
+G5,q0048,numeric,invented,last digit +1,$13.70,$13.71,True
+G5,q0048,numeric,invented,+10%,$13.70,$15.07,True
+G5,q0048,numeric,invented,-10%,$13.70,$12.33,True
+G5,q0048,numeric,wrong cell,"same row, other column",$13.70,$11.86,False
+G5,q0048,numeric,wrong cell,"same column, other row",$13.70,$13.64,False
+G5,q0048,numeric,wrong cell,"same line item, other table",$13.70,$18.00,False
+G5,q0047,numeric,invented,last digit +1,"$12,016","$12,017",True
+G5,q0047,numeric,invented,+10%,"$12,016","$13,218",True
+G5,q0047,numeric,invented,-10%,"$12,016","$10,814",True
+G5,q0047,numeric,invented,transposed digits,"$12,016","$12,061",True
+G5,q0047,numeric,wrong cell,"same row, other column","$12,016","$10,785",False
+G5,q0047,numeric,wrong cell,"same column, other row","$12,016","$26,504",False
+G5,q0131,numeric,invented,last digit +1,"$64,000","$64,001",True
+G5,q0131,numeric,invented,+10%,"$64,000","$70,400",True
+G5,q0131,numeric,invented,-10%,"$64,000","$57,600",True
+G5,q0131,numeric,invented,transposed digits,"$64,000","$60,400",True
+G5,q0131,numeric,wrong cell,"same row, other column","$64,000","$49,510",False
+G5,q0131,numeric,wrong cell,"same column, other row","$64,000","$8,768",False
+G5,q0131,numeric,wrong cell,"same line item, other table","$64,000","$91,288",False
+G5,q0121,numeric,invented,last digit +1,$70,$71,True
+G5,q0121,numeric,invented,+10%,$70,$77,True
+G5,q0121,numeric,invented,-10%,$70,$63,True
+G5,q0121,numeric,invented,transposed digits,$70,$7,True
+G5,q0121,numeric,wrong cell,"same row, other column",$70,$105,False
+G5,q0121,numeric,wrong cell,"same column, other row",$70,$487,False
+G5,q0024,numeric,invented,last digit +1,"$28,031","$28,032",True
+G5,q0024,numeric,invented,+10%,"$28,031","$30,834",True
+G5,q0024,numeric,invented,-10%,"$28,031","$25,228",True
+G5,q0024,numeric,invented,transposed digits,"$28,031","$28,013",True
+G5,q0024,numeric,wrong cell,"same row, other column","$28,031","$25,494",False
+G5,q0024,numeric,wrong cell,"same column, other row","$28,031",$171,False
+G5,q0024,numeric,wrong cell,"same line item, other table","$28,031","$36,267",False
+G5,q0114,numeric,invented,last digit +1,$244,$245,True
+G5,q0114,numeric,invented,+10%,$244,$268,True
+G5,q0114,numeric,invented,-10%,$244,$220,True
+G5,q0114,numeric,invented,transposed digits,$244,$424,True
+G5,q0114,numeric,wrong cell,"same row, other column",$244,$98,False
+G5,q0114,numeric,wrong cell,"same column, other row",$244,"$1,532",False
+G5,q0114,numeric,wrong cell,"same line item, other table",$244,$243,False
+G5,q0077,numeric,invented,last digit +1,"$7,832","$7,833",True
+G5,q0077,numeric,invented,+10%,"$7,832","$8,615",True
+G5,q0077,numeric,invented,-10%,"$7,832","$7,049",True
+G5,q0077,numeric,invented,transposed digits,"$7,832","$7,823",True
+G5,q0077,numeric,wrong cell,"same row, other column","$7,832","$2,999",False
+G5,q0077,numeric,wrong cell,"same column, other row","$7,832","$43,208",False
+G5,q0036,numeric,invented,last digit +1,"$18,896","$18,897",True
+G5,q0036,numeric,invented,+10%,"$18,896","$20,786",True
+G5,q0036,numeric,invented,-10%,"$18,896","$17,006",True
+G5,q0036,numeric,invented,transposed digits,"$18,896","$18,869",True
+G5,q0036,numeric,wrong cell,"same row, other column","$18,896","$15,278",False
+G5,q0036,numeric,wrong cell,"same column, other row","$18,896",$7,False
+G5,q0036,numeric,wrong cell,"same line item, other table","$18,896","$15,278",False
+G5,q0023,numeric,invented,last digit +1,"$53,887","$53,888",True
+G5,q0023,numeric,invented,+10%,"$53,887","$59,276",True
+G5,q0023,numeric,invented,-10%,"$53,887","$48,498",True
+G5,q0023,numeric,invented,transposed digits,"$53,887","$53,878",True
+G5,q0023,numeric,wrong cell,"same row, other column","$53,887","$62,585",False
+G5,q0023,numeric,wrong cell,"same column, other row","$53,887","$15,579",False
+G5,q0023,numeric,wrong cell,"same line item, other table","$53,887","$82,627",False
+G5,q0168,yoy,invented,last digit +1,$129,$130,True
+G5,q0168,yoy,invented,+10%,$129,$142,True
+G5,q0168,yoy,invented,-10%,$129,$116,True
+G5,q0168,yoy,invented,transposed digits,$129,$192,True
+G5,q0168,yoy,wrong cell,"same row, other column",$129,$74,False
+G5,q0168,yoy,wrong cell,"same column, other row",$129,$834,False
+G5,q0168,yoy,wrong cell,"same line item, other table",$129,$52,False
+G5,q0168,yoy,invented,last digit +1,$101,$102,True
+G5,q0168,yoy,invented,+10%,$101,$111,True
+G5,q0168,yoy,invented,-10%,$101,$91,True
+G5,q0168,yoy,invented,transposed digits,$101,$110,True
+G5,q0168,yoy,wrong cell,"same row, other column",$101,$74,False
+G5,q0168,yoy,wrong cell,"same column, other row",$101,$974,False
+G5,q0168,yoy,wrong cell,"same line item, other table",$101,$52,False
+G5,q0175,yoy,invented,last digit +1,$611,$612,True
+G5,q0175,yoy,invented,+10%,$611,$672,True
+G5,q0175,yoy,invented,-10%,$611,$550,True
+G5,q0175,yoy,invented,transposed digits,$611,$161,True
+G5,q0175,yoy,wrong cell,"same column, other row",$611,"$2,177",False
+G5,q0175,yoy,wrong cell,"same line item, other table",$611,$410,False
+G5,q0175,yoy,invented,last digit +1,$997,$998,True
+G5,q0175,yoy,invented,+10%,$997,"$1,097",True
+G5,q0175,yoy,invented,-10%,$997,$897,True
+G5,q0175,yoy,invented,transposed digits,$997,$979,False
+G5,q0175,yoy,wrong cell,"same column, other row",$997,"$1,584",False
+G5,q0175,yoy,wrong cell,"same line item, other table",$997,$410,False
+G5,q0171,yoy,invented,last digit +1,"$3,932","$3,933",True
+G5,q0171,yoy,invented,+10%,"$3,932","$4,325",True
+G5,q0171,yoy,invented,-10%,"$3,932","$3,539",True
+G5,q0171,yoy,invented,transposed digits,"$3,932","$3,923",True
+G5,q0171,yoy,wrong cell,"same row, other column","$3,932","$1,481",False
+G5,q0171,yoy,wrong cell,"same column, other row","$3,932",$842,False
+G5,q0171,yoy,wrong cell,"same line item, other table","$3,932","$10,443",False
+G5,q0171,yoy,invented,last digit +1,"$5,413","$5,414",True
+G5,q0171,yoy,invented,+10%,"$5,413","$5,954",True
+G5,q0171,yoy,invented,-10%,"$5,413","$4,872",True
+G5,q0171,yoy,invented,transposed digits,"$5,413","$5,431",True
+G5,q0171,yoy,wrong cell,"same row, other column","$5,413","$1,481",False
+G5,q0171,yoy,wrong cell,"same column, other row","$5,413","$1,122",False
+G5,q0171,yoy,wrong cell,"same line item, other table","$5,413","$10,443",False
+G5,q0170,yoy,invented,last digit +1,$40,$41,True
+G5,q0170,yoy,invented,+10%,$40,$44,False
+G5,q0170,yoy,invented,-10%,$40,$36,True
+G5,q0170,yoy,invented,transposed digits,$40,$4,False
+G5,q0170,yoy,wrong cell,"same column, other row",$40,$98,False
+G5,q0170,yoy,invented,last digit +1,$52,$53,True
+G5,q0170,yoy,invented,+10%,$52,$57,True
+G5,q0170,yoy,invented,-10%,$52,$47,False
+G5,q0170,yoy,invented,transposed digits,$52,$25,True
+G5,q0170,yoy,wrong cell,"same column, other row",$52,$244,False
+G5,q0147,yoy,invented,last digit +1,"$9,792","$9,793",True
+G5,q0147,yoy,invented,+10%,"$9,792","$10,771",True
+G5,q0147,yoy,invented,-10%,"$9,792","$8,813",True
+G5,q0147,yoy,invented,transposed digits,"$9,792","$9,729",True
+G5,q0147,yoy,wrong cell,"same column, other row","$9,792",$603,False
+G5,q0147,yoy,invented,last digit +1,"$(4,886)","$(4,887)",True
+G5,q0147,yoy,invented,+10%,"$(4,886)","$(5,375)",True
+G5,q0147,yoy,invented,-10%,"$(4,886)","$(4,397)",True
+G5,q0147,yoy,invented,transposed digits,"$(4,886)","$(4,868)",True
+G5,q0147,yoy,wrong cell,"same column, other row","$(4,886)",$(154),False
+G5,q0143,pct_change,invented,last digit +1,"15,509,763","15,509,764",True
+G5,q0143,pct_change,invented,+10%,"15,509,763","17,060,739",True
+G5,q0143,pct_change,invented,-10%,"15,509,763","13,958,787",True
+G5,q0143,pct_change,invented,transposed digits,"15,509,763","15,509,736",True
+G5,q0143,pct_change,wrong cell,"same column, other row","15,509,763","15,576,641",False
+G5,q0143,pct_change,wrong cell,"same line item, other table","15,509,763",3,False
+G5,q0143,pct_change,invented,last digit +1,"15,081,724","15,081,725",True
+G5,q0143,pct_change,invented,+10%,"15,081,724","16,589,896",True
+G5,q0143,pct_change,invented,-10%,"15,081,724","13,573,552",True
+G5,q0143,pct_change,invented,transposed digits,"15,081,724","15,081,742",True
+G5,q0143,pct_change,wrong cell,"same column, other row","15,081,724","15,150,865",False
+G5,q0143,pct_change,wrong cell,"same line item, other table","15,081,724",3,False
+G5,q0163,pct_change,invented,last digit +1,"$20,840","$20,841",True
+G5,q0163,pct_change,invented,+10%,"$20,840","$22,924",True
+G5,q0163,pct_change,invented,-10%,"$20,840","$18,756",True
+G5,q0163,pct_change,invented,transposed digits,"$20,840","$20,804",True
+G5,q0163,pct_change,wrong cell,"same row, other column","$20,840","$30,242",False
+G5,q0163,pct_change,wrong cell,"same column, other row","$20,840","$3,358",False
+G5,q0163,pct_change,invented,last digit +1,"$28,849","$28,850",True
+G5,q0163,pct_change,invented,+10%,"$28,849","$31,734",True
+G5,q0163,pct_change,invented,-10%,"$28,849","$25,964",True
+G5,q0163,pct_change,invented,transposed digits,"$28,849","$28,894",True
+G5,q0163,pct_change,wrong cell,"same row, other column","$28,849","$30,242",False
+G5,q0163,pct_change,wrong cell,"same column, other row","$28,849","$4,553",False
+G5,q0205,cross_company,invented,last digit +1,"$215,938","$215,939",True
+G5,q0205,cross_company,invented,+10%,"$215,938","$237,532",True
+G5,q0205,cross_company,invented,-10%,"$215,938","$194,344",True
+G5,q0205,cross_company,invented,transposed digits,"$215,938","$215,983",True
+G5,q0205,cross_company,invented,last digit +1,"$331,839","$331,840",True
+G5,q0205,cross_company,invented,+10%,"$331,839","$365,023",True
+G5,q0205,cross_company,invented,-10%,"$331,839","$298,655",True
+G5,q0205,cross_company,invented,transposed digits,"$331,839","$331,893",True
+G5,q0205,cross_company,wrong cell,"same row, other column","$331,839","$281,724",False
+G5,q0205,cross_company,wrong cell,"same column, other row","$331,839","$106,374",False
+G6,q0115,numeric,invented,last digit +1,"$3,122","$3,123",True
+G6,q0115,numeric,invented,+10%,"$3,122","$3,434",True
+G6,q0115,numeric,invented,-10%,"$3,122","$2,810",True
+G6,q0115,numeric,invented,transposed digits,"$3,122","$3,212",True
+G6,q0115,numeric,wrong cell,"same row, other column","$3,122","$4,004",False
+G6,q0115,numeric,wrong cell,"same column, other row","$3,122",$467,False
+G6,q0115,numeric,wrong cell,"same line item, other table","$3,122","$11,226",False
+G6,q0130,numeric,invented,last digit +1,"$10,275","$10,276",True
+G6,q0130,numeric,invented,+10%,"$10,275","$11,303",True
+G6,q0130,numeric,invented,-10%,"$10,275","$9,248",True
+G6,q0130,numeric,invented,transposed digits,"$10,275","$10,257",True
+G6,q0048,numeric,invented,last digit +1,$13.70,$13.71,True
+G6,q0048,numeric,invented,+10%,$13.70,$15.07,True
+G6,q0048,numeric,invented,-10%,$13.70,$12.33,True
+G6,q0048,numeric,wrong cell,"same row, other column",$13.70,$11.86,False
+G6,q0048,numeric,wrong cell,"same column, other row",$13.70,$13.64,False
+G6,q0048,numeric,wrong cell,"same line item, other table",$13.70,$18.00,False
+G6,q0047,numeric,invented,last digit +1,"$12,016","$12,017",True
+G6,q0047,numeric,invented,+10%,"$12,016","$13,218",True
+G6,q0047,numeric,invented,-10%,"$12,016","$10,814",True
+G6,q0047,numeric,invented,transposed digits,"$12,016","$12,061",True
+G6,q0047,numeric,wrong cell,"same row, other column","$12,016","$10,785",False
+G6,q0047,numeric,wrong cell,"same column, other row","$12,016","$26,504",False
+G6,q0131,numeric,invented,last digit +1,"$64,000","$64,001",True
+G6,q0131,numeric,invented,+10%,"$64,000","$70,400",True
+G6,q0131,numeric,invented,-10%,"$64,000","$57,600",True
+G6,q0131,numeric,invented,transposed digits,"$64,000","$60,400",True
+G6,q0131,numeric,wrong cell,"same row, other column","$64,000","$49,510",False
+G6,q0131,numeric,wrong cell,"same column, other row","$64,000","$8,768",False
+G6,q0131,numeric,wrong cell,"same line item, other table","$64,000","$91,288",False
+G6,q0121,numeric,invented,last digit +1,$70,$71,True
+G6,q0121,numeric,invented,+10%,$70,$77,True
+G6,q0121,numeric,invented,-10%,$70,$63,True
+G6,q0121,numeric,invented,transposed digits,$70,$7,True
+G6,q0121,numeric,wrong cell,"same row, other column",$70,$105,False
+G6,q0121,numeric,wrong cell,"same column, other row",$70,$487,False
+G6,q0024,numeric,invented,last digit +1,"$28,031","$28,032",True
+G6,q0024,numeric,invented,+10%,"$28,031","$30,834",True
+G6,q0024,numeric,invented,-10%,"$28,031","$25,228",True
+G6,q0024,numeric,invented,transposed digits,"$28,031","$28,013",True
+G6,q0024,numeric,wrong cell,"same row, other column","$28,031","$25,494",False
+G6,q0024,numeric,wrong cell,"same column, other row","$28,031",$171,False
+G6,q0024,numeric,wrong cell,"same line item, other table","$28,031","$36,267",False
+G6,q0114,numeric,invented,last digit +1,$244,$245,True
+G6,q0114,numeric,invented,+10%,$244,$268,True
+G6,q0114,numeric,invented,-10%,$244,$220,True
+G6,q0114,numeric,invented,transposed digits,$244,$424,True
+G6,q0114,numeric,wrong cell,"same row, other column",$244,$98,False
+G6,q0114,numeric,wrong cell,"same column, other row",$244,"$1,532",False
+G6,q0114,numeric,wrong cell,"same line item, other table",$244,$243,False
+G6,q0077,numeric,invented,last digit +1,"$7,832","$7,833",True
+G6,q0077,numeric,invented,+10%,"$7,832","$8,615",True
+G6,q0077,numeric,invented,-10%,"$7,832","$7,049",True
+G6,q0077,numeric,invented,transposed digits,"$7,832","$7,823",True
+G6,q0077,numeric,wrong cell,"same row, other column","$7,832","$2,999",False
+G6,q0077,numeric,wrong cell,"same column, other row","$7,832","$43,208",False
+G6,q0036,numeric,invented,last digit +1,"$18,896","$18,897",True
+G6,q0036,numeric,invented,+10%,"$18,896","$20,786",True
+G6,q0036,numeric,invented,-10%,"$18,896","$17,006",True
+G6,q0036,numeric,invented,transposed digits,"$18,896","$18,869",True
+G6,q0036,numeric,wrong cell,"same row, other column","$18,896","$15,278",False
+G6,q0036,numeric,wrong cell,"same column, other row","$18,896",$7,False
+G6,q0036,numeric,wrong cell,"same line item, other table","$18,896","$15,278",False
+G6,q0023,numeric,invented,last digit +1,"$53,887","$53,888",True
+G6,q0023,numeric,invented,+10%,"$53,887","$59,276",True
+G6,q0023,numeric,invented,-10%,"$53,887","$48,498",True
+G6,q0023,numeric,invented,transposed digits,"$53,887","$53,878",True
+G6,q0023,numeric,wrong cell,"same row, other column","$53,887","$62,585",False
+G6,q0023,numeric,wrong cell,"same column, other row","$53,887","$15,579",False
+G6,q0023,numeric,wrong cell,"same line item, other table","$53,887","$82,627",False
+G6,q0168,yoy,invented,last digit +1,$129,$130,True
+G6,q0168,yoy,invented,+10%,$129,$142,True
+G6,q0168,yoy,invented,-10%,$129,$116,True
+G6,q0168,yoy,invented,transposed digits,$129,$192,True
+G6,q0168,yoy,wrong cell,"same row, other column",$129,$74,False
+G6,q0168,yoy,wrong cell,"same column, other row",$129,$834,False
+G6,q0168,yoy,wrong cell,"same line item, other table",$129,$52,False
+G6,q0168,yoy,invented,last digit +1,$101,$102,True
+G6,q0168,yoy,invented,+10%,$101,$111,True
+G6,q0168,yoy,invented,-10%,$101,$91,True
+G6,q0168,yoy,invented,transposed digits,$101,$110,True
+G6,q0168,yoy,wrong cell,"same row, other column",$101,$74,False
+G6,q0168,yoy,wrong cell,"same column, other row",$101,$974,False
+G6,q0168,yoy,wrong cell,"same line item, other table",$101,$52,False
+G6,q0175,yoy,invented,last digit +1,$611,$612,True
+G6,q0175,yoy,invented,+10%,$611,$672,True
+G6,q0175,yoy,invented,-10%,$611,$550,True
+G6,q0175,yoy,invented,transposed digits,$611,$161,True
+G6,q0175,yoy,wrong cell,"same column, other row",$611,"$2,177",False
+G6,q0175,yoy,wrong cell,"same line item, other table",$611,$410,False
+G6,q0175,yoy,invented,last digit +1,$997,$998,True
+G6,q0175,yoy,invented,+10%,$997,"$1,097",True
+G6,q0175,yoy,invented,-10%,$997,$897,False
+G6,q0175,yoy,invented,transposed digits,$997,$979,False
+G6,q0175,yoy,wrong cell,"same column, other row",$997,"$1,584",False
+G6,q0175,yoy,wrong cell,"same line item, other table",$997,$410,False
+G6,q0171,yoy,invented,last digit +1,"$3,932","$3,933",True
+G6,q0171,yoy,invented,+10%,"$3,932","$4,325",True
+G6,q0171,yoy,invented,-10%,"$3,932","$3,539",True
+G6,q0171,yoy,invented,transposed digits,"$3,932","$3,923",True
+G6,q0171,yoy,wrong cell,"same row, other column","$3,932","$1,481",False
+G6,q0171,yoy,wrong cell,"same column, other row","$3,932",$842,False
+G6,q0171,yoy,wrong cell,"same line item, other table","$3,932","$8,408",False
+G6,q0171,yoy,invented,last digit +1,"$5,413","$5,414",True
+G6,q0171,yoy,invented,+10%,"$5,413","$5,954",True
+G6,q0171,yoy,invented,-10%,"$5,413","$4,872",True
+G6,q0171,yoy,invented,transposed digits,"$5,413","$5,431",True
+G6,q0171,yoy,wrong cell,"same row, other column","$5,413","$1,481",False
+G6,q0171,yoy,wrong cell,"same column, other row","$5,413","$1,122",False
+G6,q0171,yoy,wrong cell,"same line item, other table","$5,413","$8,408",False
+G6,q0160,yoy,invented,last digit +1,"$2,161","$2,162",True
+G6,q0160,yoy,invented,+10%,"$2,161","$2,377",True
+G6,q0160,yoy,invented,-10%,"$2,161","$1,945",False
+G6,q0160,yoy,invented,transposed digits,"$2,161","$2,116",True
+G6,q0160,yoy,wrong cell,"same row, other column","$2,161","$6,688",False
+G6,q0160,yoy,wrong cell,"same column, other row","$2,161","$6,721",False
+G6,q0160,yoy,wrong cell,"same line item, other table","$2,161","$6,358",False
+G6,q0160,yoy,invented,last digit +1,"$1,941","$1,942",False
+G6,q0160,yoy,invented,+10%,"$1,941","$2,135",True
+G6,q0160,yoy,invented,-10%,"$1,941","$1,747",True
+G6,q0160,yoy,invented,transposed digits,"$1,941","$1,914",False
+G6,q0160,yoy,wrong cell,"same row, other column","$1,941","$6,688",False
+G6,q0160,yoy,wrong cell,"same column, other row","$1,941","$3,350",False
+G6,q0160,yoy,wrong cell,"same line item, other table","$1,941","$6,358",False
+G6,q0162,yoy,invented,last digit +1,$(16),$(17),True
+G6,q0162,yoy,invented,+10%,$(16),$(18),False
+G6,q0162,yoy,invented,-10%,$(16),$(14),False
+G6,q0162,yoy,invented,transposed digits,$(16),$(61),True
+G6,q0162,yoy,wrong cell,"same row, other column",$(16),"$(6,846)",False
+G6,q0162,yoy,wrong cell,"same column, other row",$(16),"$(2,559)",False
+G6,q0162,yoy,wrong cell,"same line item, other table",$(16),$(343),False
+G6,q0162,yoy,invented,last digit +1,$(637),$(638),True
+G6,q0162,yoy,invented,+10%,$(637),$(701),True
+G6,q0162,yoy,invented,-10%,$(637),$(573),True
+G6,q0162,yoy,invented,transposed digits,$(637),$(673),True
+G6,q0162,yoy,wrong cell,"same row, other column",$(637),"$(6,846)",False
+G6,q0162,yoy,wrong cell,"same column, other row",$(637),"$(5,691)",False
+G6,q0162,yoy,wrong cell,"same line item, other table",$(637),$(343),False
+G6,q0147,yoy,invented,last digit +1,"$9,792","$9,793",True
+G6,q0147,yoy,invented,+10%,"$9,792","$10,771",True
+G6,q0147,yoy,invented,-10%,"$9,792","$8,813",True
+G6,q0147,yoy,invented,transposed digits,"$9,792","$9,729",True
+G6,q0147,yoy,wrong cell,"same column, other row","$9,792",$603,False
+G6,q0147,yoy,invented,last digit +1,"$(4,886)","$(4,887)",True
+G6,q0147,yoy,invented,+10%,"$(4,886)","$(5,375)",True
+G6,q0147,yoy,invented,-10%,"$(4,886)","$(4,397)",True
+G6,q0147,yoy,invented,transposed digits,"$(4,886)","$(4,868)",True
+G6,q0147,yoy,wrong cell,"same column, other row","$(4,886)",$(154),False
+G6,q0143,pct_change,invented,last digit +1,"15,509,763","15,509,764",True
+G6,q0143,pct_change,invented,+10%,"15,509,763","17,060,739",True
+G6,q0143,pct_change,invented,-10%,"15,509,763","13,958,787",True
+G6,q0143,pct_change,invented,transposed digits,"15,509,763","15,509,736",True
+G6,q0143,pct_change,wrong cell,"same column, other row","15,509,763","15,576,641",False
+G6,q0143,pct_change,wrong cell,"same line item, other table","15,509,763",3,False
+G6,q0143,pct_change,invented,last digit +1,"15,081,724","15,081,725",True
+G6,q0143,pct_change,invented,+10%,"15,081,724","16,589,896",True
+G6,q0143,pct_change,invented,-10%,"15,081,724","13,573,552",True
+G6,q0143,pct_change,invented,transposed digits,"15,081,724","15,081,742",True
+G6,q0143,pct_change,wrong cell,"same column, other row","15,081,724","15,150,865",False
+G6,q0143,pct_change,wrong cell,"same line item, other table","15,081,724",3,False
+G6,q0163,pct_change,invented,last digit +1,"$20,840","$20,841",True
+G6,q0163,pct_change,invented,+10%,"$20,840","$22,924",True
+G6,q0163,pct_change,invented,-10%,"$20,840","$18,756",True
+G6,q0163,pct_change,invented,transposed digits,"$20,840","$20,804",True
+G6,q0163,pct_change,wrong cell,"same row, other column","$20,840","$80,452",False
+G6,q0163,pct_change,wrong cell,"same column, other row","$20,840","$3,358",False
+G6,q0163,pct_change,wrong cell,"same line item, other table","$20,840","$30,242",False
+G6,q0163,pct_change,invented,last digit +1,"$28,849","$28,850",True
+G6,q0163,pct_change,invented,+10%,"$28,849","$31,734",True
+G6,q0163,pct_change,invented,-10%,"$28,849","$25,964",True
+G6,q0163,pct_change,invented,transposed digits,"$28,849","$28,894",True
+G6,q0163,pct_change,wrong cell,"same row, other column","$28,849","$30,242",False
+G6,q0163,pct_change,wrong cell,"same column, other row","$28,849","$4,553",False
+G6,q0163,pct_change,wrong cell,"same line item, other table","$28,849","$80,452",False
+G6,q0146,pct_change,invented,last digit +1,"$4,597","$4,598",True
+G6,q0146,pct_change,invented,+10%,"$4,597","$5,057",True
+G6,q0146,pct_change,invented,-10%,"$4,597","$4,137",True
+G6,q0146,pct_change,invented,transposed digits,"$4,597","$4,579",True
+G6,q0146,pct_change,wrong cell,"same row, other column","$4,597","$15,381",False
+G6,q0146,pct_change,wrong cell,"same column, other row","$4,597",$16,False
+G6,q0146,pct_change,wrong cell,"same line item, other table","$4,597","$6,478",False
+G6,q0146,pct_change,invented,last digit +1,"$4,046","$4,047",True
+G6,q0146,pct_change,invented,+10%,"$4,046","$4,451",True
+G6,q0146,pct_change,invented,-10%,"$4,046","$3,641",True
+G6,q0146,pct_change,invented,transposed digits,"$4,046","$4,064",True
+G6,q0146,pct_change,wrong cell,"same row, other column","$4,046","$15,381",False
+G6,q0146,pct_change,wrong cell,"same column, other row","$4,046",$16,False
+G6,q0146,pct_change,wrong cell,"same line item, other table","$4,046","$6,478",False
+G6,q0167,pct_change,invented,last digit +1,"$16,621","$16,622",True
+G6,q0167,pct_change,invented,+10%,"$16,621","$18,283",True
+G6,q0167,pct_change,invented,-10%,"$16,621","$14,959",True
+G6,q0167,pct_change,invented,transposed digits,"$16,621","$16,612",True
+G6,q0167,pct_change,wrong cell,"same row, other column","$16,621","$11,618",False
+G6,q0167,pct_change,wrong cell,"same column, other row","$16,621","$60,922",False
+G6,q0167,pct_change,wrong cell,"same line item, other table","$16,621",$25,False
+G6,q0167,pct_change,invented,last digit +1,"$32,639","$32,640",True
+G6,q0167,pct_change,invented,+10%,"$32,639","$35,903",True
+G6,q0167,pct_change,invented,-10%,"$32,639","$29,375",True
+G6,q0167,pct_change,invented,transposed digits,"$32,639","$32,693",True
+G6,q0167,pct_change,wrong cell,"same row, other column","$32,639","$11,618",False
+G6,q0167,pct_change,wrong cell,"same column, other row","$32,639","$130,497",False
+G6,q0167,pct_change,wrong cell,"same line item, other table","$32,639",$25,False
+G6,q0185,cross_quarter,invented,last digit +1,"$30,552","$30,553",True
+G6,q0185,cross_quarter,invented,+10%,"$30,552","$33,607",True
+G6,q0185,cross_quarter,invented,-10%,"$30,552","$27,497",True
+G6,q0185,cross_quarter,invented,transposed digits,"$30,552","$30,525",True
+G6,q0185,cross_quarter,wrong cell,"same row, other column","$30,552","$26,895",False
+G6,q0185,cross_quarter,wrong cell,"same column, other row","$30,552","$1,673",False
+G6,q0185,cross_quarter,wrong cell,"same line item, other table","$30,552","$20,599",False
+G6,q0185,cross_quarter,invented,last digit +1,"$31,653","$31,654",True
+G6,q0185,cross_quarter,invented,+10%,"$31,653","$34,818",True
+G6,q0185,cross_quarter,invented,-10%,"$31,653","$28,488",True
+G6,q0185,cross_quarter,invented,transposed digits,"$31,653","$31,635",True
+G6,q0185,cross_quarter,wrong cell,"same row, other column","$31,653","$38,275",False
+G6,q0185,cross_quarter,wrong cell,"same column, other row","$31,653","$16,180",False
+G6,q0185,cross_quarter,wrong cell,"same line item, other table","$31,653","$26,895",False
+G6,q0186,cross_quarter,invented,last digit +1,"$53,536","$53,537",True
+G6,q0186,cross_quarter,invented,+10%,"$53,536","$58,890",True
+G6,q0186,cross_quarter,invented,-10%,"$53,536","$48,182",True
+G6,q0186,cross_quarter,invented,transposed digits,"$53,536","$53,563",True
+G6,q0186,cross_quarter,wrong cell,"same row, other column","$53,536","$44,299",False
+G6,q0186,cross_quarter,wrong cell,"same column, other row","$53,536","$7,621",False
+G6,q0186,cross_quarter,wrong cell,"same line item, other table","$53,536","$28,440",False
+G6,q0186,cross_quarter,invented,last digit +1,"$63,734","$63,735",True
+G6,q0186,cross_quarter,invented,+10%,"$63,734","$70,107",True
+G6,q0186,cross_quarter,invented,-10%,"$63,734","$57,361",True
+G6,q0186,cross_quarter,invented,transposed digits,"$63,734","$63,743",True
+G6,q0186,cross_quarter,wrong cell,"same row, other column","$63,734","$28,440",False
+G6,q0186,cross_quarter,wrong cell,"same column, other row","$63,734","$8,408",False
+G6,q0186,cross_quarter,wrong cell,"same line item, other table","$63,734","$44,299",False
+G6,q0198,cross_quarter,invented,last digit +1,"$26,422","$26,423",True
+G6,q0198,cross_quarter,invented,+10%,"$26,422","$29,064",True
+G6,q0198,cross_quarter,invented,-10%,"$26,422","$23,780",True
+G6,q0198,cross_quarter,invented,transposed digits,"$26,422","$26,242",True
+G6,q0198,cross_quarter,wrong cell,"same row, other column","$26,422","$16,599",False
+G6,q0198,cross_quarter,wrong cell,"same column, other row","$26,422","$4,784",False
+G6,q0198,cross_quarter,wrong cell,"same line item, other table","$26,422","$14,881",False
+G6,q0198,cross_quarter,invented,last digit +1,"$18,775","$18,776",True
+G6,q0198,cross_quarter,invented,+10%,"$18,775","$20,652",True
+G6,q0198,cross_quarter,invented,-10%,"$18,775","$16,898",True
+G6,q0198,cross_quarter,invented,transposed digits,"$18,775","$18,757",True
+G6,q0198,cross_quarter,wrong cell,"same column, other row","$18,775","$68,038",False
+G6,q0198,cross_quarter,wrong cell,"same line item, other table","$18,775","$45,197",False
+G6,q0179,cross_quarter,invented,last digit +1,"$28,440","$28,441",True
+G6,q0179,cross_quarter,invented,+10%,"$28,440","$31,284",True
+G6,q0179,cross_quarter,invented,-10%,"$28,440","$25,596",True
+G6,q0179,cross_quarter,invented,transposed digits,"$28,440","$28,404",True
+G6,q0179,cross_quarter,wrong cell,"same row, other column","$28,440","$18,642",False
+G6,q0179,cross_quarter,wrong cell,"same column, other row","$28,440","$5,413",False
+G6,q0179,cross_quarter,wrong cell,"same line item, other table","$28,440","$24,034",False
+G6,q0179,cross_quarter,invented,last digit +1,"$21,638","$21,639",True
+G6,q0179,cross_quarter,invented,+10%,"$21,638","$23,802",True
+G6,q0179,cross_quarter,invented,-10%,"$21,638","$19,474",True
+G6,q0179,cross_quarter,invented,transposed digits,"$21,638","$21,683",True
+G6,q0179,cross_quarter,wrong cell,"same row, other column","$21,638","$24,034",False
+G6,q0179,cross_quarter,wrong cell,"same column, other row","$21,638","$5,030",False
+G6,q0179,cross_quarter,wrong cell,"same line item, other table","$21,638","$18,642",False
+G6,q0193,cross_quarter,invented,last digit +1,"$38,458","$38,459",True
+G6,q0193,cross_quarter,invented,+10%,"$38,458","$42,304",True
+G6,q0193,cross_quarter,invented,-10%,"$38,458","$34,612",True
+G6,q0193,cross_quarter,invented,transposed digits,"$38,458","$38,485",True
+G6,q0193,cross_quarter,wrong cell,"same row, other column","$38,458","$24,108",False
+G6,q0193,cross_quarter,wrong cell,"same column, other row","$38,458","$2,025",False
+G6,q0193,cross_quarter,wrong cell,"same line item, other table","$38,458","$25,824",False
+G6,q0193,cross_quarter,invented,last digit +1,"$31,778","$31,779",True
+G6,q0193,cross_quarter,invented,+10%,"$31,778","$34,956",True
+G6,q0193,cross_quarter,invented,-10%,"$31,778","$28,600",True
+G6,q0193,cross_quarter,invented,transposed digits,"$31,778","$31,787",True
+G6,q0193,cross_quarter,wrong cell,"same row, other column","$31,778","$25,824",False
+G6,q0193,cross_quarter,wrong cell,"same column, other row","$31,778","$2,026",False
+G6,q0193,cross_quarter,wrong cell,"same line item, other table","$31,778","$24,108",False
+G6,q0189,cross_quarter,invented,last digit +1,"$36,330","$36,331",True
+G6,q0189,cross_quarter,invented,+10%,"$36,330","$39,963",True
+G6,q0189,cross_quarter,invented,-10%,"$36,330","$32,697",True
+G6,q0189,cross_quarter,invented,transposed digits,"$36,330","$36,303",True
+G6,q0189,cross_quarter,wrong cell,"same row, other column","$36,330","$42,097",False
+G6,q0189,cross_quarter,wrong cell,"same column, other row","$36,330","$6,254",False
+G6,q0189,cross_quarter,wrong cell,"same line item, other table","$36,330","$23,636",False
+G6,q0189,cross_quarter,invented,last digit +1,"$24,780","$24,781",True
+G6,q0189,cross_quarter,invented,+10%,"$24,780","$27,258",True
+G6,q0189,cross_quarter,invented,-10%,"$24,780","$22,302",True
+G6,q0189,cross_quarter,invented,transposed digits,"$24,780","$24,708",True
+G6,q0189,cross_quarter,wrong cell,"same row, other column","$24,780","$23,636",False
+G6,q0189,cross_quarter,wrong cell,"same column, other row","$24,780","$4,530",False
+G6,q0189,cross_quarter,wrong cell,"same line item, other table","$24,780","$42,097",False
+G6,q0200,cross_quarter,invented,last digit +1,"$57,006","$57,007",True
+G6,q0200,cross_quarter,invented,+10%,"$57,006","$62,707",True
+G6,q0200,cross_quarter,invented,-10%,"$57,006","$51,305",True
+G6,q0200,cross_quarter,invented,transposed digits,"$57,006","$57,060",True
+G6,q0200,cross_quarter,wrong cell,"same row, other column","$57,006","$50,908",False
+G6,q0200,cross_quarter,wrong cell,"same column, other row","$57,006","$18,739",False
+G6,q0200,cross_quarter,wrong cell,"same line item, other table","$57,006","$41,331",False
+G6,q0200,cross_quarter,invented,last digit +1,"$46,743","$46,744",True
+G6,q0200,cross_quarter,invented,+10%,"$46,743","$51,417",True
+G6,q0200,cross_quarter,invented,-10%,"$46,743","$42,069",True
+G6,q0200,cross_quarter,invented,transposed digits,"$46,743","$46,734",True
+G6,q0200,cross_quarter,wrong cell,"same row, other column","$46,743","$41,331",False
+G6,q0200,cross_quarter,wrong cell,"same column, other row","$46,743","$16,138",False
+G6,q0200,cross_quarter,wrong cell,"same line item, other table","$46,743","$50,908",False
+G6,q0202,cross_quarter,invented,last digit +1,"$42,832","$42,833",True
+G6,q0202,cross_quarter,invented,+10%,"$42,832","$47,115",True
+G6,q0202,cross_quarter,invented,-10%,"$42,832","$38,549",True
+G6,q0202,cross_quarter,invented,transposed digits,"$42,832","$42,823",True
+G6,q0202,cross_quarter,wrong cell,"same row, other column","$42,832","$50,852",False
+G6,q0202,cross_quarter,wrong cell,"same column, other row","$42,832","$15,443",False
+G6,q0202,cross_quarter,wrong cell,"same line item, other table","$42,832","$21,509",False
+G6,q0202,cross_quarter,invented,last digit +1,"$29,589","$29,590",True
+G6,q0202,cross_quarter,invented,+10%,"$29,589","$32,548",True
+G6,q0202,cross_quarter,invented,-10%,"$29,589","$26,630",True
+G6,q0202,cross_quarter,invented,transposed digits,"$29,589","$29,598",True
+G6,q0202,cross_quarter,wrong cell,"same row, other column","$29,589","$27,900",False
+G6,q0202,cross_quarter,wrong cell,"same column, other row","$29,589","$15,278",False
+G6,q0202,cross_quarter,wrong cell,"same line item, other table","$29,589","$21,509",False
+G6,q0211,cross_company,invented,last digit +1,"$120,067","$120,068",True
+G6,q0211,cross_company,invented,+10%,"$120,067","$132,074",True
+G6,q0211,cross_company,invented,-10%,"$120,067","$108,060",True
+G6,q0211,cross_company,invented,transposed digits,"$120,067","$120,076",True
+G6,q0211,cross_company,wrong cell,"same row, other column","$120,067","$72,880",False
+G6,q0211,cross_company,wrong cell,"same column, other row","$120,067","$21,383",False
+G6,q0211,cross_company,wrong cell,"same line item, other table","$120,067","$101,832",False
+G6,q0211,cross_company,invented,last digit +1,"$133,749","$133,750",True
+G6,q0211,cross_company,invented,+10%,"$133,749","$147,124",True
+G6,q0211,cross_company,invented,-10%,"$133,749","$120,374",True
+G6,q0211,cross_company,invented,transposed digits,"$133,749","$133,794",True
+G6,q0211,cross_company,wrong cell,"same row, other column","$133,749","$101,832",False
+G6,q0211,cross_company,wrong cell,"same column, other row","$133,749","$32,185",False
+G6,q0211,cross_company,wrong cell,"same line item, other table","$133,749","$72,880",False
+G6,q0206,cross_company,invented,last digit +1,"$133,050","$133,051",True
+G6,q0206,cross_company,invented,+10%,"$133,050","$146,355",True
+G6,q0206,cross_company,invented,-10%,"$133,050","$119,745",True
+G6,q0206,cross_company,invented,transposed digits,"$133,050","$133,005",True
+G6,q0206,cross_company,wrong cell,"same row, other column","$133,050","$123,216",False
+G6,q0206,cross_company,wrong cell,"same column, other row","$133,050","$62,151",False
+G6,q0206,cross_company,wrong cell,"same line item, other table","$133,050","$83,879",False
+G6,q0206,cross_company,invented,last digit +1,"$155,237","$155,238",True
+G6,q0206,cross_company,invented,+10%,"$155,237","$170,761",True
+G6,q0206,cross_company,invented,-10%,"$155,237","$139,713",True
+G6,q0206,cross_company,invented,transposed digits,"$155,237","$155,273",True
+G6,q0206,cross_company,wrong cell,"same row, other column","$155,237","$128,528",False
+G6,q0206,cross_company,wrong cell,"same column, other row","$155,237","$70,228",False
+G6,q0206,cross_company,wrong cell,"same line item, other table","$155,237","$123,216",False
+G6,q0205,cross_company,invented,last digit +1,"$215,938","$215,939",True
+G6,q0205,cross_company,invented,+10%,"$215,938","$237,532",True
+G6,q0205,cross_company,invented,-10%,"$215,938","$194,344",True
+G6,q0205,cross_company,invented,transposed digits,"$215,938","$215,983",True
+G6,q0205,cross_company,wrong cell,"same row, other column","$215,938","$193,479",False
+G6,q0205,cross_company,wrong cell,"same column, other row","$215,938","$76,641",False
+G6,q0205,cross_company,wrong cell,"same line item, other table","$215,938","$139,996",False
+G6,q0205,cross_company,invented,last digit +1,"$331,839","$331,840",True
+G6,q0205,cross_company,invented,+10%,"$331,839","$365,023",True
+G6,q0205,cross_company,invented,-10%,"$331,839","$298,655",True
+G6,q0205,cross_company,invented,transposed digits,"$331,839","$331,893",True
+G6,q0205,cross_company,wrong cell,"same row, other column","$331,839","$281,724",False
+G6,q0205,cross_company,wrong cell,"same column, other row","$331,839","$106,374",False
+G6,q0205,cross_company,wrong cell,"same line item, other table","$331,839","$193,479",False
+G6,q0210,cross_company,invented,last digit +1,"$112,010","$112,011",True
+G6,q0210,cross_company,invented,+10%,"$112,010","$123,211",True
+G6,q0210,cross_company,invented,-10%,"$112,010","$100,809",True
+G6,q0210,cross_company,invented,transposed digits,"$112,010","$112,001",True
+G6,q0210,cross_company,wrong cell,"same row, other column","$112,010","$93,736",False
+G6,q0210,cross_company,wrong cell,"same column, other row","$112,010","$20,719",False
+G6,q0210,cross_company,wrong cell,"same line item, other table","$112,010","$72,880",False
+G6,q0210,cross_company,invented,last digit +1,"$120,067","$120,068",True
+G6,q0210,cross_company,invented,+10%,"$120,067","$132,074",True
+G6,q0210,cross_company,invented,-10%,"$120,067","$108,060",True
+G6,q0210,cross_company,invented,transposed digits,"$120,067","$120,076",True
+G6,q0210,cross_company,wrong cell,"same row, other column","$120,067","$72,880",False
+G6,q0210,cross_company,wrong cell,"same column, other row","$120,067","$21,383",False
+G6,q0210,cross_company,wrong cell,"same line item, other table","$120,067","$93,736",False
+G6,q0203,cross_company,invented,last digit +1,"$416,161","$416,162",True
+G6,q0203,cross_company,invented,+10%,"$416,161","$457,777",True
+G6,q0203,cross_company,invented,-10%,"$416,161","$374,545",True
+G6,q0203,cross_company,invented,transposed digits,"$416,161","$416,116",True
+G6,q0203,cross_company,wrong cell,"same row, other column","$416,161","$391,035",False
+G6,q0203,cross_company,wrong cell,"same column, other row","$416,161","$109,158",False
+G6,q0203,cross_company,wrong cell,"same line item, other table","$416,161","$94,036",False
+G6,q0203,cross_company,invented,last digit +1,"$331,839","$331,840",True
+G6,q0203,cross_company,invented,+10%,"$331,839","$365,023",True
+G6,q0203,cross_company,invented,-10%,"$331,839","$298,655",True
+G6,q0203,cross_company,invented,transposed digits,"$331,839","$331,893",True
+G6,q0203,cross_company,wrong cell,"same row, other column","$331,839","$281,724",False
+G6,q0203,cross_company,wrong cell,"same column, other row","$331,839","$267,143",False
+G6,q0203,cross_company,wrong cell,"same line item, other table","$331,839","$82,886",False
+G7,q0115,numeric,invented,last digit +1,"$3,122","$3,123",True
+G7,q0115,numeric,invented,+10%,"$3,122","$3,434",True
+G7,q0115,numeric,invented,-10%,"$3,122","$2,810",True
+G7,q0115,numeric,invented,transposed digits,"$3,122","$3,212",True
+G7,q0115,numeric,wrong cell,"same row, other column","$3,122","$4,004",False
+G7,q0115,numeric,wrong cell,"same column, other row","$3,122",$467,False
+G7,q0115,numeric,wrong cell,"same line item, other table","$3,122","$11,226",False
+G7,q0130,numeric,invented,last digit +1,"$10,275","$10,276",True
+G7,q0130,numeric,invented,+10%,"$10,275","$11,303",True
+G7,q0130,numeric,invented,-10%,"$10,275","$9,248",True
+G7,q0130,numeric,invented,transposed digits,"$10,275","$10,257",True
+G7,q0048,numeric,invented,last digit +1,$13.70,$13.71,True
+G7,q0048,numeric,invented,+10%,$13.70,$15.07,True
+G7,q0048,numeric,invented,-10%,$13.70,$12.33,True
+G7,q0047,numeric,invented,last digit +1,"$12,016","$12,017",True
+G7,q0047,numeric,invented,+10%,"$12,016","$13,218",True
+G7,q0047,numeric,invented,-10%,"$12,016","$10,814",True
+G7,q0047,numeric,invented,transposed digits,"$12,016","$12,061",True
+G7,q0047,numeric,wrong cell,"same row, other column","$12,016","$10,785",False
+G7,q0047,numeric,wrong cell,"same column, other row","$12,016","$26,504",False
+G7,q0131,numeric,invented,last digit +1,"$64,000","$64,001",True
+G7,q0131,numeric,invented,+10%,"$64,000","$70,400",True
+G7,q0131,numeric,invented,-10%,"$64,000","$57,600",True
+G7,q0131,numeric,invented,transposed digits,"$64,000","$60,400",True
+G7,q0131,numeric,wrong cell,"same row, other column","$64,000","$49,510",False
+G7,q0131,numeric,wrong cell,"same column, other row","$64,000","$8,768",False
+G7,q0131,numeric,wrong cell,"same line item, other table","$64,000","$91,288",False
+G7,q0121,numeric,invented,last digit +1,$70,$71,True
+G7,q0121,numeric,invented,+10%,$70,$77,True
+G7,q0121,numeric,invented,-10%,$70,$63,True
+G7,q0121,numeric,invented,transposed digits,$70,$7,False
+G7,q0121,numeric,wrong cell,"same row, other column",$70,$105,False
+G7,q0121,numeric,wrong cell,"same column, other row",$70,$487,False
+G7,q0024,numeric,invented,last digit +1,"$28,031","$28,032",True
+G7,q0024,numeric,invented,+10%,"$28,031","$30,834",True
+G7,q0024,numeric,invented,-10%,"$28,031","$25,228",True
+G7,q0024,numeric,invented,transposed digits,"$28,031","$28,013",True
+G7,q0024,numeric,wrong cell,"same row, other column","$28,031","$25,494",False
+G7,q0024,numeric,wrong cell,"same column, other row","$28,031",$171,False
+G7,q0024,numeric,wrong cell,"same line item, other table","$28,031","$36,267",False
+G7,q0114,numeric,invented,last digit +1,$244,$245,True
+G7,q0114,numeric,invented,+10%,$244,$268,True
+G7,q0114,numeric,invented,-10%,$244,$220,True
+G7,q0114,numeric,invented,transposed digits,$244,$424,True
+G7,q0114,numeric,wrong cell,"same row, other column",$244,$98,False
+G7,q0114,numeric,wrong cell,"same column, other row",$244,"$1,532",False
+G7,q0114,numeric,wrong cell,"same line item, other table",$244,$243,False
+G7,q0077,numeric,invented,last digit +1,"$7,832","$7,833",True
+G7,q0077,numeric,invented,+10%,"$7,832","$8,615",True
+G7,q0077,numeric,invented,-10%,"$7,832","$7,049",True
+G7,q0077,numeric,invented,transposed digits,"$7,832","$7,823",True
+G7,q0077,numeric,wrong cell,"same row, other column","$7,832","$2,999",False
+G7,q0077,numeric,wrong cell,"same column, other row","$7,832","$43,208",False
+G7,q0036,numeric,invented,last digit +1,"$18,896","$18,897",True
+G7,q0036,numeric,invented,+10%,"$18,896","$20,786",True
+G7,q0036,numeric,invented,-10%,"$18,896","$17,006",True
+G7,q0036,numeric,invented,transposed digits,"$18,896","$18,869",True
+G7,q0036,numeric,wrong cell,"same row, other column","$18,896","$15,278",False
+G7,q0036,numeric,wrong cell,"same column, other row","$18,896",$7,False
+G7,q0036,numeric,wrong cell,"same line item, other table","$18,896","$15,278",False
+G7,q0023,numeric,invented,last digit +1,"$53,887","$53,888",True
+G7,q0023,numeric,invented,+10%,"$53,887","$59,276",True
+G7,q0023,numeric,invented,-10%,"$53,887","$48,498",True
+G7,q0023,numeric,invented,transposed digits,"$53,887","$53,878",True
+G7,q0023,numeric,wrong cell,"same row, other column","$53,887","$62,585",False
+G7,q0023,numeric,wrong cell,"same column, other row","$53,887","$15,579",False
+G7,q0023,numeric,wrong cell,"same line item, other table","$53,887","$82,627",False
+G7,q0168,yoy,invented,last digit +1,$129,$130,True
+G7,q0168,yoy,invented,+10%,$129,$142,True
+G7,q0168,yoy,invented,-10%,$129,$116,True
+G7,q0168,yoy,invented,transposed digits,$129,$192,True
+G7,q0168,yoy,wrong cell,"same row, other column",$129,$74,False
+G7,q0168,yoy,wrong cell,"same column, other row",$129,$834,False
+G7,q0168,yoy,wrong cell,"same line item, other table",$129,$52,False
+G7,q0168,yoy,invented,last digit +1,$101,$102,True
+G7,q0168,yoy,invented,+10%,$101,$111,True
+G7,q0168,yoy,invented,-10%,$101,$91,True
+G7,q0168,yoy,invented,transposed digits,$101,$110,True
+G7,q0168,yoy,wrong cell,"same row, other column",$101,$74,False
+G7,q0168,yoy,wrong cell,"same column, other row",$101,$974,False
+G7,q0168,yoy,wrong cell,"same line item, other table",$101,$52,False
+G7,q0175,yoy,invented,last digit +1,$611,$612,True
+G7,q0175,yoy,invented,+10%,$611,$672,True
+G7,q0175,yoy,invented,-10%,$611,$550,True
+G7,q0175,yoy,invented,transposed digits,$611,$161,True
+G7,q0175,yoy,wrong cell,"same column, other row",$611,"$2,177",False
+G7,q0175,yoy,wrong cell,"same line item, other table",$611,$410,False
+G7,q0175,yoy,invented,last digit +1,$997,$998,True
+G7,q0175,yoy,invented,+10%,$997,"$1,097",True
+G7,q0175,yoy,invented,-10%,$997,$897,True
+G7,q0175,yoy,invented,transposed digits,$997,$979,False
+G7,q0175,yoy,wrong cell,"same column, other row",$997,"$1,584",False
+G7,q0175,yoy,wrong cell,"same line item, other table",$997,$410,False
+G7,q0171,yoy,invented,last digit +1,"$3,932","$3,933",True
+G7,q0171,yoy,invented,+10%,"$3,932","$4,325",True
+G7,q0171,yoy,invented,-10%,"$3,932","$3,539",True
+G7,q0171,yoy,invented,transposed digits,"$3,932","$3,923",True
+G7,q0171,yoy,wrong cell,"same row, other column","$3,932","$1,481",False
+G7,q0171,yoy,wrong cell,"same column, other row","$3,932",$842,False
+G7,q0171,yoy,wrong cell,"same line item, other table","$3,932","$8,408",False
+G7,q0171,yoy,invented,last digit +1,"$5,413","$5,414",True
+G7,q0171,yoy,invented,+10%,"$5,413","$5,954",True
+G7,q0171,yoy,invented,-10%,"$5,413","$4,872",True
+G7,q0171,yoy,invented,transposed digits,"$5,413","$5,431",True
+G7,q0171,yoy,wrong cell,"same row, other column","$5,413","$1,481",False
+G7,q0171,yoy,wrong cell,"same column, other row","$5,413","$1,122",False
+G7,q0171,yoy,wrong cell,"same line item, other table","$5,413","$8,408",False
+G7,q0170,yoy,invented,last digit +1,$40,$41,True
+G7,q0170,yoy,invented,+10%,$40,$44,True
+G7,q0170,yoy,invented,-10%,$40,$36,True
+G7,q0170,yoy,invented,transposed digits,$40,$4,False
+G7,q0170,yoy,wrong cell,"same column, other row",$40,$98,False
+G7,q0170,yoy,wrong cell,"same line item, other table",$40,$33,False
+G7,q0170,yoy,invented,last digit +1,$52,$53,True
+G7,q0170,yoy,invented,+10%,$52,$57,True
+G7,q0170,yoy,invented,-10%,$52,$47,True
+G7,q0170,yoy,invented,transposed digits,$52,$25,False
+G7,q0170,yoy,wrong cell,"same column, other row",$52,$244,False
+G7,q0170,yoy,wrong cell,"same line item, other table",$52,$33,False
+G7,q0160,yoy,invented,last digit +1,"$2,161","$2,162",True
+G7,q0160,yoy,invented,+10%,"$2,161","$2,377",True
+G7,q0160,yoy,invented,-10%,"$2,161","$1,945",False
+G7,q0160,yoy,invented,transposed digits,"$2,161","$2,116",True
+G7,q0160,yoy,wrong cell,"same row, other column","$2,161","$6,688",False
+G7,q0160,yoy,wrong cell,"same column, other row","$2,161","$6,721",False
+G7,q0160,yoy,wrong cell,"same line item, other table","$2,161","$6,358",False
+G7,q0160,yoy,invented,last digit +1,"$1,941","$1,942",False
+G7,q0160,yoy,invented,+10%,"$1,941","$2,135",True
+G7,q0160,yoy,invented,-10%,"$1,941","$1,747",True
+G7,q0160,yoy,invented,transposed digits,"$1,941","$1,914",False
+G7,q0160,yoy,wrong cell,"same row, other column","$1,941","$6,688",False
+G7,q0160,yoy,wrong cell,"same column, other row","$1,941","$3,350",False
+G7,q0160,yoy,wrong cell,"same line item, other table","$1,941","$6,358",False
+G7,q0162,yoy,invented,last digit +1,$(16),$(17),True
+G7,q0162,yoy,invented,+10%,$(16),$(18),False
+G7,q0162,yoy,invented,-10%,$(16),$(14),False
+G7,q0162,yoy,invented,transposed digits,$(16),$(61),True
+G7,q0162,yoy,wrong cell,"same row, other column",$(16),"$(6,846)",False
+G7,q0162,yoy,wrong cell,"same column, other row",$(16),"$(2,559)",False
+G7,q0162,yoy,wrong cell,"same line item, other table",$(16),$(343),False
+G7,q0162,yoy,invented,last digit +1,$(637),$(638),True
+G7,q0162,yoy,invented,+10%,$(637),$(701),True
+G7,q0162,yoy,invented,-10%,$(637),$(573),True
+G7,q0162,yoy,invented,transposed digits,$(637),$(673),True
+G7,q0162,yoy,wrong cell,"same row, other column",$(637),"$(6,846)",False
+G7,q0162,yoy,wrong cell,"same column, other row",$(637),"$(5,691)",False
+G7,q0162,yoy,wrong cell,"same line item, other table",$(637),$(343),False
+G7,q0143,pct_change,invented,last digit +1,"15,509,763","15,509,764",True
+G7,q0143,pct_change,invented,+10%,"15,509,763","17,060,739",True
+G7,q0143,pct_change,invented,-10%,"15,509,763","13,958,787",True
+G7,q0143,pct_change,invented,transposed digits,"15,509,763","15,509,736",True
+G7,q0143,pct_change,wrong cell,"same column, other row","15,509,763","15,576,641",False
+G7,q0143,pct_change,wrong cell,"same line item, other table","15,509,763",3,False
+G7,q0143,pct_change,invented,last digit +1,"15,081,724","15,081,725",True
+G7,q0143,pct_change,invented,+10%,"15,081,724","16,589,896",True
+G7,q0143,pct_change,invented,-10%,"15,081,724","13,573,552",True
+G7,q0143,pct_change,invented,transposed digits,"15,081,724","15,081,742",True
+G7,q0143,pct_change,wrong cell,"same column, other row","15,081,724","15,150,865",False
+G7,q0143,pct_change,wrong cell,"same line item, other table","15,081,724",3,False
+G7,q0167,pct_change,invented,last digit +1,"$16,621","$16,622",True
+G7,q0167,pct_change,invented,+10%,"$16,621","$18,283",True
+G7,q0167,pct_change,invented,-10%,"$16,621","$14,959",True
+G7,q0167,pct_change,invented,transposed digits,"$16,621","$16,612",True
+G7,q0167,pct_change,wrong cell,"same row, other column","$16,621","$11,618",False
+G7,q0167,pct_change,wrong cell,"same column, other row","$16,621","$60,922",False
+G7,q0167,pct_change,wrong cell,"same line item, other table","$16,621",$25,False
+G7,q0167,pct_change,invented,last digit +1,"$32,639","$32,640",True
+G7,q0167,pct_change,invented,+10%,"$32,639","$35,903",True
+G7,q0167,pct_change,invented,-10%,"$32,639","$29,375",True
+G7,q0167,pct_change,invented,transposed digits,"$32,639","$32,693",True
+G7,q0167,pct_change,wrong cell,"same row, other column","$32,639","$11,618",False
+G7,q0167,pct_change,wrong cell,"same column, other row","$32,639","$130,497",False
+G7,q0167,pct_change,wrong cell,"same line item, other table","$32,639",$25,False
+G7,q0186,cross_quarter,invented,last digit +1,"$53,536","$53,537",True
+G7,q0186,cross_quarter,invented,+10%,"$53,536","$58,890",True
+G7,q0186,cross_quarter,invented,-10%,"$53,536","$48,182",True
+G7,q0186,cross_quarter,invented,transposed digits,"$53,536","$53,563",True
+G7,q0186,cross_quarter,wrong cell,"same row, other column","$53,536","$44,299",False
+G7,q0186,cross_quarter,wrong cell,"same column, other row","$53,536","$7,621",False
+G7,q0186,cross_quarter,wrong cell,"same line item, other table","$53,536","$28,440",False
+G7,q0186,cross_quarter,invented,last digit +1,"$63,734","$63,735",True
+G7,q0186,cross_quarter,invented,+10%,"$63,734","$70,107",True
+G7,q0186,cross_quarter,invented,-10%,"$63,734","$57,361",True
+G7,q0186,cross_quarter,invented,transposed digits,"$63,734","$63,743",True
+G7,q0186,cross_quarter,wrong cell,"same row, other column","$63,734","$28,440",False
+G7,q0186,cross_quarter,wrong cell,"same column, other row","$63,734","$8,408",False
+G7,q0186,cross_quarter,wrong cell,"same line item, other table","$63,734","$44,299",False
+G7,q0198,cross_quarter,invented,last digit +1,"$26,422","$26,423",True
+G7,q0198,cross_quarter,invented,+10%,"$26,422","$29,064",True
+G7,q0198,cross_quarter,invented,-10%,"$26,422","$23,780",True
+G7,q0198,cross_quarter,invented,transposed digits,"$26,422","$26,242",True
+G7,q0198,cross_quarter,wrong cell,"same row, other column","$26,422","$16,599",False
+G7,q0198,cross_quarter,wrong cell,"same column, other row","$26,422","$4,784",False
+G7,q0198,cross_quarter,wrong cell,"same line item, other table","$26,422","$14,881",False
+G7,q0198,cross_quarter,invented,last digit +1,"$18,775","$18,776",True
+G7,q0198,cross_quarter,invented,+10%,"$18,775","$20,652",True
+G7,q0198,cross_quarter,invented,-10%,"$18,775","$16,898",True
+G7,q0198,cross_quarter,invented,transposed digits,"$18,775","$18,757",True
+G7,q0198,cross_quarter,wrong cell,"same column, other row","$18,775","$68,038",False
+G7,q0198,cross_quarter,wrong cell,"same line item, other table","$18,775","$45,197",False
+G7,q0179,cross_quarter,invented,last digit +1,"$28,440","$28,441",True
+G7,q0179,cross_quarter,invented,+10%,"$28,440","$31,284",True
+G7,q0179,cross_quarter,invented,-10%,"$28,440","$25,596",True
+G7,q0179,cross_quarter,invented,transposed digits,"$28,440","$28,404",True
+G7,q0179,cross_quarter,wrong cell,"same row, other column","$28,440","$18,642",False
+G7,q0179,cross_quarter,wrong cell,"same column, other row","$28,440","$5,413",False
+G7,q0179,cross_quarter,wrong cell,"same line item, other table","$28,440","$24,034",False
+G7,q0179,cross_quarter,invented,last digit +1,"$21,638","$21,639",True
+G7,q0179,cross_quarter,invented,+10%,"$21,638","$23,802",True
+G7,q0179,cross_quarter,invented,-10%,"$21,638","$19,474",True
+G7,q0179,cross_quarter,invented,transposed digits,"$21,638","$21,683",True
+G7,q0179,cross_quarter,wrong cell,"same row, other column","$21,638","$24,034",False
+G7,q0179,cross_quarter,wrong cell,"same column, other row","$21,638","$5,030",False
+G7,q0179,cross_quarter,wrong cell,"same line item, other table","$21,638","$18,642",False
+G7,q0193,cross_quarter,invented,last digit +1,"$38,458","$38,459",True
+G7,q0193,cross_quarter,invented,+10%,"$38,458","$42,304",True
+G7,q0193,cross_quarter,invented,-10%,"$38,458","$34,612",True
+G7,q0193,cross_quarter,invented,transposed digits,"$38,458","$38,485",True
+G7,q0193,cross_quarter,wrong cell,"same row, other column","$38,458","$24,108",False
+G7,q0193,cross_quarter,wrong cell,"same column, other row","$38,458","$2,025",False
+G7,q0193,cross_quarter,wrong cell,"same line item, other table","$38,458","$25,824",False
+G7,q0193,cross_quarter,invented,last digit +1,"$31,778","$31,779",True
+G7,q0193,cross_quarter,invented,+10%,"$31,778","$34,956",True
+G7,q0193,cross_quarter,invented,-10%,"$31,778","$28,600",True
+G7,q0193,cross_quarter,invented,transposed digits,"$31,778","$31,787",True
+G7,q0193,cross_quarter,wrong cell,"same row, other column","$31,778","$25,824",False
+G7,q0193,cross_quarter,wrong cell,"same column, other row","$31,778","$2,026",False
+G7,q0193,cross_quarter,wrong cell,"same line item, other table","$31,778","$24,108",False
+G7,q0189,cross_quarter,invented,last digit +1,"$36,330","$36,331",True
+G7,q0189,cross_quarter,invented,+10%,"$36,330","$39,963",True
+G7,q0189,cross_quarter,invented,-10%,"$36,330","$32,697",True
+G7,q0189,cross_quarter,invented,transposed digits,"$36,330","$36,303",True
+G7,q0189,cross_quarter,wrong cell,"same row, other column","$36,330","$42,097",False
+G7,q0189,cross_quarter,wrong cell,"same column, other row","$36,330","$6,254",False
+G7,q0189,cross_quarter,wrong cell,"same line item, other table","$36,330","$23,636",False
+G7,q0189,cross_quarter,invented,last digit +1,"$24,780","$24,781",True
+G7,q0189,cross_quarter,invented,+10%,"$24,780","$27,258",True
+G7,q0189,cross_quarter,invented,-10%,"$24,780","$22,302",True
+G7,q0189,cross_quarter,invented,transposed digits,"$24,780","$24,708",True
+G7,q0189,cross_quarter,wrong cell,"same row, other column","$24,780","$23,636",False
+G7,q0189,cross_quarter,wrong cell,"same column, other row","$24,780","$4,530",False
+G7,q0189,cross_quarter,wrong cell,"same line item, other table","$24,780","$42,097",False
+G7,q0202,cross_quarter,invented,last digit +1,"$42,832","$42,833",True
+G7,q0202,cross_quarter,invented,+10%,"$42,832","$47,115",True
+G7,q0202,cross_quarter,invented,-10%,"$42,832","$38,549",True
+G7,q0202,cross_quarter,invented,transposed digits,"$42,832","$42,823",True
+G7,q0202,cross_quarter,wrong cell,"same row, other column","$42,832","$50,852",False
+G7,q0202,cross_quarter,wrong cell,"same column, other row","$42,832","$15,443",False
+G7,q0202,cross_quarter,wrong cell,"same line item, other table","$42,832","$21,509",False
+G7,q0202,cross_quarter,invented,last digit +1,"$29,589","$29,590",True
+G7,q0202,cross_quarter,invented,+10%,"$29,589","$32,548",True
+G7,q0202,cross_quarter,invented,-10%,"$29,589","$26,630",True
+G7,q0202,cross_quarter,invented,transposed digits,"$29,589","$29,598",True
+G7,q0202,cross_quarter,wrong cell,"same row, other column","$29,589","$27,900",False
+G7,q0202,cross_quarter,wrong cell,"same column, other row","$29,589","$15,278",False
+G7,q0202,cross_quarter,wrong cell,"same line item, other table","$29,589","$21,509",False
+G7,q0211,cross_company,invented,last digit +1,"$120,067","$120,068",True
+G7,q0211,cross_company,invented,+10%,"$120,067","$132,074",True
+G7,q0211,cross_company,invented,-10%,"$120,067","$108,060",True
+G7,q0211,cross_company,invented,transposed digits,"$120,067","$120,076",True
+G7,q0211,cross_company,wrong cell,"same row, other column","$120,067","$72,880",False
+G7,q0211,cross_company,wrong cell,"same column, other row","$120,067","$21,383",False
+G7,q0211,cross_company,wrong cell,"same line item, other table","$120,067","$101,832",False
+G7,q0211,cross_company,invented,last digit +1,"$133,749","$133,750",True
+G7,q0211,cross_company,invented,+10%,"$133,749","$147,124",True
+G7,q0211,cross_company,invented,-10%,"$133,749","$120,374",True
+G7,q0211,cross_company,invented,transposed digits,"$133,749","$133,794",True
+G7,q0211,cross_company,wrong cell,"same row, other column","$133,749","$101,832",False
+G7,q0211,cross_company,wrong cell,"same column, other row","$133,749","$32,185",False
+G7,q0211,cross_company,wrong cell,"same line item, other table","$133,749","$72,880",False
+G7,q0206,cross_company,invented,last digit +1,"$133,050","$133,051",True
+G7,q0206,cross_company,invented,+10%,"$133,050","$146,355",True
+G7,q0206,cross_company,invented,-10%,"$133,050","$119,745",True
+G7,q0206,cross_company,invented,transposed digits,"$133,050","$133,005",True
+G7,q0206,cross_company,wrong cell,"same row, other column","$133,050","$123,216",False
+G7,q0206,cross_company,wrong cell,"same column, other row","$133,050","$62,151",False
+G7,q0206,cross_company,wrong cell,"same line item, other table","$133,050","$83,879",False
+G7,q0206,cross_company,invented,last digit +1,"$155,237","$155,238",True
+G7,q0206,cross_company,invented,+10%,"$155,237","$170,761",True
+G7,q0206,cross_company,invented,-10%,"$155,237","$139,713",True
+G7,q0206,cross_company,invented,transposed digits,"$155,237","$155,273",True
+G7,q0206,cross_company,wrong cell,"same row, other column","$155,237","$128,528",False
+G7,q0206,cross_company,wrong cell,"same column, other row","$155,237","$70,228",False
+G7,q0206,cross_company,wrong cell,"same line item, other table","$155,237","$123,216",False
+G7,q0205,cross_company,invented,last digit +1,"$215,938","$215,939",True
+G7,q0205,cross_company,invented,+10%,"$215,938","$237,532",True
+G7,q0205,cross_company,invented,-10%,"$215,938","$194,344",True
+G7,q0205,cross_company,invented,transposed digits,"$215,938","$215,983",True
+G7,q0205,cross_company,wrong cell,"same row, other column","$215,938","$193,479",False
+G7,q0205,cross_company,wrong cell,"same column, other row","$215,938","$76,641",False
+G7,q0205,cross_company,invented,last digit +1,"$331,839","$331,840",True
+G7,q0205,cross_company,invented,+10%,"$331,839","$365,023",True
+G7,q0205,cross_company,invented,-10%,"$331,839","$298,655",True
+G7,q0205,cross_company,invented,transposed digits,"$331,839","$331,893",True
+G7,q0210,cross_company,invented,last digit +1,"$112,010","$112,011",True
+G7,q0210,cross_company,invented,+10%,"$112,010","$123,211",True
+G7,q0210,cross_company,invented,-10%,"$112,010","$100,809",True
+G7,q0210,cross_company,invented,transposed digits,"$112,010","$112,001",True
+G7,q0210,cross_company,wrong cell,"same row, other column","$112,010","$93,736",False
+G7,q0210,cross_company,wrong cell,"same column, other row","$112,010","$20,719",False
+G7,q0210,cross_company,wrong cell,"same line item, other table","$112,010","$72,880",False
+G7,q0210,cross_company,invented,last digit +1,"$120,067","$120,068",True
+G7,q0210,cross_company,invented,+10%,"$120,067","$132,074",True
+G7,q0210,cross_company,invented,-10%,"$120,067","$108,060",True
+G7,q0210,cross_company,invented,transposed digits,"$120,067","$120,076",True
+G7,q0210,cross_company,wrong cell,"same row, other column","$120,067","$72,880",False
+G7,q0210,cross_company,wrong cell,"same column, other row","$120,067","$21,383",False
+G7,q0210,cross_company,wrong cell,"same line item, other table","$120,067","$93,736",False
+G7,q0203,cross_company,invented,last digit +1,"$416,161","$416,162",True
+G7,q0203,cross_company,invented,+10%,"$416,161","$457,777",True
+G7,q0203,cross_company,invented,-10%,"$416,161","$374,545",True
+G7,q0203,cross_company,invented,transposed digits,"$416,161","$416,116",True
+G7,q0203,cross_company,wrong cell,"same row, other column","$416,161","$391,035",False
+G7,q0203,cross_company,wrong cell,"same column, other row","$416,161","$109,158",False
+G7,q0203,cross_company,wrong cell,"same line item, other table","$416,161","$94,036",False
+G7,q0203,cross_company,invented,last digit +1,"$331,839","$331,840",True
+G7,q0203,cross_company,invented,+10%,"$331,839","$365,023",True
+G7,q0203,cross_company,invented,-10%,"$331,839","$298,655",True
+G7,q0203,cross_company,invented,transposed digits,"$331,839","$331,893",True
+G8,q0115,numeric,invented,last digit +1,"$3,122","$3,123",True
+G8,q0115,numeric,invented,+10%,"$3,122","$3,434",True
+G8,q0115,numeric,invented,-10%,"$3,122","$2,810",True
+G8,q0115,numeric,invented,transposed digits,"$3,122","$3,212",True
+G8,q0115,numeric,wrong cell,"same row, other column","$3,122","$4,004",False
+G8,q0115,numeric,wrong cell,"same column, other row","$3,122",$467,False
+G8,q0115,numeric,wrong cell,"same line item, other table","$3,122","$11,226",False
+G8,q0119,numeric,invented,last digit +1,"$40,609","$40,610",True
+G8,q0119,numeric,invented,+10%,"$40,609","$44,670",True
+G8,q0119,numeric,invented,-10%,"$40,609","$36,548",True
+G8,q0119,numeric,invented,transposed digits,"$40,609","$40,690",True
+G8,q0119,numeric,wrong cell,"same row, other column","$40,609","$32,274",False
+G8,q0119,numeric,wrong cell,"same column, other row","$40,609","$6,055",False
+G8,q0119,numeric,wrong cell,"same line item, other table","$40,609","$91,288",False
+G8,q0130,numeric,invented,last digit +1,"$10,275","$10,276",True
+G8,q0130,numeric,invented,+10%,"$10,275","$11,303",True
+G8,q0130,numeric,invented,-10%,"$10,275","$9,248",True
+G8,q0130,numeric,invented,transposed digits,"$10,275","$10,257",True
+G8,q0048,numeric,invented,last digit +1,$13.70,$13.71,True
+G8,q0048,numeric,invented,+10%,$13.70,$15.07,True
+G8,q0048,numeric,invented,-10%,$13.70,$12.33,True
+G8,q0047,numeric,invented,last digit +1,"$12,016","$12,017",True
+G8,q0047,numeric,invented,+10%,"$12,016","$13,218",True
+G8,q0047,numeric,invented,-10%,"$12,016","$10,814",True
+G8,q0047,numeric,invented,transposed digits,"$12,016","$12,061",True
+G8,q0047,numeric,wrong cell,"same row, other column","$12,016","$10,785",False
+G8,q0047,numeric,wrong cell,"same column, other row","$12,016","$26,504",False
+G8,q0131,numeric,invented,last digit +1,"$64,000","$64,001",True
+G8,q0131,numeric,invented,+10%,"$64,000","$70,400",True
+G8,q0131,numeric,invented,-10%,"$64,000","$57,600",True
+G8,q0131,numeric,invented,transposed digits,"$64,000","$60,400",True
+G8,q0131,numeric,wrong cell,"same row, other column","$64,000","$49,510",False
+G8,q0131,numeric,wrong cell,"same column, other row","$64,000","$8,768",False
+G8,q0131,numeric,wrong cell,"same line item, other table","$64,000","$91,288",False
+G8,q0121,numeric,invented,last digit +1,$70,$71,True
+G8,q0121,numeric,invented,+10%,$70,$77,True
+G8,q0121,numeric,invented,-10%,$70,$63,True
+G8,q0121,numeric,invented,transposed digits,$70,$7,False
+G8,q0121,numeric,wrong cell,"same row, other column",$70,$105,False
+G8,q0121,numeric,wrong cell,"same column, other row",$70,$487,False
+G8,q0024,numeric,invented,last digit +1,"$28,031","$28,032",True
+G8,q0024,numeric,invented,+10%,"$28,031","$30,834",True
+G8,q0024,numeric,invented,-10%,"$28,031","$25,228",True
+G8,q0024,numeric,invented,transposed digits,"$28,031","$28,013",True
+G8,q0024,numeric,wrong cell,"same row, other column","$28,031","$25,494",False
+G8,q0024,numeric,wrong cell,"same column, other row","$28,031",$171,False
+G8,q0024,numeric,wrong cell,"same line item, other table","$28,031","$36,267",False
+G8,q0114,numeric,invented,last digit +1,$244,$245,True
+G8,q0114,numeric,invented,+10%,$244,$268,True
+G8,q0114,numeric,invented,-10%,$244,$220,True
+G8,q0114,numeric,invented,transposed digits,$244,$424,True
+G8,q0114,numeric,wrong cell,"same row, other column",$244,$98,False
+G8,q0114,numeric,wrong cell,"same column, other row",$244,"$1,532",False
+G8,q0114,numeric,wrong cell,"same line item, other table",$244,$243,False
+G8,q0077,numeric,invented,last digit +1,"$7,832","$7,833",True
+G8,q0077,numeric,invented,+10%,"$7,832","$8,615",True
+G8,q0077,numeric,invented,-10%,"$7,832","$7,049",True
+G8,q0077,numeric,invented,transposed digits,"$7,832","$7,823",True
+G8,q0077,numeric,wrong cell,"same row, other column","$7,832","$2,999",False
+G8,q0077,numeric,wrong cell,"same column, other row","$7,832","$43,208",False
+G8,q0036,numeric,invented,last digit +1,"$18,896","$18,897",True
+G8,q0036,numeric,invented,+10%,"$18,896","$20,786",True
+G8,q0036,numeric,invented,-10%,"$18,896","$17,006",True
+G8,q0036,numeric,invented,transposed digits,"$18,896","$18,869",True
+G8,q0036,numeric,wrong cell,"same row, other column","$18,896","$15,278",False
+G8,q0036,numeric,wrong cell,"same column, other row","$18,896",$7,False
+G8,q0036,numeric,wrong cell,"same line item, other table","$18,896","$15,278",False
+G8,q0023,numeric,invented,last digit +1,"$53,887","$53,888",True
+G8,q0023,numeric,invented,+10%,"$53,887","$59,276",True
+G8,q0023,numeric,invented,-10%,"$53,887","$48,498",True
+G8,q0023,numeric,invented,transposed digits,"$53,887","$53,878",True
+G8,q0023,numeric,wrong cell,"same row, other column","$53,887","$62,585",False
+G8,q0023,numeric,wrong cell,"same column, other row","$53,887","$15,579",False
+G8,q0023,numeric,wrong cell,"same line item, other table","$53,887","$82,627",False
+G8,q0168,yoy,invented,last digit +1,$129,$130,True
+G8,q0168,yoy,invented,+10%,$129,$142,True
+G8,q0168,yoy,invented,-10%,$129,$116,True
+G8,q0168,yoy,invented,transposed digits,$129,$192,True
+G8,q0168,yoy,wrong cell,"same row, other column",$129,$74,False
+G8,q0168,yoy,wrong cell,"same column, other row",$129,$834,False
+G8,q0168,yoy,wrong cell,"same line item, other table",$129,$52,False
+G8,q0168,yoy,invented,last digit +1,$101,$102,True
+G8,q0168,yoy,invented,+10%,$101,$111,True
+G8,q0168,yoy,invented,-10%,$101,$91,True
+G8,q0168,yoy,invented,transposed digits,$101,$110,True
+G8,q0168,yoy,wrong cell,"same row, other column",$101,$74,False
+G8,q0168,yoy,wrong cell,"same column, other row",$101,$974,False
+G8,q0168,yoy,wrong cell,"same line item, other table",$101,$52,False
+G8,q0171,yoy,invented,last digit +1,"$3,932","$3,933",True
+G8,q0171,yoy,invented,+10%,"$3,932","$4,325",True
+G8,q0171,yoy,invented,-10%,"$3,932","$3,539",True
+G8,q0171,yoy,invented,transposed digits,"$3,932","$3,923",True
+G8,q0171,yoy,wrong cell,"same row, other column","$3,932","$1,481",False
+G8,q0171,yoy,wrong cell,"same column, other row","$3,932",$842,False
+G8,q0171,yoy,wrong cell,"same line item, other table","$3,932","$8,408",False
+G8,q0171,yoy,invented,last digit +1,"$5,413","$5,414",True
+G8,q0171,yoy,invented,+10%,"$5,413","$5,954",True
+G8,q0171,yoy,invented,-10%,"$5,413","$4,872",True
+G8,q0171,yoy,invented,transposed digits,"$5,413","$5,431",True
+G8,q0171,yoy,wrong cell,"same row, other column","$5,413","$1,481",False
+G8,q0171,yoy,wrong cell,"same column, other row","$5,413","$1,122",False
+G8,q0171,yoy,wrong cell,"same line item, other table","$5,413","$8,408",False

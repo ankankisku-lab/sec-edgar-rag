@@ -69,20 +69,39 @@ def _value(token: str) -> float | None:
     return -v if neg else v
 
 
-def verify_numbers(answer: str, sources: str, question: str = "", calcs: list[dict] | None = None) -> list[str]:
-    """Numbers in the answer that no source (or calculation) supports."""
-    text = re.sub(r"\[\d+\](?:\[\d+\])*", " ", answer)          # citation markers
-    text = re.sub(r"\b(?:Q[1-4]|FY)\s?\d{2,4}\b", " ", text)       # period labels
-    allowed = {abs(v) for v in (_value(t) for t in NUM_RE.findall(sources + " " + question)) if v is not None}
-    allowed |= {abs(c["value"]) for c in (calcs or []) if "value" in c}
-    unsupported = []
-    for token in NUM_RE.findall(text):
-        v = _value(token)
+def number_spans(answer: str, keep_percent: bool = False) -> list[tuple[int, int, str, float]]:
+    """(start, end, token, absolute value) of the numbers that verification checks: citation
+    markers, period labels, years and day-of-month numbers are not claims about the filing's figures.
+
+    The day-of-month rule also skips whole percentages up to 31 ("11%"); keep_percent=True keeps
+    them (the Phase 17 audit and the citation view use it)."""
+    blank = lambda m: " " * len(m.group())  # noqa: E731 -- keep offsets aligned with the answer
+    text = re.sub(r"\[\d+\](?:\[\d+\])*", blank, answer)          # citation markers
+    text = re.sub(r"\b(?:Q[1-4]|FY)\s?\d{2,4}\b", blank, text)     # period labels
+    out = []
+    for m in NUM_RE.finditer(text):
+        token, v = m.group(), _value(m.group())
         if v is None:
             continue
         v = abs(v)
-        if v.is_integer() and (1900 <= v <= 2100 or (v <= 31 and "$" not in token)):
+        percent = keep_percent and text[m.end():m.end() + 1] == "%"
+        if v.is_integer() and (1900 <= v <= 2100 or (v <= 31 and "$" not in token)) and not percent:
             continue  # years and day-of-month numbers
+        out.append((m.start(), m.end(), token, v))
+    return out
+
+
+def number_tokens(answer: str, keep_percent: bool = False) -> list[tuple[str, float]]:
+    """number_spans() without the positions."""
+    return [(token, v) for _, _, token, v in number_spans(answer, keep_percent)]
+
+
+def verify_numbers(answer: str, sources: str, question: str = "", calcs: list[dict] | None = None) -> list[str]:
+    """Numbers in the answer that no source (or calculation) supports."""
+    allowed = {abs(v) for v in (_value(t) for t in NUM_RE.findall(sources + " " + question)) if v is not None}
+    allowed |= {abs(c["value"]) for c in (calcs or []) if "value" in c}
+    unsupported = []
+    for token, v in number_tokens(answer):
         if v in allowed:
             continue
         # "$28.2 billion" from a table in millions (28,202); allow 1-2 decimal rounding

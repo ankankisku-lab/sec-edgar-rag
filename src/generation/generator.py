@@ -26,7 +26,7 @@ from src.generation.context import ParentExpander
 from src.generation.numbers import apply_calcs, verify_numbers
 from src.retrieval.reranker import retrieve_reranked
 
-QA_TEMPLATE = PromptTemplate(
+_PROMPT = (
     "You are a financial analyst answering questions about SEC 10-K and 10-Q filings.\n"
     "Use ONLY the numbered sources below. Rules:\n"
     "1. Cite the source number after every fact, like [1] or [2][3].\n"
@@ -35,19 +35,30 @@ QA_TEMPLATE = PromptTemplate(
     "7,433 million shares (no $ sign); per-share amounts as $1.57 per share.\n"
     "3. Filings show several periods side by side: check that the company, the fiscal period "
     "and the column match the question before quoting a number.\n"
+    "{arithmetic_rules}"
+    "6. Only if none of the requested figures is in the sources, reply exactly: \"The provided "
+    "filings do not contain this information.\" Never add that sentence after an answer. "
+    "Do not use outside knowledge.\n"
+    "Be concise: answer first, then a short explanation if the question asks why or how.\n\n"
+    "Sources:\n{{context_str}}\n\n"
+    "Question: {{query_str}}\n"
+    "Answer:"
+)
+CALC_RULES = (
     "4. Never do arithmetic yourself, not even rounding. Every difference, ratio or percentage "
     "change must be written as <calc>expression</calc> with plain numbers (no commas, negatives "
     "as -171), for example <calc>(28202 - 25352) / 25352 * 100</calc>%. It is computed for you.\n"
     "5. When the question compares periods or companies, state each value with its period and "
     "then the difference as a <calc>, e.g. 'up $<calc>28202 - 25352</calc> million'.\n"
-    "6. Only if none of the requested figures is in the sources, reply exactly: \"The provided "
-    "filings do not contain this information.\" Never add that sentence after an answer. "
-    "Do not use outside knowledge.\n"
-    "Be concise: answer first, then a short explanation if the question asks why or how.\n\n"
-    "Sources:\n{context_str}\n\n"
-    "Question: {query_str}\n"
-    "Answer:"
 )
+# Phase 17 ablation only: the same prompt, but the model does its own arithmetic.
+SELF_ARITHMETIC_RULES = (
+    "4. Compute every difference, ratio or percentage change yourself and state the result.\n"
+    "5. When the question compares periods or companies, state each value with its period and "
+    "then the difference, e.g. 'up $2,850 million'.\n"
+)
+QA_TEMPLATE = PromptTemplate(_PROMPT.format(arithmetic_rules=CALC_RULES))
+QA_TEMPLATE_NO_CALC = PromptTemplate(_PROMPT.format(arithmetic_rules=SELF_ARITHMETIC_RULES))
 
 
 class V4Retriever(BaseRetriever):
@@ -71,10 +82,11 @@ def get_llm():
                   additional_kwargs={"seed": cfg["seed"], "num_predict": cfg["max_output_tokens"]})
 
 
-@lru_cache(maxsize=2)
-def get_query_engine(decompose: bool = False) -> CitationQueryEngine:
+@lru_cache(maxsize=4)
+def get_query_engine(decompose: bool = False, calc: bool = True) -> CitationQueryEngine:
     """decompose=True: multi-fact questions are split into sub-questions, each retrieved
-    separately and interleaved (V5); the LLM still answers the original question."""
+    separately and interleaved (V5); the LLM still answers the original question.
+    calc=False: the Phase 17 ablation prompt (no <calc>; the model does its own arithmetic)."""
     from llama_index.core import get_response_synthesizer
     from src.retrieval.decomposed import DecomposedRetriever
     cfg = load_config("generation")
@@ -85,7 +97,7 @@ def get_query_engine(decompose: bool = False) -> CitationQueryEngine:
         node_postprocessors=[ParentExpander.from_config()],
         citation_chunk_size=4096,           # never re-split our parents; the budget is enforced upstream
         metadata_mode=MetadataMode.LLM,     # company / form / period / section / caption / units
-        response_synthesizer=get_response_synthesizer(llm=get_llm(), text_qa_template=QA_TEMPLATE,
+        response_synthesizer=get_response_synthesizer(llm=get_llm(), text_qa_template=QA_TEMPLATE if calc else QA_TEMPLATE_NO_CALC,
                                                        response_mode="compact"),
     )
 
@@ -101,10 +113,10 @@ def ollama_running():
             ollama_server.stop(proc)
 
 
-def answer(question: str, decompose: bool = False) -> dict:
+def answer(question: str, decompose: bool = False, calc: bool = True) -> dict:
     from src.observability.tracing import set_output, span
-    with span("rag.answer", "CHAIN", input_value=question, **{"rag.decompose": decompose}) as root:
-        result = _answer(question, decompose)
+    with span("rag.answer", "CHAIN", input_value=question, **{"rag.decompose": decompose, "rag.calc": calc}) as root:
+        result = _answer(question, decompose, calc)
         set_output(root, result["answer"], **{"rag.n_sources": len(result["sources"]),
                                               "rag.n_sub_questions": len(result["sub_questions"]),
                                               "rag.unverified_numbers": len(result["unverified_numbers"])})
@@ -113,9 +125,9 @@ def answer(question: str, decompose: bool = False) -> dict:
         return result
 
 
-def _answer(question: str, decompose: bool) -> dict:
+def _answer(question: str, decompose: bool, calc: bool = True) -> dict:
     from src.observability.tracing import set_output, span
-    engine, bundle = get_query_engine(decompose), QueryBundle(question)
+    engine, bundle = get_query_engine(decompose, calc), QueryBundle(question)
     # retrieve() + synthesize() is exactly what CitationQueryEngine.query() does; split to time each.
     t0 = time.perf_counter()
     nodes = engine.retrieve(bundle)
