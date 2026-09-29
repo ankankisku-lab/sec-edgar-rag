@@ -130,6 +130,121 @@ flowchart LR
 With decomposition, answer accuracy on the same 40 questions went from 52.5% to 87.5%, and no
 answer in any run contained a number that the sources don't support.
 
+## Example questions for the chat UI
+
+63 questions across 16 companies that were asked through the live API (Docker stack, V5 retrieval +
+Qwen3-4B) and checked. Every numeric answer below quoted the right figure: each number matches an
+iXBRL fact in the company's filing with the asked concept and reporting period, and none is a segment
+figure. Every narrative answer was cited and grounded. Click a number in an answer to see the cell it
+came from, and follow the link to see it highlighted in the original filing.
+
+For your own questions, name the company and the exact fiscal period. Company fiscal years differ:
+Nvidia's fiscal 2026 ended January 25, 2026, Microsoft's fiscal 2026 Q3 ended March 31, 2026, and
+Costco's quarters are 12 weeks. A period-end date ("for the year ended December 31, 2025") is the most
+reliable way to name a period.
+
+<details><summary><b>Single quarter</b> (15)</summary>
+
+- What was Apple's total net sales in fiscal 2025 Q3?
+- What was Microsoft's total revenue in fiscal 2026 Q3?
+- What was Nvidia's revenue in fiscal 2027 Q2?
+- What was Amazon's net income in fiscal 2026 Q2?
+- What was Alphabet's operating income in fiscal 2026 Q1?
+- What was Meta's total revenue in fiscal 2026 Q2?
+- What were Tesla's total revenues in fiscal 2026 Q1?
+- What were Costco's net sales in fiscal 2026 Q3?
+- What was Netflix's operating income in fiscal 2026 Q2?
+- What was Adobe's total revenue in fiscal 2026 Q3?
+- What was AMD's net revenue in fiscal 2026 Q2?
+- What was Broadcom's net revenue in fiscal 2026 Q3?
+- What was Qualcomm's net income in fiscal 2026 Q3?
+- What was Cisco's total revenue in fiscal 2026 Q3?
+- What were Apple's diluted earnings per share in fiscal 2026 Q2?
+</details>
+
+<details><summary><b>Annual report</b> (10)</summary>
+
+- What was Microsoft's net income in its fiscal 2026 annual report?
+- What was Nvidia's total revenue for the fiscal year ended January 25, 2026?
+- What were Amazon's total net sales for the year ended December 31, 2025?
+- What was Alphabet's net income for the year ended December 31, 2025?
+- What was Meta's research and development expense for the year ended December 31, 2025?
+- What was Costco's net income for fiscal 2025 (year ended August 31, 2025)?
+- What was Intel's net income (loss) for the year ended December 27, 2025?
+- What was PepsiCo's net revenue for the year ended December 27, 2025?
+- What was Cisco's total revenue for fiscal 2026 (year ended July 25, 2026)?
+- What was Adobe's net income for fiscal 2025 (year ended November 28, 2025)?
+</details>
+
+<details><summary><b>Balance sheet and cash flow</b> (8)</summary>
+
+- What were Apple's total assets as of June 28, 2025?
+- What were Microsoft's cash and cash equivalents as of June 30, 2026?
+- What was Nvidia's net cash provided by operating activities for the fiscal year ended January 25, 2026?
+- How much did Alphabet spend on purchases of property and equipment in the year ended December 31, 2025?
+- What were Amazon's total current liabilities as of December 31, 2025?
+- How much did Apple spend on repurchases of common stock in fiscal 2025?
+- What was Meta's long-term debt as of June 30, 2026?
+- What was Tesla's inventory as of March 31, 2026?
+</details>
+
+<details><summary><b>Year over year</b> (4)</summary>
+
+- How did Apple's total net sales in fiscal 2025 Q3 compare with the same quarter a year earlier?
+- How did Nvidia's gross profit for the three months ended July 26, 2026 compare with the three months ended July 27, 2025?
+- How did Costco's net sales in fiscal 2025 compare with fiscal 2024?
+- How did Amazon's operating income for the six months ended June 30, 2026 compare with the six months ended June 30, 2025?
+</details>
+
+<details><summary><b>Percentage change</b> (3)</summary>
+
+- By what percentage did Meta's total revenue change from 2024 to 2025?
+- By what percentage did Alphabet's net income change from 2024 to 2025?
+- By what percentage did Apple's total net sales change from the year ended September 28, 2024 to the year ended September 27, 2025?
+</details>
+
+<details><summary><b>Quarter vs quarter</b> (4)</summary>
+
+- Compare Apple's net income in fiscal 2026 Q1 with fiscal 2026 Q2. Which quarter was higher, and by how much?
+- Compare Nvidia's revenue in fiscal 2027 Q1 with fiscal 2027 Q2. Which quarter was higher, and by how much?
+- Compare Tesla's total revenues in fiscal 2025 Q3 with fiscal 2026 Q1. Which quarter was higher?
+- Compare Amazon's net sales in fiscal 2026 Q1 and fiscal 2026 Q2. Which quarter was higher, and by how much?
+</details>
+
+<details><summary><b>Company vs company</b> (6)</summary>
+
+- Compare Apple's and Microsoft's net income in their most recent annual reports (fiscal 2025 and fiscal 2026). Which was larger?
+- Compare Nvidia's and AMD's total revenue in their fiscal 2025 annual reports. Which was larger?
+- Compare Alphabet's and Meta's operating income for the year ended December 31, 2025. Which was larger?
+- Compare Costco's and PepsiCo's net income in their fiscal 2025 annual reports. Which was larger?
+- Compare Intel's and AMD's research and development expenses for the year ended December 27, 2025. Which was larger?
+- Compare Broadcom's and Qualcomm's net income in their fiscal 2025 annual reports. Which was larger?
+</details>
+
+<details><summary><b>Narrative: drivers and risks</b> (13)</summary>
+
+- What drove the growth in Apple's Services net sales in fiscal 2025?
+- What supply chain risks does Nvidia describe in its fiscal 2026 10-K?
+- How did the Activision Blizzard acquisition affect Microsoft's fiscal 2025 results?
+- What factors affected Tesla's automotive revenue in 2025?
+- Who does Netflix describe as its competitors in its 10-K for 2025?
+- How does Costco describe its membership fee revenue in fiscal 2025?
+- What does Meta say about its capital expenditures and AI infrastructure in 2025?
+- What restructuring actions did Intel describe in its 2025 annual report?
+- What drove Google Cloud revenue growth in 2025, according to Alphabet?
+- What does Adobe say about generative AI in its fiscal 2025 annual report?
+- What export control risks does AMD describe in its 2025 10-K?
+- What drove Microsoft's Intelligent Cloud revenue in fiscal 2026 Q3?
+- How did pricing and volume affect PepsiCo's net revenue in 2025?
+</details>
+
+Of the 80 questions tried, 17 were left out. The misses show where the system is still weak:
+
+- **Wrong period:** Nvidia's revenue change "from fiscal 2025 to fiscal 2026" was answered from six-month figures. Microsoft's operating income for "fiscal 2026 Q2 vs Q3" was answered from year-to-date totals.
+- **Segment instead of total:** "Microsoft's operating income" quarters were answered from the Productivity and Business Processes segment. The value is real and correctly tagged, but it is not the company total.
+- **Numbers the model changed:** Netflix's 2024 revenue was quoted with swapped digits, and a unit conversion produced "5,700 billion". The number check flagged the swapped digits.
+- **Refusals and missing citations:** three questions were refused, and one answer gave numbers without citing a source.
+
 ## Setup
 
 ```powershell
