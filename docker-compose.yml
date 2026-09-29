@@ -86,6 +86,7 @@ services:
       - ./models:/models                           # embedder, reranker, BM25 caches (offline)
       - ./data/index:/app/data/index               # parent store, opened read-only + immutable
       - ./data/eval/cache:/app/data/eval/cache     # decomposition cache (router + LLM results)
+      - ./data/raw:/app/data/raw:ro                # original filings for GET /filing (citation highlight)
     deploy:
       resources:
         reservations:

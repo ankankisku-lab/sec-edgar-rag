@@ -53,6 +53,23 @@ def test_citations_point_to_the_quoted_cell(client):
     assert passage["blocks"][cell["block"]]["rows"][cell["row"]][cell["col"]] == "$28,202"
 
 
+def test_answer_survives_a_broken_filing_locator(client, monkeypatch):
+    import sys
+    monkeypatch.setitem(sys.modules, "src.generation.filing_locator", None)   # import now fails
+    r = client.post("/query", json={"question": "What was Apple's operating income in fiscal 2025 Q3?"})
+    assert r.status_code == 200 and r.json()["numbers"][0]["status"] == "cell"
+
+
+def test_original_filing_is_served_without_scripts(client, monkeypatch):
+    import src.generation.filing_locator as F
+    monkeypatch.setattr(F, "render_filing", lambda fid, node, mark: "<html><body>filing</body></html>" if fid == "AAPL_10Q_2025-06-28" else None)
+    r = client.get("/filing/AAPL_10Q_2025-06-28?node=12&mark=$28,202")
+    assert r.status_code == 200 and "script-src" not in r.headers["content-security-policy"]
+    assert r.headers["content-security-policy"].startswith("default-src 'none'")
+    assert client.get("/filing/UNKNOWN_10Q_2025-06-28").status_code == 404
+    assert client.get("/filing/AAPL_10Q_2025-06-28?node=-1").status_code == 422
+
+
 def test_validation_rejects_empty_and_oversized_questions(client):
     assert client.post("/query", json={"question": ""}).status_code == 422
     assert client.post("/query", json={"question": "x" * 5000}).status_code == 422

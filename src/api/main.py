@@ -4,6 +4,7 @@
     POST /query    question -> grounded answer with citations, calculations, unverified
                    numbers, sub-questions, latency breakdown and the Phoenix trace id; each
                    source carries its passage and each number the cell it was quoted from
+    GET  /filing/{filing_id}?node=&mark=   the original SEC filing with a cited number highlighted
     GET  /health   Qdrant, Ollama and model readiness (503 until everything is up)
     GET  /metrics  request counts, errors, queue, latency percentiles, refusal and
                    unverified-number rates over the recent window
@@ -32,7 +33,7 @@ from typing import Any
 
 import requests
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
 
@@ -176,9 +177,9 @@ async def query(req: QueryRequest) -> QueryResponse:
         STATE.lock.release()
     refused = REFUSAL in result["answer"].lower()
     STATE.recent.append((total_ms, refused, bool(result["unverified_numbers"])))
-    # Citation view: each source's passage, and every number of the answer traced to its cell.
-    from src.generation.source_view import locate_numbers
-    passages, numbers = locate_numbers(result["answer"], result.get("contexts", []), result["calculations"])
+    # Citation view: each source's passage, every number of the answer traced to its cell, and
+    # that cell located in the original filing (iXBRL fact or text) for GET /filing.
+    passages, numbers = await run_in_threadpool(_citations, result)
     fields = [k for k in Source.model_fields if k != "passage"]
     return QueryResponse(
         request_id=request_id, question=req.question, answer=result["answer"],
@@ -189,6 +190,36 @@ async def query(req: QueryRequest) -> QueryResponse:
         calculations=result["calculations"], unverified_numbers=result["unverified_numbers"],
         latency_ms={"total": total_ms, **result.get("latency_breakdown_ms", {})}, trace_id=result.get("trace_id"),
     )
+
+
+def _citations(result: dict) -> tuple[list[dict], list[dict]]:
+    from src.generation.source_view import locate_numbers
+    passages, numbers = locate_numbers(result["answer"], result.get("contexts", []), result["calculations"])
+    try:
+        from src.generation.filing_locator import link_numbers
+        link_numbers(numbers, passages, [s.get("filing_id") for s in result["sources"]])
+    except Exception:  # the original-filing links are a convenience; never fail an answer over them
+        log.exception("locating citations in the original filings failed")
+    return passages, numbers
+
+
+# The original filing is third-party HTML served from this origin: no scripts, forms or frames;
+# images and relative links resolve to sec.gov through the <base> the renderer adds.
+FILING_CSP = ("default-src 'none'; img-src https://www.sec.gov data:; style-src 'unsafe-inline'; "
+              "base-uri https://www.sec.gov; form-action 'none'; frame-ancestors 'none'")
+
+
+@app.get("/filing/{filing_id}", include_in_schema=False)
+async def filing(filing_id: str, node: int | None = None, mark: str | None = None) -> HTMLResponse:
+    """The original SEC filing with element `node` highlighted (open with #sec-rag-target)."""
+    from src.generation.filing_locator import render_filing
+    if node is not None and not 0 <= node < 10_000_000:
+        raise HTTPException(422, detail="node out of range")
+    html = await run_in_threadpool(render_filing, filing_id, node, (mark or "")[:60] or None)
+    if html is None:
+        raise HTTPException(404, detail="unknown filing")
+    return HTMLResponse(html, headers={"Content-Security-Policy": FILING_CSP, "X-Content-Type-Options": "nosniff",
+                                       "Cache-Control": "private, max-age=3600"})
 
 
 @app.get("/health")

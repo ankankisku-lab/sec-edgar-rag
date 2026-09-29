@@ -116,6 +116,11 @@ details.passage summary::-webkit-details-marker { display: none; }
 details.passage summary::before { content: "▸"; display: inline-block; width: 12px; transition: transform .15s; }
 details.passage[open] summary::before { transform: rotate(90deg); }
 .pv { margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 8px; max-height: 420px; overflow: auto; }
+.pv-links { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+.pv-links a { text-decoration: none; font-weight: 600; }
+.pv-links a:hover { text-decoration: underline; }
+.pv-links a.sec { font-weight: 450; font-size: 12px; }
+.pv-links .fine { color: var(--faint); font-size: 11.5px; }
 .pv-text { font-size: 13px; color: var(--muted); margin: 0 0 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .pv-text.cap { font-size: 12px; color: var(--faint); margin-bottom: 4px; }
 .pv-wrap { overflow-x: auto; margin: 0 0 8px; }
@@ -351,7 +356,7 @@ function sourceHTML(s, id, cited, numbers) {
   const count = hl.cells.size + [...hl.text.values()].reduce((a, t) => a + t.size, 0);
   const passage = s.passage && s.passage.blocks && s.passage.blocks.length
     ? `<details class="passage" id="p-${id}-${s.n}"><summary>Show passage${count ? ` · ${count} quoted` : ""}</summary>
-        <div class="pv">${passageHTML(s.passage, id, s.n, hl)}</div></details>` : "";
+        ${filingLinksHTML(s, numbers)}<div class="pv">${passageHTML(s.passage, id, s.n, hl)}</div></details>` : "";
   return `<div class="src${cited ? " cited" : ""}" id="s-${id}-${s.n}">
     <div class="src-n">${s.n}</div>
     <div><div class="src-top"><span class="tick">${esc(ticker)}</span><span class="form">${esc(s.form)}</span>
@@ -378,7 +383,31 @@ function numberTitle(n) {
   const where = n.cells.length
     ? n.cells.slice(0, 2).map((c) => `Source ${c.source}: ${c.label}${c.column ? " · " + c.column : ""}`).join("\n")
     : n.text.slice(0, 2).map((t) => `Source ${t.source}: quoted in the text`).join("\n");
-  return where + (n.in_cited_source ? "" : "\nNot in the source this sentence cites") + "\nClick to show it";
+  return where + (n.in_cited_source ? "" : "\nNot in the source this sentence cites") +
+    "\nClick to show it (the passage links to the original filing)";
+}
+
+// Links into the original filing: our copy with the spot highlighted, and sec.gov scrolled to
+// the iXBRL fact where the number is tagged.
+function filingLinksHTML(s, numbers) {
+  if (!s.filing_id) return "";
+  const seen = new Set(), links = [];
+  for (const n of numbers || []) {
+    for (const m of [...n.cells, ...n.text]) {
+      const f = m.source === s.n && m.filing;
+      if (!f || seen.has(f.node)) continue;
+      seen.add(f.node);
+      const href = `/filing/${encodeURIComponent(s.filing_id)}?node=${f.node}&mark=${encodeURIComponent(n.token)}#sec-rag-target`;
+      const tip = `Open the original ${s.form || "filing"} with ${n.token} highlighted` + (f.unique ? "" : " (best of several matches)");
+      let html = `<a href="${esc(href)}" target="_blank" rel="noopener" title="${esc(tip)}">${esc(n.token)}${f.unique ? "" : "*"} ↗</a>`;
+      if (f.fact_id && s.url) html += ` <a class="sec" href="${esc(s.url)}#${esc(f.fact_id)}" target="_blank" rel="noopener"
+        title="sec.gov, scrolled to the tagged fact ${esc(f.concept || "")}">sec.gov</a>`;
+      links.push(html);
+    }
+  }
+  if (!links.length) return "";
+  const ambiguous = links.some((l) => l.includes("* ↗"));
+  return `<div class="pv-links">In the original filing: ${links.join(" · ")}${ambiguous ? ` <span class="fine">* best match</span>` : ""}</div>`;
 }
 
 function highlightsFor(sourceN, numbers) {

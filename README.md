@@ -507,6 +507,17 @@ curl -X POST http://127.0.0.1:8000/query -H "Content-Type: application/json" -d 
   source's passage -- the table rendered as a table -- with the cell highlighted and its row label and
   column header in the tooltip; clicking `[n]` opens passage *n* at its highlights. A number found only in
   a source the sentence does not cite is underlined as a warning. Phase 17 uses the same parser.
+- Original filing: each passage also links every quoted number into the filing itself.
+  `GET /filing/{filing_id}?node=&mark=` serves the downloaded `.htm` with that spot highlighted
+  (`src/generation/filing_locator.py`), and a second link opens sec.gov scrolled to the iXBRL fact
+  (`document_url#f-91`). No re-parsing: table values are matched to their iXBRL facts or to untagged
+  cells (MD&A tables repeat statement figures untagged), ranked by row label, overlap with the quoted
+  table's numbers, the fact's reporting period, the Item and the caption; prose numbers by the words
+  around them. On the 434 numbers of the saved G5-G8 answers (`python -m src.generation.filing_locator`):
+  96.8% resolve to exactly one spot, 2.1% to a best of several, 0.9% are not found; all 277 table values
+  land in an HTML table holding at least 80% of the quoted table's numbers. Every downloaded filing
+  carries a script sec.gov's bot protection injected at download time, so the served copy is stripped
+  of scripts, frames and event handlers and sent with a no-script Content-Security-Policy.
 - `POST /query` -> answer, sub-questions, cited sources (filing, period, section, SEC URL, and the
   passage the LLM read as text and table blocks), `numbers` (each number's offsets in the answer and the
   cells or sentences it was found in), `<calc>` calculations, unverified numbers, latency
