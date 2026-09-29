@@ -2,7 +2,8 @@
 
     GET  /         chat page (static HTML calling /query; no build step, works offline)
     POST /query    question -> grounded answer with citations, calculations, unverified
-                   numbers, sub-questions, latency breakdown and the Phoenix trace id
+                   numbers, sub-questions, latency breakdown and the Phoenix trace id; each
+                   source carries its passage and each number the cell it was quoted from
     GET  /health   Qdrant, Ollama and model readiness (503 until everything is up)
     GET  /metrics  request counts, errors, queue, latency percentiles, refusal and
                    unverified-number rates over the recent window
@@ -58,6 +59,19 @@ class Source(BaseModel):
     section: str | None
     url: str | None
     score: float
+    passage: dict[str, Any] | None = Field(
+        None, description="the source as the LLM read it: metadata header plus text and table blocks")
+
+
+class NumberRef(BaseModel):
+    """Where one number of the answer was quoted from (src.generation.source_view.locate_numbers)."""
+    start: int
+    end: int
+    token: str
+    status: str = Field(..., description="cell | text | calculated | not found")
+    in_cited_source: bool
+    cells: list[dict[str, Any]]
+    text: list[dict[str, Any]]
 
 
 class QueryResponse(BaseModel):
@@ -66,6 +80,7 @@ class QueryResponse(BaseModel):
     answer: str
     sub_questions: list[str]
     sources: list[Source]
+    numbers: list[NumberRef] = []
     calculations: list[dict[str, Any]]
     unverified_numbers: list[str]
     latency_ms: dict[str, int]
@@ -161,10 +176,16 @@ async def query(req: QueryRequest) -> QueryResponse:
         STATE.lock.release()
     refused = REFUSAL in result["answer"].lower()
     STATE.recent.append((total_ms, refused, bool(result["unverified_numbers"])))
+    # Citation view: each source's passage, and every number of the answer traced to its cell.
+    from src.generation.source_view import locate_numbers
+    passages, numbers = locate_numbers(result["answer"], result.get("contexts", []), result["calculations"])
+    fields = [k for k in Source.model_fields if k != "passage"]
     return QueryResponse(
         request_id=request_id, question=req.question, answer=result["answer"],
         sub_questions=result["sub_questions"],
-        sources=[Source(**{k: s.get(k) for k in Source.model_fields}) for s in result["sources"]],
+        sources=[Source(**{k: s.get(k) for k in fields}, passage=passages[i] if i < len(passages) else None)
+                 for i, s in enumerate(result["sources"])],
+        numbers=numbers,
         calculations=result["calculations"], unverified_numbers=result["unverified_numbers"],
         latency_ms={"total": total_ms, **result.get("latency_breakdown_ms", {})}, trace_id=result.get("trace_id"),
     )

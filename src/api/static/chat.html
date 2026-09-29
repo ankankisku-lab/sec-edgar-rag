@@ -11,6 +11,7 @@
   --border: #e2e5ea; --accent: #0f766e; --accent-ink: #ffffff; --accent-soft: #e3f3f1;
   --user: #1d2129; --user-ink: #f7f8fa;
   --ok: #17803a; --ok-soft: #e7f5ec; --warn: #95590a; --warn-soft: #fdf3e1; --bad: #b42318; --bad-soft: #fdecea;
+  --hl: #fff1b8; --hl-row: #fbf8ea;
   --shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 1px 3px rgba(16, 24, 40, .07);
 }
 @media (prefers-color-scheme: dark) {
@@ -19,6 +20,7 @@
     --border: #2c3139; --accent: #2bb3a3; --accent-ink: #0b1513; --accent-soft: #15302d;
     --user: #2a2f38; --user-ink: #eef0f4;
     --ok: #4cc47a; --ok-soft: #15291d; --warn: #e3a64a; --warn-soft: #2d2413; --bad: #f07b6f; --bad-soft: #321b19;
+    --hl: #4d4116; --hl-row: #262419;
     --shadow: 0 1px 2px rgba(0, 0, 0, .3);
   }
 }
@@ -81,10 +83,10 @@ main { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
 
 /* sources */
 details.sources { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 10px; }
-details.sources summary { cursor: pointer; font-size: 13.5px; color: var(--muted); list-style: none; user-select: none; }
-details.sources summary::-webkit-details-marker { display: none; }
-details.sources summary::before { content: "▸"; display: inline-block; width: 14px; transition: transform .15s; }
-details.sources[open] summary::before { transform: rotate(90deg); }
+details.sources > summary { cursor: pointer; font-size: 13.5px; color: var(--muted); list-style: none; user-select: none; }
+details.sources > summary::-webkit-details-marker { display: none; }
+details.sources > summary::before { content: "▸"; display: inline-block; width: 14px; transition: transform .15s; }
+details.sources[open] > summary::before { transform: rotate(90deg); }
 .src-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
 .src { display: grid; grid-template-columns: 24px 1fr auto; gap: 10px; align-items: start; padding: 8px 10px;
   border: 1px solid var(--border); border-radius: 10px; font-size: 13.5px; transition: background .4s, border-color .4s; }
@@ -100,6 +102,33 @@ details.sources[open] summary::before { transform: rotate(90deg); }
 .section { color: var(--muted); font-size: 12.5px; margin-top: 2px; overflow-wrap: anywhere; }
 .src-link { font-size: 12.5px; white-space: nowrap; text-decoration: none; padding-top: 1px; }
 .src-link:hover { text-decoration: underline; }
+
+/* numbers in the answer, traced to the cell they were quoted from */
+.num { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer;
+  border-bottom: 1.5px dotted var(--accent); border-radius: 2px; }
+.num:hover, .num:focus-visible { background: var(--hl); outline: none; }
+.num.off { border-bottom-color: var(--warn); }
+
+/* passage behind a citation */
+details.passage { grid-column: 1 / -1; margin-top: 2px; }
+details.passage summary { cursor: pointer; font-size: 12.5px; color: var(--accent); list-style: none; user-select: none; width: max-content; }
+details.passage summary::-webkit-details-marker { display: none; }
+details.passage summary::before { content: "▸"; display: inline-block; width: 12px; transition: transform .15s; }
+details.passage[open] summary::before { transform: rotate(90deg); }
+.pv { margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 8px; max-height: 420px; overflow: auto; }
+.pv-text { font-size: 13px; color: var(--muted); margin: 0 0 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.pv-text.cap { font-size: 12px; color: var(--faint); margin-bottom: 4px; }
+.pv-wrap { overflow-x: auto; margin: 0 0 8px; }
+.pv-table { border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; width: max-content; min-width: 100%; }
+.pv-table td { padding: 3px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.pv-table td:first-child { white-space: normal; min-width: 180px; max-width: 360px; }
+.pv-table td.n { text-align: right; }
+.pv-table tr.hdr td { color: var(--faint); font-weight: 600; font-size: 12px; }
+.pv-table tr.hl-row td { background: var(--hl-row); }
+.pv-table td.hl, mark.hl { background: var(--hl); color: var(--text); font-weight: 650; border-radius: 3px; }
+mark.hl { padding: 0 2px; }
+.focus { outline: 2px solid var(--accent); outline-offset: -2px; animation: focuspulse 1.6s ease-out; }
+@keyframes focuspulse { 0%, 40% { outline-color: var(--accent); } 100% { outline-color: transparent; } }
 
 .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 12px; font-size: 12.5px; color: var(--faint);
   font-variant-numeric: tabular-nums; }
@@ -213,7 +242,8 @@ function render() {
     log.innerHTML = `<div class="empty">
       <h1>Ask about Nasdaq-100 filings</h1>
       <p>Answers come only from each company's latest 10-K and 10-Q filings. Every figure is cited and
-         checked against its source. Name the company and fiscal period for the best results.</p>
+         checked against its source; click a number to see the table cell it was quoted from. Name the
+         company and fiscal period for the best results.</p>
       <div class="examples">${EXAMPLES.map(([k, q]) =>
         `<button class="example" type="button" data-q="${esc(q)}"><span>${esc(k)}</span>${esc(q)}</button>`).join("")}
       </div></div>`;
@@ -244,8 +274,15 @@ function answerHTML(e) {
   const nums = new Set(r.sources.map((s) => s.n));
   const cited = new Set([...r.answer.matchAll(/\[(\d+)\]/g)].map((m) => +m[1]).filter((n) => nums.has(n)));
   const refused = r.answer.toLowerCase().includes(REFUSAL);
-  const body = formatAnswer(r.answer).replace(/\[(\d+)\]/g, (m, n) =>
-    nums.has(+n) ? `<button class="cite" type="button" data-src="s-${id}-${n}" title="Show source ${n}">${n}</button>` : m);
+  const numbers = r.numbers || [];
+  const body = formatAnswer(markNumbers(r.answer, numbers))
+    .replace(/(\d+)/g, (m, k) => {
+      const n = numbers[+k];
+      return `<button class="num${n.in_cited_source ? "" : " off"}" type="button" data-num="${id}:${k}" title="${esc(numberTitle(n))}">`;
+    })
+    .replace(//g, "</button>")
+    .replace(/\[(\d+)\]/g, (m, n) =>
+      nums.has(+n) ? `<button class="cite" type="button" data-src="s-${id}-${n}" title="Show source ${n}">${n}</button>` : m);
   const hasNumbers = /\d/.test(r.answer.replace(/\[\d+\]/g, ""));
 
   let html = `<div class="answer${refused ? " refused" : ""}">${body}</div>`;
@@ -259,7 +296,7 @@ function answerHTML(e) {
   }
 
   const chips = [];
-  if (!refused && hasNumbers && !r.unverified_numbers.length) chips.push(`<span class="chip ok">✓ Every number matches a source</span>`);
+  if (!refused && hasNumbers && !r.unverified_numbers.length) chips.push(`<span class="chip ok">✓ Every number found in a source</span>`);
   if (cited.size) chips.push(`<span class="chip">${cited.size} of ${r.sources.length} sources cited</span>`);
   if (chips.length) html += `<div class="chips">${chips.join("")}</div>`;
 
@@ -274,7 +311,7 @@ function answerHTML(e) {
 
   if (r.sources.length) {
     html += `<details class="sources" id="d-${id}"><summary>Sources (${r.sources.length})</summary><div class="src-list">
-      ${r.sources.map((s) => sourceHTML(s, id, cited.has(s.n))).join("")}</div></details>`;
+      ${r.sources.map((s) => sourceHTML(s, id, cited.has(s.n), numbers)).join("")}</div></details>`;
   }
 
   const lat = r.latency_ms || {};
@@ -307,16 +344,115 @@ function formatAnswer(text) {
   return out.join("");
 }
 
-function sourceHTML(s, id, cited) {
+function sourceHTML(s, id, cited, numbers) {
   const ticker = (s.filing_id || "").split("_")[0];
   const section = (s.section || "").split(" > ").join(" › ");
+  const hl = highlightsFor(s.n, numbers);
+  const count = hl.cells.size + [...hl.text.values()].reduce((a, t) => a + t.size, 0);
+  const passage = s.passage && s.passage.blocks && s.passage.blocks.length
+    ? `<details class="passage" id="p-${id}-${s.n}"><summary>Show passage${count ? ` · ${count} quoted` : ""}</summary>
+        <div class="pv">${passageHTML(s.passage, id, s.n, hl)}</div></details>` : "";
   return `<div class="src${cited ? " cited" : ""}" id="s-${id}-${s.n}">
     <div class="src-n">${s.n}</div>
     <div><div class="src-top"><span class="tick">${esc(ticker)}</span><span class="form">${esc(s.form)}</span>
       <span class="period">${esc(s.period)}</span></div>
       <div class="section">${esc(section)}</div></div>
     ${s.url ? `<a class="src-link" href="${esc(s.url)}" target="_blank" rel="noopener">SEC filing ↗</a>` : ""}
+    ${passage}
   </div>`;
+}
+
+// ------------------------------------------------------------ citations: number -> quoted cell
+// Private-use characters mark each located number before escaping and formatting; they are
+// swapped for <button class="num"> afterwards, so offsets from the API stay exact.
+function markNumbers(answer, numbers) {
+  let t = answer;
+  numbers.map((n, k) => ({ ...n, k }))
+    .filter((n) => n.status === "cell" || n.status === "text")
+    .sort((a, b) => b.start - a.start)
+    .forEach((n) => { t = t.slice(0, n.start) + "" + n.k + "" + t.slice(n.start, n.end) + "" + t.slice(n.end); });
+  return t;
+}
+
+function numberTitle(n) {
+  const where = n.cells.length
+    ? n.cells.slice(0, 2).map((c) => `Source ${c.source}: ${c.label}${c.column ? " · " + c.column : ""}`).join("\n")
+    : n.text.slice(0, 2).map((t) => `Source ${t.source}: quoted in the text`).join("\n");
+  return where + (n.in_cited_source ? "" : "\nNot in the source this sentence cites") + "\nClick to show it";
+}
+
+function highlightsFor(sourceN, numbers) {
+  const cells = new Set(), rows = new Set(), text = new Map();
+  for (const n of numbers || []) {
+    for (const c of n.cells) if (c.source === sourceN) { cells.add(`${c.block}-${c.row}-${c.col}`); rows.add(`${c.block}-${c.row}`); }
+    for (const t of n.text) if (t.source === sourceN) (text.get(t.block) || text.set(t.block, new Set()).get(t.block)).add(t.token);
+  }
+  return { cells, rows, text };
+}
+
+const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const isHeaderRow = (row) => row.slice(1).some((c) => c.trim()) &&
+  row.slice(1).every((c) => !/\d/.test(c) || /^\s*(19|20)\d\d\s*$/.test(c) || /[A-Za-z]{3}/.test(c));
+
+function passageHTML(p, id, n, hl) {
+  return p.blocks.map((b, bi) => {
+    if (b.type === "table") {
+      const rows = b.rows.map((row, ri) => {
+        const cls = [isHeaderRow(row) ? "hdr" : "", hl.rows.has(`${bi}-${ri}`) ? "hl-row" : ""].filter(Boolean).join(" ");
+        const cells = row.map((cell, ci) => {
+          const text = cell.replace(/\*\*/g, "");
+          const c = [ci > 0 && /\d/.test(text) ? "n" : "", hl.cells.has(`${bi}-${ri}-${ci}`) ? "hl" : ""].filter(Boolean).join(" ");
+          return `<td id="c-${id}-${n}-${bi}-${ri}-${ci}"${c ? ` class="${c}"` : ""}>${esc(text)}</td>`;
+        }).join("");
+        return `<tr${cls ? ` class="${cls}"` : ""}>${cells}</tr>`;
+      }).join("");
+      return `<div class="pv-wrap"><table class="pv-table">${rows}</table></div>`;
+    }
+    const tokens = [...(hl.text.get(bi) || [])];
+    return b.text.split(/\n{2,}/).filter((para) => !/^[\s•·●◦▪-]*$/.test(para)).map((para) => {
+      const cap = /^(Table|Units):/.test(para.trim());
+      let html = esc(para.replace(/^#+\s*/gm, "").replace(/\*\*/g, ""));
+      for (const tok of tokens) {
+        html = html.replace(new RegExp(`(?<![\\d,.])${reEsc(esc(tok))}(?![\\d,]|\\.\\d)`, "g"), (m) => `<mark class="hl" data-b="${bi}">${m}</mark>`);
+      }
+      return `<p class="pv-text${cap ? " cap" : ""}">${html}</p>`;
+    }).join("");
+  }).join("");
+}
+
+function openPassage(id, n) {
+  const d = document.getElementById(`d-${id}`);
+  if (d) d.open = true;
+  const pv = document.getElementById(`p-${id}-${n}`);
+  if (pv) pv.open = true;
+  return pv;
+}
+
+function flash(el) {
+  el.classList.remove("focus");
+  void el.offsetWidth;               // restart the animation
+  el.classList.add("focus");
+  setTimeout(() => el.classList.remove("focus"), 1700);
+}
+
+function showNumber(key) {
+  const [id, k] = key.split(":");
+  const e = history.find((h) => h.id === id);
+  const n = e && e.res && (e.res.numbers || [])[+k];
+  if (!n) return;
+  const targets = [];
+  for (const c of n.cells) {
+    openPassage(id, c.source);
+    const el = document.getElementById(`c-${id}-${c.source}-${c.block}-${c.row}-${c.col}`);
+    if (el) targets.push(el);
+  }
+  for (const t of n.text) {
+    const pv = openPassage(id, t.source);
+    pv?.querySelectorAll(`mark.hl[data-b="${t.block}"]`).forEach((m) => { if (m.textContent === t.token) targets.push(m); });
+  }
+  if (!targets.length) return;
+  targets[0].scrollIntoView({ block: "center", behavior: "smooth" });
+  targets.forEach(flash);
 }
 
 // ------------------------------------------------------------ asking
@@ -414,12 +550,16 @@ log.addEventListener("click", (ev) => {
   const t = ev.target.closest("button");
   if (!t) return;
   if (t.dataset.q) { input.value = t.dataset.q; updateComposer(); input.focus(); }
+  else if (t.dataset.num) showNumber(t.dataset.num);
   else if (t.dataset.src) {
     const card = document.getElementById(t.dataset.src);
     card.closest("details").open = true;
-    card.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    const [, id, n] = t.dataset.src.split("-");
+    const first = openPassage(id, n)?.querySelector(".hl");
+    (first || card).scrollIntoView({ block: first ? "center" : "nearest", behavior: "smooth" });
     card.classList.add("flash");
     setTimeout(() => card.classList.remove("flash"), 1400);
+    if (first) flash(first);
   } else if (t.dataset.copy) {
     navigator.clipboard?.writeText(t.dataset.copy).then(() => {
       const old = t.textContent; t.textContent = "trace id copied"; setTimeout(() => (t.textContent = old), 1200);

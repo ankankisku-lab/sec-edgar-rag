@@ -8,8 +8,13 @@ import src.api.main as api
 import src.generation.generator as generator
 
 
+CONTEXT = ("Source 1:\ncompany: Apple\nperiod: fiscal 2025 Q3 (quarter ended June 28, 2025)\n\n"
+           "|  | Three Months Ended |  |\n|---|---|---|\n|  | June 28, 2025 | June 29, 2024 |\n"
+           "| Operating income | $28,202 | $25,352 |\n")
+
+
 def fake_answer(question, decompose):
-    return {"question": question, "sub_questions": [question], "contexts": ["Source 1:\n..."],
+    return {"question": question, "sub_questions": [question], "contexts": [CONTEXT],
             "answer": "Operating income was $28,202 million [1].",
             "sources": [{"n": 1, "node_id": "x", "filing_id": "AAPL_10Q_2025-06-28", "form": "10-Q",
                          "period": "fiscal 2025 Q3", "section": "Item 1", "url": "https://sec.gov/x", "score": 7.1}],
@@ -34,6 +39,18 @@ def test_query_returns_answer_sources_and_latency(client):
     assert body["sources"][0]["filing_id"] == "AAPL_10Q_2025-06-28"
     assert set(body["latency_ms"]) == {"total", "retrieval", "generation"}
     assert body["trace_id"] == "ab" * 16 and len(body["request_id"]) == 12
+
+
+def test_citations_point_to_the_quoted_cell(client):
+    body = client.post("/query", json={"question": "What was Apple's operating income in fiscal 2025 Q3?"}).json()
+    passage = body["sources"][0]["passage"]
+    assert passage["header"]["company"] == "Apple" and passage["blocks"][0]["type"] == "table"
+    [num] = body["numbers"]
+    assert num["token"] == "$28,202" and num["status"] == "cell" and num["in_cited_source"]
+    assert body["answer"][num["start"]:num["end"]] == "$28,202"
+    cell = num["cells"][0]
+    assert (cell["source"], cell["label"], cell["column"]) == (1, "Operating income", "Three Months Ended · June 28, 2025")
+    assert passage["blocks"][cell["block"]]["rows"][cell["row"]][cell["col"]] == "$28,202"
 
 
 def test_validation_rejects_empty_and_oversized_questions(client):
